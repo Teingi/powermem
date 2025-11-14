@@ -1141,7 +1141,7 @@ pip install dashscope    # For Qwen
 from powermem import create_memory
 
 # Explicitly specify config file
-memory = create_memory(config_file="configs/powermem.env")
+memory = create_memory(config_file=".env")
 ```
 
 ### Issue: Vector Dimension Mismatch
