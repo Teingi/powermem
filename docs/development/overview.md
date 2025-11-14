@@ -59,8 +59,8 @@ pip install -e ".[dev,test]"
 Copy the example environment file and configure it:
 
 ```bash
-cp configs/env.example configs/powermem.env
-# Edit configs/powermem.env with your configuration
+cp .env.example .env
+# Edit .env with your configuration
 ```
 
 ### Development Tools

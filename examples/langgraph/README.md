@@ -82,7 +82,7 @@ Copy the configuration template and edit it:
 
 ```bash
 # From project root
-cp configs/env.example configs/powermem.env
+cp .env.example configs/powermem.env
 ```
 
 Edit `configs/powermem.env` and configure:
