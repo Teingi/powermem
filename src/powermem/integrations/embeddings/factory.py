@@ -30,6 +30,7 @@ class EmbedderFactory:
         "langchain": "powermem.integrations.embeddings.langchain.LangchainEmbedding",
         "aws_bedrock": "powermem.integrations.embeddings.aws_bedrock.AWSBedrockEmbedding",
         "qwen": "powermem.integrations.embeddings.qwen.QwenEmbedding",
+        "siliconflow": "powermem.integrations.embeddings.siliconflow.SiliconFlowEmbedding",
     }
 
     @classmethod

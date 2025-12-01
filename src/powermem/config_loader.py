@@ -136,6 +136,26 @@ def load_config_from_env() -> Dict[str, Any]:
         base_url = os.getenv('LLM_BASE_URL', 'https://api.siliconflow.cn/v1')
         llm_config['openai_base_url'] = base_url
     
+    # Build Embedding config based on provider
+    embedding_provider = os.getenv('EMBEDDING_PROVIDER', 'qwen')
+    embedding_config = {
+        'api_key': os.getenv('EMBEDDING_API_KEY'),
+        'model': os.getenv('EMBEDDING_MODEL', 'text-embedding-v4' if embedding_provider == 'qwen' else 'BAAI/bge-large-en-v1.5'),
+        'embedding_dims': int(os.getenv('EMBEDDING_DIMS', '1536'))
+    }
+    
+    # Add provider-specific config
+    if embedding_provider == 'qwen':
+        embedding_config['dashscope_base_url'] = os.getenv('EMBEDDING_BASE_URL', 'https://dashscope.aliyuncs.com/api/v1')
+    elif embedding_provider == 'openai':
+        base_url = os.getenv('EMBEDDING_BASE_URL')
+        if base_url:
+            embedding_config['openai_base_url'] = base_url
+    elif embedding_provider == 'siliconflow':
+        # SiliconFlow uses OpenAI-compatible API
+        base_url = os.getenv('EMBEDDING_BASE_URL', 'https://api.siliconflow.cn/v1')
+        embedding_config['openai_base_url'] = base_url
+    
     config = {
         'vector_store': {
             'provider': db_provider,
@@ -146,12 +166,8 @@ def load_config_from_env() -> Dict[str, Any]:
             'config': llm_config
         },
         'embedder': {
-            'provider': os.getenv('EMBEDDING_PROVIDER', 'qwen'),
-            'config': {
-                'api_key': os.getenv('EMBEDDING_API_KEY'),
-                'model': os.getenv('EMBEDDING_MODEL', 'text-embedding-v4'),
-                'embedding_dims': int(os.getenv('EMBEDDING_DIMS', '1536'))
-            }
+            'provider': embedding_provider,
+            'config': embedding_config
         },
         'intelligent_memory': {
             'enabled': os.getenv('INTELLIGENT_MEMORY_ENABLED', 'true').lower() == 'true',
