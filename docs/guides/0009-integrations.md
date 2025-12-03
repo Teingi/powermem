@@ -116,10 +116,6 @@ memory.add_message(AIMessage(content=response_text))
 memory.save_to_powermem(user_input, response_text)
 ```
 
-### Complete Example
-
-See the [Healthcare Support Bot example](../../examples/langchain/healthcare_support_bot.py) for a complete implementation.
-
 ## LangGraph Integration
 
 PowerMem integrates with LangGraph 1.0+ for stateful conversation workflows.
@@ -214,10 +210,6 @@ initial_state = {
 
 final_state = app.invoke(initial_state)
 ```
-
-### Complete Example
-
-See the [Customer Service Bot example](../../examples/langgraph/customer_service_bot.py) for a complete LangGraph implementation with PowerMem.
 
 ## FastAPI Integration
 
