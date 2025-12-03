@@ -26,7 +26,7 @@ from dotenv import load_dotenv
 # Add src to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
 
-from powermem import create_memory, auto_config
+from powermem import Memory, auto_config
 
 # LangChain imports - using new LangChain 1.1.0+ API
 try:

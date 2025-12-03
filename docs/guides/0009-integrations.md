@@ -13,12 +13,12 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables import RunnableLambda
 from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
 from langchain_openai import ChatOpenAI
-from powermem import create_memory, auto_config
+from powermem import Memory, auto_config
 from typing import List, Dict, Any
 
 # Create powermem instance
 config = auto_config()
-powermem = create_memory(config=config)
+powermem = Memory(config=config)
 
 # Custom memory class for PowerMem integration
 class PowermemMemory:
@@ -126,12 +126,12 @@ PowerMem integrates with LangGraph 1.0+ for stateful conversation workflows.
 from langgraph.graph import StateGraph, END, START
 from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
 from langchain_openai import ChatOpenAI
-from powermem import create_memory, auto_config
+from powermem import Memory, auto_config
 from typing import TypedDict, Annotated, List
 
 # Create powermem instance
 config = auto_config()
-powermem = create_memory(config=config)
+powermem = Memory(config=config)
 
 # Define state schema
 class ConversationState(TypedDict):
