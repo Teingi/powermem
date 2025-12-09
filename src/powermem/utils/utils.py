@@ -553,6 +553,71 @@ def serialize_datetime(value: Any) -> Any:
     return value
 
 
+# JavaScript Number.MAX_SAFE_INTEGER = 2^53 - 1 = 9007199254740991
+# Integers larger than this will lose precision when parsed by JavaScript
+JS_MAX_SAFE_INTEGER = 9007199254740991
+
+
+def serialize_large_int(value: Any) -> Any:
+    """
+    Convert large integers (> 2^53 - 1) to strings for JSON serialization.
+    This prevents precision loss when JSON is parsed by JavaScript/TypeScript clients.
+    Recursively handles dictionaries and lists.
+    
+    Args:
+        value: Value to serialize (can be int, dict, list, or primitive)
+    
+    Returns:
+        Serialized value with large integers converted to strings
+    
+    Example:
+        >>> serialize_large_int({"id": 653247040368672768})
+        {"id": "653247040368672768"}
+        >>> serialize_large_int({"id": 12345})  # Small integer unchanged
+        {"id": 12345}
+    """
+    if isinstance(value, int):
+        # Convert integers larger than JavaScript's MAX_SAFE_INTEGER to strings
+        if value > JS_MAX_SAFE_INTEGER or value < -JS_MAX_SAFE_INTEGER:
+            return str(value)
+        return value
+    elif isinstance(value, dict):
+        return {k: serialize_large_int(v) for k, v in value.items()}
+    elif isinstance(value, list):
+        return [serialize_large_int(item) for item in value]
+    return value
+
+
+def serialize_for_json(value: Any) -> Any:
+    """
+    Serialize value for JSON output, handling both datetime and large integers.
+    This is a convenience function that combines serialize_datetime and serialize_large_int.
+    
+    Args:
+        value: Value to serialize (can be datetime, int, dict, list, or primitive)
+    
+    Returns:
+        Serialized value ready for JSON encoding
+    
+    Example:
+        >>> serialize_for_json({
+        ...     "id": 653247040368672768,
+        ...     "created_at": datetime.now(),
+        ...     "name": "test"
+        ... })
+        {
+            "id": "653247040368672768",
+            "created_at": "2025-12-09T10:00:00",
+            "name": "test"
+        }
+    """
+    # First serialize datetimes
+    value = serialize_datetime(value)
+    # Then serialize large integers
+    value = serialize_large_int(value)
+    return value
+
+
 def convert_config_object_to_dict(obj: Any) -> Any:
     """
     Recursively convert ConfigObject instances to dictionaries.

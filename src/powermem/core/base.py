@@ -71,7 +71,7 @@ class MemoryBase(ABC):
     @abstractmethod
     def get(
         self,
-        memory_id: int,
+        memory_id: Union[int, str],
         user_id: Optional[str] = None,
         agent_id: Optional[str] = None,
     ) -> Optional[Dict[str, Any]]:
@@ -79,7 +79,7 @@ class MemoryBase(ABC):
         Get a specific memory by ID.
         
         Args:
-            memory_id: ID of the memory to retrieve
+            memory_id: ID of the memory to retrieve (int or str). String IDs are converted to int internally.
             user_id: User ID for access control
             agent_id: Agent ID for access control
             
@@ -91,7 +91,7 @@ class MemoryBase(ABC):
     @abstractmethod
     def update(
         self,
-        memory_id: int,
+        memory_id: Union[int, str],
         content: str,
         user_id: Optional[str] = None,
         agent_id: Optional[str] = None,
@@ -101,7 +101,7 @@ class MemoryBase(ABC):
         Update an existing memory.
         
         Args:
-            memory_id: ID of the memory to update
+            memory_id: ID of the memory to update (int or str). String IDs are converted to int internally.
             content: New content for the memory
             user_id: User ID for access control
             agent_id: Agent ID for access control
@@ -115,7 +115,7 @@ class MemoryBase(ABC):
     @abstractmethod
     def delete(
         self,
-        memory_id: int,
+        memory_id: Union[int, str],
         user_id: Optional[str] = None,
         agent_id: Optional[str] = None,
     ) -> bool:
@@ -123,7 +123,7 @@ class MemoryBase(ABC):
         Delete a memory.
         
         Args:
-            memory_id: ID of the memory to delete
+            memory_id: ID of the memory to delete (int or str). String IDs are converted to int internally.
             user_id: User ID for access control
             agent_id: Agent ID for access control
             

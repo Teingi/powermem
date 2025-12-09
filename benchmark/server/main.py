@@ -19,7 +19,7 @@ import asyncio
 import logging
 import os
 import sys
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
@@ -360,9 +360,14 @@ def get_all_memories(
 
 
 @app.get("/memories/{memory_id}", summary="Get a memory")
-def get_memory(memory_id: int):
-    """Retrieve a specific memory by ID."""
+def get_memory(memory_id: Union[int, str]):
+    """Retrieve a specific memory by ID.
+    
+    Args:
+        memory_id: Memory identifier (int or str). String IDs are converted to int internally.
+    """
     try:
+        # Convert string memory_id to int if needed (handled by Memory.get internally, but explicit here for clarity)
         return MEMORY_INSTANCE.get(memory_id)
     except Exception as e:
         logging.exception("Error in get_memory:")
@@ -384,27 +389,38 @@ def search_memories(search_req: SearchRequest):
 
 
 @app.put("/memories/{memory_id}", summary="Update a memory")
-def update_memory(memory_id: int, updated_memory: Dict[str, Any]):
+def update_memory(memory_id: Union[int, str], updated_memory: Dict[str, Any]):
     """Update an existing memory with new content.
     
     Args:
-        memory_id: ID of the memory to update
+        memory_id: Memory identifier (int or str). String IDs are converted to int internally.
         updated_memory: New content to update the memory with
     
     Returns:
         dict: Success message indicating the memory was updated
     """
     try:
-        return MEMORY_INSTANCE.update(memory_id=memory_id, data=updated_memory)
+        # Extract content from updated_memory dict
+        content = updated_memory.get("content") or updated_memory.get("memory") or updated_memory.get("data", "")
+        metadata = updated_memory.get("metadata")
+        # Convert string memory_id to int if needed (handled by Memory.update internally, but explicit here for clarity)
+        return MEMORY_INSTANCE.update(memory_id=memory_id, content=content, metadata=metadata)
     except Exception as e:
         logging.exception("Error in update_memory:")
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.get("/memories/{memory_id}/history", summary="Get memory history")
-def memory_history(memory_id: int):
-    """Retrieve memory history."""
+def memory_history(memory_id: Union[int, str]):
+    """Retrieve memory history.
+    
+    Args:
+        memory_id: Memory identifier (int or str). String IDs are converted to int internally.
+    """
     try:
+        # Convert string memory_id to int if needed
+        if isinstance(memory_id, str):
+            memory_id = int(memory_id)
         return MEMORY_INSTANCE.history(memory_id=memory_id)
     except Exception as e:
         logging.exception("Error in memory_history:")
@@ -412,7 +428,7 @@ def memory_history(memory_id: int):
 
 
 @app.delete("/memories/{memory_id}", summary="Delete a memory")
-def delete_memory(memory_id: int):
+def delete_memory(memory_id: Union[int, str]):
     """Delete a specific memory by ID."""
     try:
         MEMORY_INSTANCE.delete(memory_id=memory_id)

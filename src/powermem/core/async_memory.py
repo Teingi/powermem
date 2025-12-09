@@ -23,7 +23,7 @@ from ..integrations.embeddings.factory import EmbedderFactory
 from .telemetry import TelemetryManager
 from .audit import AuditLogger
 from ..intelligence.plugin import IntelligentMemoryPlugin, EbbinghausIntelligencePlugin
-from ..utils.utils import remove_code_blocks, convert_config_object_to_dict, parse_vision_messages
+from ..utils.utils import remove_code_blocks, convert_config_object_to_dict, parse_vision_messages, serialize_for_json
 from ..prompts.intelligent_memory_prompts import (
     FACT_RETRIEVAL_PROMPT,
     FACT_EXTRACTION_PROMPT,
@@ -593,7 +593,8 @@ class AsyncMemory(MemoryBase):
         }
         if graph_result:
             result["relations"] = graph_result
-        return result
+        # Serialize large integers to strings for JSON compatibility with JavaScript clients
+        return serialize_for_json(result)
     
     async def _intelligent_add_async(
         self,
@@ -792,18 +793,21 @@ class AsyncMemory(MemoryBase):
             result: Dict[str, Any] = {"results": results}
             if graph_result:
                 result["relations"] = graph_result
-            return result
+            # Serialize large integers to strings for JSON compatibility with JavaScript clients
+            return serialize_for_json(result)
         # If we processed actions but they were all NONE (duplicates detected), return empty results
         elif action_counts.get("NONE", 0) > 0:
             logger.info(f"All actions were NONE (duplicates detected), returning empty results")
             result: Dict[str, Any] = {"results": []}
             if graph_result:
                 result["relations"] = graph_result
-            return result
+            # Serialize large integers to strings for JSON compatibility with JavaScript clients
+            return serialize_for_json(result)
         # Return [] if we had no actions at all
         else:
             logger.warning("No actions returned from LLM, skip intelligent add")
-            return {"results": []}
+            # Serialize large integers to strings for JSON compatibility with JavaScript clients
+            return serialize_for_json({"results": []})
 
     async def _add_to_graph_async(
         self,
@@ -1057,10 +1061,14 @@ class AsyncMemory(MemoryBase):
             if self.enable_graph:
                 filters = {**(filters or {}), "user_id": user_id, "agent_id": agent_id, "run_id": run_id}
                 graph_results = await asyncio.to_thread(self.graph_store.search, query, filters, limit)
-                return {"results": transformed_results, "relations": graph_results}
+                result = {"results": transformed_results, "relations": graph_results}
+                # Serialize large integers to strings for JSON compatibility with JavaScript clients
+                return serialize_for_json(result)
 
             # Return in benchmark expected format
-            return {"results": transformed_results}
+            result = {"results": transformed_results}
+            # Serialize large integers to strings for JSON compatibility with JavaScript clients
+            return serialize_for_json(result)
             
         except Exception as e:
             logger.error(f"Failed to search memories: {e}")
@@ -1069,26 +1077,35 @@ class AsyncMemory(MemoryBase):
     
     async def get(
         self,
-        memory_id: int,
+        memory_id: Union[int, str],
         user_id: Optional[str] = None,
         agent_id: Optional[str] = None,
     ) -> Optional[Dict[str, Any]]:
         """Get a specific memory by ID asynchronously.
         
+        Args:
+            memory_id: Memory identifier (int or str). String IDs are converted to int internally.
+            user_id: User identifier for permission check.
+            agent_id: Agent identifier for permission check.
+        
         Returns:
             Optional[Dict[str, Any]]: A dictionary containing the memory data if found, None otherwise.
                 The dictionary contains the following fields:
-                    - "id" (int): Memory ID
+                    - "id" (str): Memory ID (serialized as string for JSON compatibility)
                     - "content" (str): The memory content
                     - "user_id" (str, optional): User ID associated with the memory
                     - "agent_id" (str, optional): Agent ID associated with the memory
                     - "run_id" (str, optional): Run ID associated with the memory
                     - "metadata" (Dict): Metadata dictionary associated with the memory
-                    - "created_at" (datetime, optional): Creation timestamp
-                    - "updated_at" (datetime, optional): Update timestamp
+                    - "created_at" (str, optional): Creation timestamp in ISO format
+                    - "updated_at" (str, optional): Update timestamp in ISO format
                 Returns None if the memory is not found or access is denied.
         """
         try:
+            # Convert string memory_id to int for internal processing
+            if isinstance(memory_id, str):
+                memory_id = int(memory_id)
+            
             result = await self.storage.get_memory_async(memory_id, user_id, agent_id)
             
             if result:
@@ -1108,7 +1125,8 @@ class AsyncMemory(MemoryBase):
                     "agent_id": agent_id
                 }, user_id=user_id, agent_id=agent_id)
             
-            return result
+            # Serialize large integers to strings for JSON compatibility with JavaScript clients
+            return serialize_for_json(result) if result else None
             
         except Exception as e:
             logger.error(f"Failed to get memory {memory_id}: {e}")
@@ -1116,7 +1134,7 @@ class AsyncMemory(MemoryBase):
     
     async def update(
         self,
-        memory_id: int,
+        memory_id: Union[int, str],
         content: str,
         user_id: Optional[str] = None,
         agent_id: Optional[str] = None,
@@ -1124,10 +1142,17 @@ class AsyncMemory(MemoryBase):
     ) -> Dict[str, Any]:
         """Update an existing memory asynchronously.
         
+        Args:
+            memory_id: Memory identifier (int or str). String IDs are converted to int internally.
+            content: New content for the memory.
+            user_id: User identifier for permission check.
+            agent_id: Agent identifier for permission check.
+            metadata: Updated metadata dictionary.
+        
         Returns:
             Dict[str, Any]: A dictionary containing the updated memory data if successful, None if memory not found or access denied.
                 The dictionary contains the following fields:
-                    - "id" (int): Memory ID
+                    - "id" (str): Memory ID (serialized as string for JSON compatibility)
                     - "content" (str): The updated memory content (stored as "data" in payload)
                     - "user_id" (str, optional): User ID associated with the memory
                     - "agent_id" (str, optional): Agent ID associated with the memory
@@ -1140,6 +1165,10 @@ class AsyncMemory(MemoryBase):
                 Returns None if the memory is not found or access is denied.
         """
         try:
+            # Convert string memory_id to int for internal processing
+            if isinstance(memory_id, str):
+                memory_id = int(memory_id)
+            
             # Validate content is not empty
             if not content or not content.strip():
                 raise ValueError(f"Cannot update memory with empty content: '{content}'")
@@ -1203,7 +1232,8 @@ class AsyncMemory(MemoryBase):
                 "agent_id": agent_id
             }, user_id=user_id, agent_id=agent_id)
             
-            return result
+            # Serialize large integers to strings for JSON compatibility with JavaScript clients
+            return serialize_for_json(result) if result else None
             
         except Exception as e:
             logger.error(f"Failed to update memory {memory_id}: {e}")
@@ -1211,12 +1241,25 @@ class AsyncMemory(MemoryBase):
     
     async def delete(
         self,
-        memory_id: int,
+        memory_id: Union[int, str],
         user_id: Optional[str] = None,
         agent_id: Optional[str] = None,
     ) -> bool:
-        """Delete a memory asynchronously."""
+        """Delete a memory asynchronously.
+        
+        Args:
+            memory_id: Memory identifier (int or str). String IDs are converted to int internally.
+            user_id: User identifier for permission check.
+            agent_id: Agent identifier for permission check.
+        
+        Returns:
+            bool: True if deleted successfully, False otherwise.
+        """
         try:
+            # Convert string memory_id to int for internal processing
+            if isinstance(memory_id, str):
+                memory_id = int(memory_id)
+            
             result = await self.storage.delete_memory_async(memory_id, user_id, agent_id)
             
             if result:
@@ -1273,9 +1316,13 @@ class AsyncMemory(MemoryBase):
                 filters = {**(filters or {}), "user_id": user_id, "agent_id": agent_id, "run_id": run_id}
                 graph_results = await asyncio.to_thread(self.graph_store.get_all, filters, limit + offset)
                 results.extend(graph_results)
-                return {"results": results, "relations": graph_results}
+                result = {"results": results, "relations": graph_results}
+                # Serialize large integers to strings for JSON compatibility with JavaScript clients
+                return serialize_for_json(result)
 
-            return {"results": results}
+            result = {"results": results}
+            # Serialize large integers to strings for JSON compatibility with JavaScript clients
+            return serialize_for_json(result)
             
         except Exception as e:
             logger.error(f"Failed to get all memories: {e}")
