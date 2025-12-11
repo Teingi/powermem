@@ -15,7 +15,7 @@ class SiliconFlowLLM(LLMBase):
     SiliconFlow LLM provider implementation.
     
     SiliconFlow (硅基流动) is compatible with OpenAI API format.
-    Base URL: https://api.siliconflow.cn/v1
+    Base URL: https://api.siliconflow.com/v1
     """
     
     def __init__(self, config: Optional[Union[BaseLLMConfig, OpenAIConfig, Dict]] = None):
@@ -50,7 +50,7 @@ class SiliconFlowLLM(LLMBase):
             self.config.openai_base_url 
             or os.getenv("SILICONFLOW_BASE_URL") 
             or os.getenv("LLM_BASE_URL")
-            or "https://api.siliconflow.cn/v1"
+            or "https://api.siliconflow.com/v1"
         )
 
         self.client = OpenAI(api_key=api_key, base_url=base_url)

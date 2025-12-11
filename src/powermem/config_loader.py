@@ -133,7 +133,7 @@ def load_config_from_env() -> Dict[str, Any]:
             llm_config['openai_base_url'] = base_url
     elif llm_provider == 'siliconflow':
         # SiliconFlow uses OpenAI-compatible API
-        base_url = os.getenv('LLM_BASE_URL', 'https://api.siliconflow.cn/v1')
+        base_url = os.getenv('LLM_BASE_URL', 'https://api.siliconflow.com/v1')
         llm_config['openai_base_url'] = base_url
 
 
