@@ -116,7 +116,6 @@ for result in results.get('results', []):
 - 📓 **[例](docs/examples/overview.md)**：インタラクティブな Jupyter ノートブックとユースケース
 - 👨‍💻 **[開発者ドキュメント](docs/development/overview.md)**：開発者ドキュメント
 
-
 ## ⭐ ハイライト リリースノート
 
 | Version | Iteration Period | Release Date | Function |

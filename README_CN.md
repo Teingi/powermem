@@ -100,7 +100,6 @@ for result in results.get('results', []):
 
 更多详细示例和使用模式，请参阅[入门指南](docs/guides/0001-getting_started.md)。
 
-
 ## 🔗 集成与演示
 
 - 🔗 **LangChain 集成**：基于 LangChain + PowerMem + OceanBase 构建医疗支持机器人，[查看示例](examples/langchain/README.md)

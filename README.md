@@ -99,7 +99,6 @@ for result in results.get('results', []):
 
 For more detailed examples and usage patterns, see the [Getting Started Guide](docs/guides/0001-getting_started.md).
 
-
 ## 🔗 Integrations & Demos
 
 - 🔗 **LangChain Integration**: Build medical support chatbot using LangChain + PowerMem + OceanBase, [View Example](examples/langchain/README.md)
