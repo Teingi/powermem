@@ -99,14 +99,6 @@ for result in results.get('results', []):
 
 より詳細な例と使用パターンについては、[はじめにガイド](docs/guides/0001-getting_started.md) を参照してください。
 
-
-## ⭐ ハイライト リリースノート
-
-| Version | Iteration Period | Release Date | Function |
-|---------|--------|-------|---------|
-| 0.2.0 | 2025.12 | 2025.12.16 | <ul><li>高度なユーザープロフィール管理、AI アプリケーションの「千人千面」をサポート</li><li>テキスト、画像、音声メモリを含む拡張マルチモーダルサポート</li></ul> |
-| 0.1.0 | 2025.11 | 2025.11.14 | <ul><li>コアメモリ管理機能、メモリの永続ストレージをサポート</li><li>ベクトル、全文、グラフ検索をサポートするハイブリッド検索</li><li>LLM ベースの事実抽出によるインテリジェントメモリ抽出</li><li>エビングハウス忘却曲線に基づく全ライフサイクルメモリ管理をサポート</li><li>Multi-Agent メモリ管理をサポート</li><li>複数のストレージバックエンドサポート（OceanBase、PostgreSQL、SQLite）</li><li>マルチホップグラフ検索による知識グラフの検索処理をサポート</li></ul> |
-
 ## 🔗 統合とデモ
 
 - 🔗 **LangChain 統合**: LangChain + PowerMem + OceanBase を使用して医療サポートロボットを構築、[例を参照](examples/langchain/README.md)
@@ -123,6 +115,15 @@ for result in results.get('results', []):
 - 🏗️ **[アーキテクチャガイド](docs/architecture/overview.md)**：システムアーキテクチャと設計
 - 📓 **[例](docs/examples/overview.md)**：インタラクティブな Jupyter ノートブックとユースケース
 - 👨‍💻 **[開発者ドキュメント](docs/development/overview.md)**：開発者ドキュメント
+
+
+## ⭐ ハイライト リリースノート
+
+| Version | Iteration Period | Release Date | Function |
+|---------|--------|-------|---------|
+| 0.2.0 | 2025.12 | 2025.12.16 | <ul><li>高度なユーザープロフィール管理、AI アプリケーションの「千人千面」をサポート</li><li>テキスト、画像、音声メモリを含む拡張マルチモーダルサポート</li></ul> |
+| 0.1.0 | 2025.11 | 2025.11.14 | <ul><li>コアメモリ管理機能、メモリの永続ストレージをサポート</li><li>ベクトル、全文、グラフ検索をサポートするハイブリッド検索</li><li>LLM ベースの事実抽出によるインテリジェントメモリ抽出</li><li>エビングハウス忘却曲線に基づく全ライフサイクルメモリ管理をサポート</li><li>Multi-Agent メモリ管理をサポート</li><li>複数のストレージバックエンドサポート（OceanBase、PostgreSQL、SQLite）</li><li>マルチホップグラフ検索による知識グラフの検索処理をサポート</li></ul> |
+
 
 ## 💬 サポート
 
