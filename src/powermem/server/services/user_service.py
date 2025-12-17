@@ -1,0 +1,163 @@
+"""
+User service for PowerMem API
+"""
+
+import logging
+from typing import Any, Dict, List, Optional
+from powermem import UserMemory, auto_config
+from ..models.errors import ErrorCode, APIError
+
+logger = logging.getLogger("powermem.server")
+
+
+class UserService:
+    """Service for user profile operations"""
+    
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
+        """
+        Initialize user service.
+        
+        Args:
+            config: PowerMem configuration (uses auto_config if None)
+        """
+        if config is None:
+            config = auto_config()
+        
+        self.user_memory = UserMemory(config=config)
+        logger.info("UserService initialized")
+    
+    def get_user_profile(self, user_id: str) -> Dict[str, Any]:
+        """
+        Get user profile.
+        
+        Args:
+            user_id: User ID
+            
+        Returns:
+            User profile data
+            
+        Raises:
+            APIError: If profile not found or retrieval fails
+        """
+        try:
+            if not user_id:
+                raise APIError(
+                    code=ErrorCode.INVALID_REQUEST,
+                    message="user_id is required",
+                    status_code=400,
+                )
+            
+            profile = self.user_memory.profile_store.get_profile_by_user_id(user_id)
+            
+            if not profile:
+                raise APIError(
+                    code=ErrorCode.USER_NOT_FOUND,
+                    message=f"User profile for {user_id} not found",
+                    status_code=404,
+                )
+            
+            return profile
+            
+        except APIError:
+            raise
+        except Exception as e:
+            logger.error(f"Failed to get user profile {user_id}: {e}", exc_info=True)
+            raise APIError(
+                code=ErrorCode.INTERNAL_ERROR,
+                message=f"Failed to get user profile: {str(e)}",
+                status_code=500,
+            )
+    
+    def update_user_profile(
+        self,
+        user_id: str,
+        profile_content: Optional[str] = None,
+        topics: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        """
+        Update user profile.
+        
+        Args:
+            user_id: User ID
+            profile_content: Profile content text
+            topics: Structured topics dictionary
+            
+        Returns:
+            Updated profile data
+            
+        Raises:
+            APIError: If update fails
+        """
+        try:
+            if not user_id:
+                raise APIError(
+                    code=ErrorCode.INVALID_REQUEST,
+                    message="user_id is required",
+                    status_code=400,
+                )
+            
+            # Save profile
+            profile_id = self.user_memory.profile_store.save_profile(
+                user_id=user_id,
+                profile_content=profile_content,
+                topics=topics,
+            )
+            
+            # Get updated profile
+            profile = self.user_memory.profile_store.get_profile_by_user_id(user_id)
+            
+            logger.info(f"User profile updated: {user_id}")
+            return profile
+            
+        except APIError:
+            raise
+        except Exception as e:
+            logger.error(f"Failed to update user profile {user_id}: {e}", exc_info=True)
+            raise APIError(
+                code=ErrorCode.PROFILE_UPDATE_FAILED,
+                message=f"Failed to update user profile: {str(e)}",
+                status_code=500,
+            )
+    
+    def get_user_memories(
+        self,
+        user_id: str,
+        limit: int = 100,
+        offset: int = 0,
+    ) -> List[Dict[str, Any]]:
+        """
+        Get all memories for a user.
+        
+        Args:
+            user_id: User ID
+            limit: Maximum number of results
+            offset: Number of results to skip
+            
+        Returns:
+            List of memories
+        """
+        try:
+            if not user_id:
+                raise APIError(
+                    code=ErrorCode.INVALID_REQUEST,
+                    message="user_id is required",
+                    status_code=400,
+                )
+            
+            memories = self.user_memory.memory.get_all(
+                user_id=user_id,
+                limit=limit,
+                offset=offset,
+            )
+            
+            return memories
+            
+        except APIError:
+            raise
+        except Exception as e:
+            logger.error(f"Failed to get user memories {user_id}: {e}", exc_info=True)
+            raise APIError(
+                code=ErrorCode.INTERNAL_ERROR,
+                message=f"Failed to get user memories: {str(e)}",
+                status_code=500,
+            )
