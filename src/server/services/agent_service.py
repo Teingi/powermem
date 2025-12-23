@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Optional
 from powermem import Memory, auto_config
 from ..models.errors import ErrorCode, APIError
 
-logger = logging.getLogger("powermem.server")
+logger = logging.getLogger("server")
 
 
 class AgentService:

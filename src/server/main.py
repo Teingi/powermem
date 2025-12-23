@@ -61,7 +61,7 @@ async def root():
         "name": "PowerMem API Server",
         "version": config.api_version,
         "docs": "/docs",
-        "health": "/api/v1/health",
+        "health": "/api/v1/system/health",
     }
 
 
@@ -83,7 +83,7 @@ if __name__ == "__main__":
     import uvicorn
     
     uvicorn.run(
-        "powermem.server.main:app",
+        "server.main:app",
         host=config.host,
         port=config.port,
         reload=config.reload,

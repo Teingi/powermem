@@ -121,7 +121,7 @@ async def share_agent_memories(
 
 
 @router.get(
-    "/{agent_id}/memories/shared",
+    "/{agent_id}/memories/share",
     response_model=APIResponse,
     summary="Get shared memories",
     description="Get shared memories for an agent",

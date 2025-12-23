@@ -11,14 +11,14 @@ from ...middleware.rate_limit import limiter, get_rate_limit_string
 from ...config import config
 from powermem import auto_config
 
-router = APIRouter(prefix="", tags=["system"])
+router = APIRouter(prefix="/system", tags=["system"])
 
 
 @router.get(
     "/health",
     response_model=APIResponse,
     summary="Health check",
-    description="Check if the API server is healthy",
+    description="Check if the API server is healthy (public endpoint, no authentication required)",
 )
 async def health_check():
     """Health check endpoint"""

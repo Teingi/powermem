@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Optional
 from powermem import UserMemory, auto_config
 from ..models.errors import ErrorCode, APIError
 
-logger = logging.getLogger("powermem.server")
+logger = logging.getLogger("server")
 
 
 class UserService:
@@ -159,5 +159,67 @@ class UserService:
             raise APIError(
                 code=ErrorCode.INTERNAL_ERROR,
                 message=f"Failed to get user memories: {str(e)}",
+                status_code=500,
+            )
+    
+    def delete_user_memories(self, user_id: str) -> Dict[str, Any]:
+        """
+        Delete all memories for a user (user profile deletion).
+        
+        Args:
+            user_id: User ID
+            
+        Returns:
+            Deletion result
+            
+        Raises:
+            APIError: If deletion fails
+        """
+        try:
+            if not user_id:
+                raise APIError(
+                    code=ErrorCode.INVALID_REQUEST,
+                    message="user_id is required",
+                    status_code=400,
+                )
+            
+            # Get all memories for the user
+            memories = self.user_memory.memory.get_all(user_id=user_id)
+            
+            deleted_count = 0
+            failed_count = 0
+            
+            for memory in memories:
+                try:
+                    memory_id = memory.get("id") or memory.get("memory_id")
+                    if memory_id:
+                        success = self.user_memory.memory.delete(
+                            memory_id=memory_id,
+                            user_id=user_id,
+                        )
+                        if success:
+                            deleted_count += 1
+                        else:
+                            failed_count += 1
+                except Exception as e:
+                    logger.warning(f"Failed to delete memory {memory.get('id')}: {e}")
+                    failed_count += 1
+            
+            logger.info(f"Deleted {deleted_count} memories for user {user_id}")
+            
+            return {
+                "user_id": user_id,
+                "deleted_count": deleted_count,
+                "failed_count": failed_count,
+                "total": len(memories),
+            }
+            
+        except APIError:
+            raise
+        except Exception as e:
+            logger.error(f"Failed to delete user memories {user_id}: {e}", exc_info=True)
+            raise APIError(
+                code=ErrorCode.INTERNAL_ERROR,
+                message=f"Failed to delete user memories: {str(e)}",
                 status_code=500,
             )

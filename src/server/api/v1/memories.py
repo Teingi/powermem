@@ -2,6 +2,7 @@
 Memory management API routes
 """
 
+import logging
 from typing import List, Optional
 from fastapi import APIRouter, Depends, Query, Request
 from slowapi import Limiter
@@ -11,6 +12,7 @@ from ...models.request import (
     MemoryCreateRequest,
     MemoryBatchCreateRequest,
     MemoryUpdateRequest,
+    MemoryBatchUpdateRequest,
     BulkDeleteRequest,
 )
 from ...models.response import (
@@ -22,6 +24,8 @@ from ...services.memory_service import MemoryService
 from ...middleware.auth import verify_api_key
 from ...middleware.rate_limit import limiter, get_rate_limit_string
 from ...utils.converters import memory_dict_to_response
+
+logger = logging.getLogger("server")
 
 router = APIRouter(prefix="/memories", tags=["memories"])
 
@@ -224,6 +228,15 @@ async def update_memory(
     service: MemoryService = Depends(get_memory_service),
 ):
     """Update a memory"""
+    # At least one of content or metadata must be provided
+    if body.content is None and body.metadata is None:
+        from ...models.errors import ErrorCode, APIError
+        raise APIError(
+            code=ErrorCode.INVALID_REQUEST,
+            message="At least one of content or metadata must be provided",
+            status_code=400,
+        )
+    
     result = service.update_memory(
         memory_id=memory_id,
         content=body.content,
@@ -238,6 +251,71 @@ async def update_memory(
         success=True,
         data=memory_response.model_dump(),
         message="Memory updated successfully",
+    )
+
+
+@router.put(
+    "/batch",
+    response_model=APIResponse,
+    summary="Batch update memories",
+    description="Update multiple memories in a single request (batch operation)",
+)
+@limiter.limit(get_rate_limit_string())
+async def batch_update_memories(
+    request: Request,
+    body: MemoryBatchUpdateRequest,
+    api_key: str = Depends(verify_api_key),
+    service: MemoryService = Depends(get_memory_service),
+):
+    """Update multiple memories in batch"""
+    # Convert MemoryUpdateItem objects to dictionaries
+    updates_data = [
+        {
+            "memory_id": item.memory_id,
+            "content": item.content,
+            "metadata": item.metadata,
+        }
+        for item in body.updates
+    ]
+    
+    result = service.batch_update_memories(
+        updates=updates_data,
+        user_id=body.user_id,
+        agent_id=body.agent_id,
+    )
+    
+    # Convert updated memories to response format
+    updated_memories = []
+    for item in result["updated"]:
+        try:
+            memory = service.get_memory(
+                memory_id=item["memory_id"],
+                user_id=body.user_id,
+                agent_id=body.agent_id,
+            )
+            updated_memories.append(memory_dict_to_response(memory).model_dump())
+        except Exception as e:
+            logger.warning(f"Failed to retrieve updated memory {item['memory_id']}: {e}")
+            # Include basic info even if full retrieval fails
+            updated_memories.append({
+                "memory_id": item["memory_id"],
+            })
+    
+    response_data = {
+        "memories": updated_memories,
+        "total": result["total"],
+        "updated_count": result["updated_count"],
+        "failed_count": result["failed_count"],
+    }
+    
+    # Only include failed items if there are any
+    if result["failed_count"] > 0:
+        response_data["failed"] = result["failed"]
+    
+    return APIResponse(
+        success=True,
+        data=response_data,
+        message=f"Updated {result['updated_count']} out of {result['total']} memories",
     )
 
 
@@ -271,7 +349,7 @@ async def delete_memory(
 
 
 @router.delete(
-    "",
+    "/batch",
     response_model=APIResponse,
     summary="Bulk delete memories",
     description="Delete multiple memories at once",

@@ -86,7 +86,7 @@ where = ["src"]
 "" = "src"
 
 [project.scripts]
-powermem-server = "powermem.server.cli.server:server"
+powermem-server = "server.cli.server:server"
 
 [tool.black]
 line-length = 88

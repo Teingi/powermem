@@ -14,7 +14,7 @@ from ...middleware.auth import verify_api_key
 from ...middleware.rate_limit import limiter, get_rate_limit_string
 from ...utils.converters import search_result_to_response
 
-router = APIRouter(prefix="/memories/search", tags=["search"])
+router = APIRouter(prefix="/memories", tags=["search"])
 
 
 def get_search_service() -> SearchService:
@@ -23,7 +23,7 @@ def get_search_service() -> SearchService:
 
 
 @router.post(
-    "",
+    "/search",
     response_model=APIResponse,
     summary="Search memories",
     description="Search memories using semantic search with optional filters",
@@ -63,7 +63,7 @@ async def search_memories_post(
 
 
 @router.get(
-    "",
+    "/search",
     response_model=APIResponse,
     summary="Search memories (GET)",
     description="Search memories using query parameters",

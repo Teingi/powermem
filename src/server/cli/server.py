@@ -34,7 +34,7 @@ def server(host, port, workers, reload, log_level):
     
     # Start server
     uvicorn.run(
-        "powermem.server.main:app",
+        "server.main:app",
         host=config.host,
         port=config.port,
         reload=config.reload,

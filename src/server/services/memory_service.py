@@ -8,7 +8,7 @@ from powermem import Memory, auto_config
 from ..models.errors import ErrorCode, APIError
 from ..utils.converters import memory_dict_to_response
 
-logger = logging.getLogger("powermem.server")
+logger = logging.getLogger("server")
 
 
 class MemoryService:
@@ -178,7 +178,7 @@ class MemoryService:
     def update_memory(
         self,
         memory_id: int,
-        content: str,
+        content: Optional[str] = None,
         user_id: Optional[str] = None,
         agent_id: Optional[str] = None,
         metadata: Optional[Dict[str, Any]] = None,
@@ -188,10 +188,10 @@ class MemoryService:
         
         Args:
             memory_id: Memory ID
-            content: New content
+            content: New content (optional)
             user_id: User ID for access control
             agent_id: Agent ID for access control
-            metadata: Updated metadata
+            metadata: Updated metadata (optional)
             
         Returns:
             Updated memory data
@@ -203,12 +203,26 @@ class MemoryService:
             # First check if memory exists
             existing = self.get_memory(memory_id, user_id, agent_id)
             
+            # At least one of content or metadata must be provided
+            if content is None and metadata is None:
+                raise ValueError("At least one of content or metadata must be provided")
+            
+            # Use existing content if new content not provided
+            final_content = content if content is not None else existing.get("content", "")
+            
+            # Merge metadata if both existing and new metadata exist
+            final_metadata = metadata
+            if metadata is not None and existing.get("metadata"):
+                final_metadata = {**existing.get("metadata", {}), **metadata}
+            elif existing.get("metadata"):
+                final_metadata = existing.get("metadata")
+            
             result = self.memory.update(
                 memory_id=memory_id,
-                content=content,
+                content=final_content,
                 user_id=user_id,
                 agent_id=agent_id,
-                metadata=metadata,
+                metadata=final_metadata,
             )
             
             logger.info(f"Memory updated: {memory_id}")
@@ -394,5 +408,90 @@ class MemoryService:
             "failed": failed,
             "total": len(memories),
             "created_count": len(created),
+            "failed_count": len(failed),
+        }
+    
+    def batch_update_memories(
+        self,
+        updates: List[Dict[str, Any]],
+        user_id: Optional[str] = None,
+        agent_id: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """
+        Update multiple memories in batch.
+        
+        Args:
+            updates: List of update items, each containing:
+                - memory_id: Memory ID to update
+                - content: Optional new content
+                - metadata: Optional updated metadata
+            user_id: User ID for access control
+            agent_id: Agent ID for access control
+            
+        Returns:
+            Dictionary with update results
+        """
+        updated = []
+        failed = []
+        
+        for idx, update_item in enumerate(updates):
+            try:
+                memory_id = update_item.get("memory_id")
+                if memory_id is None:
+                    raise ValueError("memory_id is required for each update")
+                
+                content = update_item.get("content")
+                metadata = update_item.get("metadata")
+                
+                # At least one of content or metadata must be provided
+                if content is None and metadata is None:
+                    raise ValueError("At least one of content or metadata must be provided")
+                
+                # Get existing memory to merge metadata if needed
+                existing = self.get_memory(memory_id, user_id, agent_id)
+                
+                # Merge metadata if both existing and new metadata exist
+                final_metadata = metadata
+                if metadata is not None and existing.get("metadata"):
+                    final_metadata = {**existing.get("metadata", {}), **metadata}
+                elif existing.get("metadata"):
+                    final_metadata = existing.get("metadata")
+                
+                # Use existing content if new content not provided
+                final_content = content if content is not None else existing.get("content", "")
+                
+                result = self.memory.update(
+                    memory_id=memory_id,
+                    content=final_content,
+                    user_id=user_id,
+                    agent_id=agent_id,
+                    metadata=final_metadata,
+                )
+                
+                updated.append({
+                    "index": idx,
+                    "memory_id": memory_id,
+                })
+                
+            except APIError as e:
+                logger.error(f"Failed to update memory at index {idx}: {e}", exc_info=True)
+                failed.append({
+                    "index": idx,
+                    "memory_id": update_item.get("memory_id"),
+                    "error": e.message,
+                })
+            except Exception as e:
+                logger.error(f"Failed to update memory at index {idx}: {e}", exc_info=True)
+                failed.append({
+                    "index": idx,
+                    "memory_id": update_item.get("memory_id"),
+                    "error": str(e),
+                })
+        
+        return {
+            "updated": updated,
+            "failed": failed,
+            "total": len(updates),
+            "updated_count": len(updated),
             "failed_count": len(failed),
         }

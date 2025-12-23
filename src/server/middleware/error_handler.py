@@ -12,7 +12,7 @@ from ..models.errors import ErrorCode, APIError
 from ..models.response import ErrorResponse
 from datetime import datetime
 
-logger = logging.getLogger("powermem.server")
+logger = logging.getLogger("server")
 
 
 async def error_handler(request: Request, exc: Exception) -> JSONResponse:

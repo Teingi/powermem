@@ -14,7 +14,7 @@ from starlette.types import ASGIApp
 from ..config import config
 
 # Setup logger
-logger = logging.getLogger("powermem.server")
+logger = logging.getLogger("server")
 
 
 def setup_logging():

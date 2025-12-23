@@ -43,8 +43,24 @@ class MemoryBatchCreateRequest(BaseModel):
 class MemoryUpdateRequest(BaseModel):
     """Request model for updating a memory"""
     
-    content: str = Field(..., description="New content for the memory")
+    content: Optional[str] = Field(None, description="New content for the memory")
     metadata: Optional[Dict[str, Any]] = Field(None, description="Updated metadata")
+
+
+class MemoryUpdateItem(BaseModel):
+    """Single memory update item for batch update"""
+    
+    memory_id: int = Field(..., description="Memory ID to update")
+    content: Optional[str] = Field(None, description="New content for the memory (optional)")
+    metadata: Optional[Dict[str, Any]] = Field(None, description="Updated metadata (optional)")
+
+
+class MemoryBatchUpdateRequest(BaseModel):
+    """Request model for updating multiple memories in batch"""
+    
+    updates: List[MemoryUpdateItem] = Field(..., description="List of memory updates", min_length=1, max_length=100)
+    user_id: Optional[str] = Field(None, description="User ID for access control")
+    agent_id: Optional[str] = Field(None, description="Agent ID for access control")
 
 
 class SearchRequest(BaseModel):
@@ -75,6 +91,6 @@ class AgentMemoryShareRequest(BaseModel):
 class BulkDeleteRequest(BaseModel):
     """Request model for bulk deleting memories"""
     
-    memory_ids: List[int] = Field(..., description="List of memory IDs to delete")
+    memory_ids: List[int] = Field(..., description="List of memory IDs to delete", min_length=1, max_length=100)
     user_id: Optional[str] = Field(None, description="User ID for access control")
     agent_id: Optional[str] = Field(None, description="Agent ID for access control")
