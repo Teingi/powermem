@@ -398,7 +398,7 @@ async def extension_rate_limiting() -> None:
 
 @pytest.mark.asyncio
 async def test_async_get_all() -> None:
-    """测试异步get_all操作：验证可以异步获取所有记忆"""
+    """Test async get_all operation: verify that all memories can be retrieved asynchronously"""
     _print_step("Async Get All: Retrieving All Memories")
     async_memory = await _create_async_memory()
     user_id = "scenario4_getall_user"
@@ -432,7 +432,7 @@ async def test_async_get_all() -> None:
 
 @pytest.mark.asyncio
 async def test_async_get() -> None:
-    """测试异步get操作：验证可以异步获取单个记忆"""
+    """Test async get operation: verify that a single memory can be retrieved asynchronously"""
     _print_step("Async Get: Retrieving Single Memory")
     async_memory = await _create_async_memory()
     user_id = "scenario4_get_user"
@@ -470,7 +470,7 @@ async def test_async_get() -> None:
 
 @pytest.mark.asyncio
 async def test_async_batch_update() -> None:
-    """测试异步批量更新：验证可以并发更新多个记忆"""
+    """Test async batch update: verify that multiple memories can be updated concurrently"""
     _print_step("Async Batch Update: Concurrent Updates")
     async_memory = await _create_async_memory()
     user_id = "scenario4_batch_update_user"
@@ -516,7 +516,7 @@ async def test_async_batch_update() -> None:
 
 @pytest.mark.asyncio
 async def test_async_batch_delete() -> None:
-    """测试异步批量删除：验证可以并发删除多个记忆"""
+    """Test async batch delete: verify that multiple memories can be deleted concurrently"""
     _print_step("Async Batch Delete: Concurrent Deletions")
     async_memory = await _create_async_memory()
     user_id = "scenario4_batch_delete_user"
@@ -561,7 +561,7 @@ async def test_async_batch_delete() -> None:
 
 @pytest.mark.asyncio
 async def test_async_metadata_filtering() -> None:
-    """测试异步元数据过滤：验证可以异步搜索和过滤带元数据的记忆"""
+    """Test async metadata filtering: verify that memories with metadata can be searched and filtered asynchronously"""
     _print_step("Async Metadata Filtering: Filtering with Metadata")
     async_memory = await _create_async_memory()
     user_id = "scenario4_metadata_user"
@@ -611,7 +611,7 @@ async def test_async_metadata_filtering() -> None:
 
 @pytest.mark.asyncio
 async def test_async_multi_agent() -> None:
-    """测试异步多agent场景：验证异步操作在多agent环境下的表现"""
+    """Test async multi-agent scenario: verify the behavior of async operations in a multi-agent environment"""
     _print_step("Async Multi-Agent: Multi-Agent Async Operations")
     user_id = "scenario4_multi_agent_user"
 
@@ -655,7 +655,7 @@ async def test_async_multi_agent() -> None:
 
 @pytest.mark.asyncio
 async def test_async_concurrent_mixed_operations() -> None:
-    """测试异步并发混合操作：同时进行添加、更新、删除和搜索操作"""
+    """Test async concurrent mixed operations: simultaneously performing add, update, delete, and search operations"""
     _print_step("Async Concurrent Mixed Operations: Add, Update, Delete, Search")
     async_memory = await _create_async_memory()
     user_id = "scenario4_mixed_ops_user"
@@ -696,7 +696,7 @@ async def test_async_concurrent_mixed_operations() -> None:
 
 @pytest.mark.asyncio
 async def test_async_timeout_handling() -> None:
-    """测试异步超时处理：验证异步操作在超时情况下的处理"""
+    """Test async timeout handling: verify the handling of async operations in timeout situations"""
     _print_step("Async Timeout Handling: Timeout Management")
     async_memory = await _create_async_memory()
     user_id = "scenario4_timeout_user"
@@ -724,7 +724,7 @@ async def test_async_timeout_handling() -> None:
 
 @pytest.mark.asyncio
 async def test_async_error_recovery() -> None:
-    """测试异步错误恢复：验证异步操作在错误发生时的恢复能力"""
+    """Test async error recovery: verify the recovery capability of async operations when errors occur"""
     _print_step("Async Error Recovery: Error Handling and Recovery")
     async_memory = await _create_async_memory()
     user_id = "scenario4_error_recovery_user"
