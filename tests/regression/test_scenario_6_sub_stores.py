@@ -102,13 +102,24 @@ def get_config() -> Dict[str, Any]:
     # Load base config from environment (includes API keys)
     env_config = auto_config()
     
-    # Merge with custom config (BASE_CONFIG takes precedence for vector_store and sub_stores)
-    merged_config = {**env_config, **BASE_CONFIG}
+    # Get embedding dimension from environment config (default to 1536 for qwen text-embedding-v4)
+    embedding_dims = 1536  # Default dimension for common models
+    if "embedder" in env_config and "config" in env_config["embedder"]:
+        embedding_dims = env_config["embedder"]["config"].get("embedding_dims", embedding_dims)
     
-    # Ensure embedder config has embedding_dims
+    # Update BASE_CONFIG with the correct embedding dimension
+    base_config = BASE_CONFIG.copy()
+    base_config["vector_store"]["config"]["embedding_model_dims"] = embedding_dims
+    for sub_store in base_config["sub_stores"]:
+        sub_store["embedding_model_dims"] = embedding_dims
+    
+    # Merge with custom config (BASE_CONFIG takes precedence for vector_store and sub_stores)
+    merged_config = {**env_config, **base_config}
+    
+    # Ensure embedder config has embedding_dims (use the dimension we detected)
     if "embedder" in merged_config and "config" in merged_config["embedder"]:
         if "embedding_dims" not in merged_config["embedder"]["config"]:
-            merged_config["embedder"]["config"]["embedding_dims"] = 768
+            merged_config["embedder"]["config"]["embedding_dims"] = embedding_dims
     
     return merged_config
 
