@@ -8,7 +8,7 @@ on:
       - 'tests/**'
       - 'pyproject.toml'
       - 'Makefile'
-  pull_request:
+  pull_request_target:
     branches: [main]
     paths:
       - 'src/**'
@@ -16,10 +16,18 @@ on:
       - 'pyproject.toml'
       - 'Makefile'
   workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Branch, tag, or PR SHA to test (leave empty for default branch)'
+        required: false
+        type: string
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    # Only auto-run for internal PRs (same repo) or push/workflow_dispatch
+    # External PRs (from forks) require manual trigger via workflow_dispatch
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name == github.repository)
     strategy:
       matrix:
         python-version: ["3.10", "3.11", "3.12"]
@@ -28,6 +36,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        # For pull_request_target, checkout the PR branch
+        # For workflow_dispatch, checkout the specified ref (or default branch)
+        # For push, checkout the pushed branch
+        with:
+          ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || (github.event_name == 'workflow_dispatch' && github.event.inputs.ref || github.ref) || github.ref }}
+          fetch-depth: 0
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
