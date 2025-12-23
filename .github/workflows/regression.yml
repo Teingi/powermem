@@ -25,13 +25,15 @@ on:
         description: 'Branch, tag, or commit SHA to test (e.g., feature-branch or abc123). Leave empty if using PR number.'
         required: false
         type: string
+  schedule:
+    - cron: '0 16 * * *'
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    # Only auto-run for internal PRs (same repo) or push/workflow_dispatch
+    # Only auto-run for internal PRs (same repo) or push/workflow_dispatch/schedule
     # External PRs (from forks) require manual trigger via workflow_dispatch
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name == github.repository)
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || (github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name == github.repository)
     strategy:
       matrix:
         python-version: ["3.10", "3.11", "3.12"]
