@@ -41,7 +41,7 @@ async def get_user_profile(
     
     return APIResponse(
         success=True,
-        data=profile_response.model_dump(),
+        data=profile_response.model_dump(mode='json'),
         message="User profile retrieved successfully",
     )
 
@@ -71,7 +71,7 @@ async def update_user_profile(
     
     return APIResponse(
         success=True,
-        data=profile_response.model_dump(),
+        data=profile_response.model_dump(mode='json'),
         message="User profile updated successfully",
     )
 
@@ -109,7 +109,7 @@ async def get_user_memories(
     
     return APIResponse(
         success=True,
-        data=response_data.model_dump(),
+        data=response_data.model_dump(mode='json'),
         message="User memories retrieved successfully",
     )
 

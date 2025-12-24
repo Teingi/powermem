@@ -6,7 +6,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, Query, Request
 from slowapi import Limiter
 
-from ...models.request import AgentMemoryShareRequest
+from ...models.request import AgentMemoryCreateRequest, AgentMemoryShareRequest
 from ...models.response import APIResponse, MemoryListResponse
 from ...services.agent_service import AgentService
 from ...middleware.auth import verify_api_key
@@ -54,7 +54,7 @@ async def get_agent_memories(
     
     return APIResponse(
         success=True,
-        data=response_data.model_dump(),
+        data=response_data.model_dump(mode='json'),
         message="Agent memories retrieved successfully",
     )
 
@@ -69,25 +69,23 @@ async def get_agent_memories(
 async def create_agent_memory(
     request: Request,
     agent_id: str,
-    content: str,
-    user_id: Optional[str] = Query(None, description="User ID"),
-    run_id: Optional[str] = Query(None, description="Run ID"),
+    body: AgentMemoryCreateRequest,
     api_key: str = Depends(verify_api_key),
     service: AgentService = Depends(get_agent_service),
 ):
     """Create a memory for an agent"""
     result = service.create_agent_memory(
         agent_id=agent_id,
-        content=content,
-        user_id=user_id,
-        run_id=run_id,
+        content=body.content,
+        user_id=body.user_id,
+        run_id=body.run_id,
     )
     
     memory_response = memory_dict_to_response(result)
     
     return APIResponse(
         success=True,
-        data=memory_response.model_dump(),
+        data=memory_response.model_dump(mode='json'),
         message="Agent memory created successfully",
     )
 
@@ -153,6 +151,6 @@ async def get_shared_memories(
     
     return APIResponse(
         success=True,
-        data=response_data.model_dump(),
+        data=response_data.model_dump(mode='json'),
         message="Shared memories retrieved successfully",
     )

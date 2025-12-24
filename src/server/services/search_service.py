@@ -6,6 +6,7 @@ import logging
 from typing import Any, Dict, List, Optional
 from powermem import Memory, auto_config
 from ..models.errors import ErrorCode, APIError
+from ..utils.metrics import get_metrics_collector
 
 logger = logging.getLogger("server")
 
@@ -70,12 +71,25 @@ class SearchService:
             )
             
             logger.info(f"Search completed: {len(results.get('results', []))} results")
+            
+            # Record successful memory operation
+            metrics_collector = get_metrics_collector()
+            metrics_collector.record_memory_operation("search", "success")
+            
             return results
             
         except APIError:
+            # Record failed memory operation for API errors
+            metrics_collector = get_metrics_collector()
+            metrics_collector.record_memory_operation("search", "failed")
             raise
         except Exception as e:
             logger.error(f"Search failed: {e}", exc_info=True)
+            
+            # Record failed memory operation
+            metrics_collector = get_metrics_collector()
+            metrics_collector.record_memory_operation("search", "failed")
+            
             raise APIError(
                 code=ErrorCode.SEARCH_FAILED,
                 message=f"Search failed: {str(e)}",

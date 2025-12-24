@@ -4,7 +4,8 @@ Agent service for PowerMem API
 
 import logging
 from typing import Any, Dict, List, Optional
-from powermem import Memory, auto_config
+from powermem import auto_config
+from powermem.agent import AgentMemory
 from ..models.errors import ErrorCode, APIError
 
 logger = logging.getLogger("server")
@@ -23,7 +24,7 @@ class AgentService:
         if config is None:
             config = auto_config()
         
-        self.memory = Memory(config=config)
+        self.agent_memory = AgentMemory(config=config)
         logger.info("AgentService initialized")
     
     def get_agent_memories(
@@ -54,11 +55,19 @@ class AgentService:
                     status_code=400,
                 )
             
-            memories = self.memory.get_all(
+            # AgentMemory.get_all() doesn't support offset, so we need to handle it manually
+            all_memories = self.agent_memory.get_all(
                 agent_id=agent_id,
-                limit=limit,
-                offset=offset,
+                limit=limit + offset,  # Get more results to account for offset
             )
+            
+            # Apply offset manually
+            if offset > 0 and len(all_memories) > offset:
+                memories = all_memories[offset:offset + limit]
+            elif offset > 0:
+                memories = []
+            else:
+                memories = all_memories[:limit]
             
             return memories
             
@@ -87,19 +96,22 @@ class AgentService:
         """
         Create a memory for an agent.
         
+        Uses AgentMemory system for intelligent memory management with
+        multi-agent collaboration, permissions, and scope support.
+        
         Args:
             agent_id: Agent ID
             content: Memory content
             user_id: User ID
-            run_id: Run ID
+            run_id: Run ID (stored in metadata)
             metadata: Metadata
-            filters: Filters
-            scope: Scope
-            memory_type: Memory type
-            infer: Enable intelligent processing
+            filters: Filters (stored in metadata)
+            scope: Memory scope (e.g., 'AGENT', 'USER_GROUP', 'PUBLIC')
+            memory_type: Memory type (stored in metadata)
+            infer: Deprecated - AgentMemory handles intelligent processing internally
             
         Returns:
-            Created memory data
+            Created memory data with memory_id field
             
         Raises:
             APIError: If creation fails
@@ -112,20 +124,37 @@ class AgentService:
                     status_code=400,
                 )
             
-            result = self.memory.add(
-                messages=content,
+            # Prepare metadata with run_id and other fields if provided
+            enhanced_metadata = metadata or {}
+            if run_id:
+                enhanced_metadata["run_id"] = run_id
+            if filters:
+                enhanced_metadata["filters"] = filters
+            if memory_type:
+                enhanced_metadata["memory_type"] = memory_type
+            
+            # AgentMemory.add() returns a dict with memory information
+            result = self.agent_memory.add(
+                content=content,
                 user_id=user_id,
                 agent_id=agent_id,
-                run_id=run_id,
-                metadata=metadata,
-                filters=filters,
+                metadata=enhanced_metadata,
                 scope=scope,
-                memory_type=memory_type,
-                infer=infer,
             )
             
-            logger.info(f"Agent memory created: {result.get('memory_id')} for agent {agent_id}")
-            return result
+            # Ensure memory_id field exists (use "id" from result)
+            if isinstance(result, dict):
+                if "id" in result and "memory_id" not in result:
+                    result["memory_id"] = result["id"]
+                logger.info(f"Agent memory created: {result.get('memory_id')} for agent {agent_id}")
+                return result
+            else:
+                logger.error(f"Failed to create memory for agent {agent_id}: unexpected result type={type(result)}")
+                raise APIError(
+                    code=ErrorCode.MEMORY_CREATE_FAILED,
+                    message="No memory was created. Unexpected result format.",
+                    status_code=500,
+                )
             
         except APIError:
             raise
@@ -146,8 +175,8 @@ class AgentService:
         """
         Share memories between agents.
         
-        Note: This is a placeholder implementation. Full agent memory sharing
-        would require the AgentMemory system which is more complex.
+        Uses AgentMemory's share_memory method for proper memory sharing
+        between agents with permission and collaboration support.
         
         Args:
             agent_id: Source agent ID
@@ -170,34 +199,44 @@ class AgentService:
             
             # Get memories to share
             if memory_ids:
+                # Get specific memories by ID
                 memories = []
-                for memory_id in memory_ids:
-                    try:
-                        memory = self.memory.get(memory_id=memory_id, agent_id=agent_id)
-                        if memory:
-                            memories.append(memory)
-                    except Exception:
-                        pass
+                all_memories = self.agent_memory.get_all(agent_id=agent_id)
+                memory_id_set = set(memory_ids)
+                for memory in all_memories:
+                    mem_id = memory.get("id") or memory.get("memory_id")
+                    if mem_id in memory_id_set:
+                        memories.append(memory)
             else:
-                memories = self.memory.get_all(agent_id=agent_id)
+                memories = self.agent_memory.get_all(agent_id=agent_id)
             
-            # For now, we'll just copy the memories to the target agent
-            # In a full implementation, this would use the AgentMemory sharing system
+            # Use AgentMemory's share_memory method for proper sharing
             shared_count = 0
             for memory in memories:
                 try:
-                    self.memory.add(
-                        messages=memory.get("content", ""),
-                        user_id=memory.get("user_id"),
-                        agent_id=target_agent_id,
-                        run_id=memory.get("run_id"),
-                        metadata=memory.get("metadata", {}),
-                        filters=memory.get("filters"),
-                        scope=memory.get("scope"),
-                        memory_type=memory.get("memory_type"),
-                        infer=False,  # Don't re-process shared memories
-                    )
-                    shared_count += 1
+                    mem_id = memory.get("id") or memory.get("memory_id")
+                    if not mem_id:
+                        continue
+                    
+                    # Use the share_memory method if available
+                    if hasattr(self.agent_memory, 'share_memory'):
+                        share_result = self.agent_memory.share_memory(
+                            memory_id=str(mem_id),
+                            from_agent=agent_id,
+                            to_agents=[target_agent_id],
+                        )
+                        if share_result.get("success", False):
+                            shared_count += 1
+                    else:
+                        # Fallback: copy memory to target agent
+                        self.agent_memory.add(
+                            content=memory.get("content") or memory.get("memory", ""),
+                            user_id=memory.get("user_id"),
+                            agent_id=target_agent_id,
+                            metadata=memory.get("metadata", {}),
+                            scope=memory.get("scope"),
+                        )
+                        shared_count += 1
                 except Exception as e:
                     logger.warning(f"Failed to share memory {memory.get('memory_id')}: {e}")
             

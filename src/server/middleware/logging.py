@@ -12,6 +12,8 @@ from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.types import ASGIApp
 from ..config import config
+from ..utils.metrics import get_metrics_collector
+from ..models.errors import APIError
 
 # Setup logger
 logger = logging.getLogger("server")
@@ -96,6 +98,17 @@ class LoggingMiddleware(BaseHTTPMiddleware):
             # Calculate duration
             duration = time.time() - start_time
             
+            # Record metrics
+            metrics_collector = get_metrics_collector()
+            # Normalize path to endpoint
+            endpoint = metrics_collector.normalize_endpoint(request.url.path)
+            metrics_collector.record_api_request(
+                method=request.method,
+                endpoint=endpoint,
+                status_code=response.status_code,
+                duration=duration
+            )
+            
             # Log response
             logger.info(
                 f"{request.method} {request.url.path} - {response.status_code}",
@@ -113,15 +126,49 @@ class LoggingMiddleware(BaseHTTPMiddleware):
             
         except Exception as e:
             duration = time.time() - start_time
-            logger.error(
-                f"Error processing {request.method} {request.url.path}",
-                extra={
-                    "request_id": request_id,
-                    "error": str(e),
-                    "duration_ms": duration * 1000,
-                },
-                exc_info=True,
+            
+            # Determine status code and whether this is an expected error
+            status_code = 500
+            is_expected_error = False
+            
+            if isinstance(e, APIError):
+                status_code = e.status_code
+                # Client errors (4xx) are expected, server errors (5xx) are unexpected
+                is_expected_error = status_code < 500
+            
+            # Record metrics for error
+            metrics_collector = get_metrics_collector()
+            endpoint = metrics_collector.normalize_endpoint(request.url.path)
+            metrics_collector.record_api_request(
+                method=request.method,
+                endpoint=endpoint,
+                status_code=status_code,
+                duration=duration
             )
+            
+            # For expected errors (4xx), log without stack trace
+            # For unexpected errors (5xx), log with full stack trace
+            if is_expected_error:
+                logger.warning(
+                    f"{request.method} {request.url.path} - {status_code}: {str(e)}",
+                    extra={
+                        "request_id": request_id,
+                        "status_code": status_code,
+                        "error": str(e),
+                        "duration_ms": duration * 1000,
+                    },
+                )
+            else:
+                logger.error(
+                    f"Error processing {request.method} {request.url.path}",
+                    extra={
+                        "request_id": request_id,
+                        "status_code": status_code,
+                        "error": str(e),
+                        "duration_ms": duration * 1000,
+                    },
+                    exc_info=True,
+                )
             raise
 
 

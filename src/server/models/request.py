@@ -81,6 +81,14 @@ class UserProfileUpdateRequest(BaseModel):
     topics: Optional[Dict[str, Any]] = Field(None, description="Structured topics dictionary")
 
 
+class AgentMemoryCreateRequest(BaseModel):
+    """Request model for creating agent memory"""
+    
+    content: str = Field(..., description="Memory content")
+    user_id: Optional[str] = Field(None, description="User ID")
+    run_id: Optional[str] = Field(None, description="Run ID")
+
+
 class AgentMemoryShareRequest(BaseModel):
     """Request model for sharing memories between agents"""
     

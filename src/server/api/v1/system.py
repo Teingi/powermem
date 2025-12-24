@@ -2,13 +2,14 @@
 System management API routes
 """
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, Response
 from slowapi import Limiter
 
 from ...models.response import APIResponse, HealthResponse, StatusResponse
 from ...middleware.auth import verify_api_key
 from ...middleware.rate_limit import limiter, get_rate_limit_string
 from ...config import config
+from ...utils.metrics import get_metrics_collector
 from powermem import auto_config
 
 router = APIRouter(prefix="/system", tags=["system"])
@@ -26,7 +27,7 @@ async def health_check():
     
     return APIResponse(
         success=True,
-        data=health.model_dump(),
+        data=health.model_dump(mode='json'),
         message="Service is healthy",
     )
 
@@ -72,16 +73,15 @@ async def get_status(
     
     return APIResponse(
         success=True,
-        data=status_data.model_dump(),
+        data=status_data.model_dump(mode='json'),
         message="System status retrieved successfully",
     )
 
 
 @router.get(
     "/metrics",
-    response_model=dict,
     summary="Prometheus metrics",
-    description="Get Prometheus format metrics (placeholder)",
+    description="Get Prometheus format metrics",
 )
 @limiter.limit(get_rate_limit_string())
 async def get_metrics(
@@ -89,12 +89,13 @@ async def get_metrics(
     api_key: str = Depends(verify_api_key),
 ):
     """Get Prometheus format metrics"""
-    # Placeholder implementation
-    # In production, this would integrate with a metrics collection system
-    return {
-        "status": "ok",
-        "message": "Metrics endpoint - to be implemented",
-    }
+    metrics_collector = get_metrics_collector()
+    metrics_text = metrics_collector.get_metrics()
+    
+    return Response(
+        content=metrics_text,
+        media_type="text/plain; version=0.0.4; charset=utf-8"
+    )
 
 
 @router.post(

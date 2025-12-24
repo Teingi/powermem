@@ -19,7 +19,9 @@ def memory_to_response(memory_data: Dict[str, Any]) -> MemoryResponse:
     """
     # Handle different memory data formats
     memory_id = memory_data.get("memory_id") or memory_data.get("id")
-    content = memory_data.get("content") or memory_data.get("memory_content", "")
+    # Handle field name mismatch: storage uses "data" but API expects "content"
+    # get_all returns "memory" field, get_memory returns "content" field
+    content = memory_data.get("memory") or memory_data.get("data") or memory_data.get("content") or memory_data.get("memory_content", "")
     
     # Parse timestamps
     created_at = None
@@ -65,9 +67,18 @@ def search_result_to_response(result: Dict[str, Any]) -> SearchResult:
     Returns:
         SearchResult instance
     """
+    # Handle different field names for content: "memory", "content", "memory_content", "data"
+    content = (
+        result.get("memory") or 
+        result.get("content") or 
+        result.get("memory_content") or 
+        result.get("data") or 
+        ""
+    )
+    
     return SearchResult(
         memory_id=result.get("memory_id") or result.get("id"),
-        content=result.get("content") or result.get("memory_content", ""),
+        content=content,
         score=result.get("score") or result.get("similarity"),
         metadata=result.get("metadata", {}),
     )

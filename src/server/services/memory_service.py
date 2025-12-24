@@ -7,6 +7,7 @@ from typing import Any, Dict, List, Optional
 from powermem import Memory, auto_config
 from ..models.errors import ErrorCode, APIError
 from ..utils.converters import memory_dict_to_response
+from ..utils.metrics import get_metrics_collector
 
 logger = logging.getLogger("server")
 
@@ -38,7 +39,7 @@ class MemoryService:
         scope: Optional[str] = None,
         memory_type: Optional[str] = None,
         infer: bool = True,
-    ) -> Dict[str, Any]:
+    ) -> List[Dict[str, Any]]:
         """
         Create a new memory.
         
@@ -51,10 +52,10 @@ class MemoryService:
             filters: Filters
             scope: Scope
             memory_type: Memory type
-            infer: Enable intelligent processing
+            infer: Enable intelligent processing (may create multiple memories)
             
         Returns:
-            Created memory data
+            List of created memory data (may contain multiple memories if infer=True)
             
         Raises:
             APIError: If creation fails
@@ -72,20 +73,84 @@ class MemoryService:
                 infer=infer,
             )
             
-            # Extract memory_id from result
+            # Extract all created memories from result
             # Result format: {"results": [{"id": memory_id, ...}], ...}
-            memory_id = None
-            if "results" in result and len(result["results"]) > 0:
-                memory_id = result["results"][0].get("id")
-            elif "memory_id" in result:
-                memory_id = result["memory_id"]
+            all_results = result.get("results", [])
             
-            if memory_id:
-                logger.info(f"Memory created: {memory_id}")
-            return result
+            if not all_results:
+                raise APIError(
+                    code=ErrorCode.MEMORY_CREATE_FAILED,
+                    message="No memories were created",
+                    status_code=500,
+                )
+            
+            logger.info(f"Created {len(all_results)} memory/memories")
+            
+            # Normalize all results to include memory_id and other fields at top level
+            # Fetch full memory info from database to get timestamps (consistent with batch_create_memories)
+            normalized_memories = []
+            
+            for result_item in all_results:
+                memory_id = result_item.get("id")
+                if memory_id is None:
+                    continue
+                
+                # Fetch full memory info from database to get complete data including timestamps
+                try:
+                    full_memory = self.get_memory(memory_id, user_id, agent_id)
+                    if full_memory:
+                        normalized_memories.append(full_memory)
+                        continue
+                except Exception as e:
+                    logger.warning(f"Failed to fetch full memory info for {memory_id}: {e}, using result_item data")
+                
+                # Fallback to result_item if get_memory fails
+                # Ensure metadata is always a dict, never None
+                result_metadata = result_item.get("metadata")
+                if result_metadata is None:
+                    result_metadata = metadata or {}
+                
+                # Extract fields with fallback: use result_item value if present and not None, otherwise use input parameter
+                def get_field(result_key: str, param_value):
+                    """Get field from result_item if available and not None, otherwise use param_value"""
+                    if result_key in result_item:
+                        result_value = result_item.get(result_key)
+                        # Use result value if it's not None, otherwise fall back to param
+                        return result_value if result_value is not None else param_value
+                    return param_value
+                
+                normalized_memory = {
+                    "id": memory_id,
+                    "memory_id": memory_id,
+                    "content": get_field("memory", content),
+                    "user_id": get_field("user_id", user_id),
+                    "agent_id": get_field("agent_id", agent_id),
+                    "run_id": get_field("run_id", run_id),
+                    "metadata": result_metadata if isinstance(result_metadata, dict) else {},
+                }
+                
+                # Add timestamps only if they exist and are not None
+                if "created_at" in result_item and result_item["created_at"] is not None:
+                    normalized_memory["created_at"] = result_item["created_at"]
+                if "updated_at" in result_item and result_item["updated_at"] is not None:
+                    normalized_memory["updated_at"] = result_item["updated_at"]
+                
+                normalized_memories.append(normalized_memory)
+            
+            # Record successful memory operation
+            metrics_collector = get_metrics_collector()
+            metrics_collector.record_memory_operation("create", "success")
+            
+            # Return array of all created memories
+            return normalized_memories
             
         except Exception as e:
             logger.error(f"Failed to create memory: {e}", exc_info=True)
+            
+            # Record failed memory operation
+            metrics_collector = get_metrics_collector()
+            metrics_collector.record_memory_operation("create", "failed")
+            
             raise APIError(
                 code=ErrorCode.MEMORY_CREATE_FAILED,
                 message=f"Failed to create memory: {str(e)}",
@@ -126,6 +191,20 @@ class MemoryService:
                     status_code=404,
                 )
             
+            # Handle field name mismatch: storage uses "data" but get_memory returns "content"
+            # If content is empty, try to get it from the underlying storage payload
+            if not memory.get("content") or memory.get("content") == "":
+                try:
+                    # Access underlying storage to get raw payload with "data" field
+                    storage_adapter = self.memory.storage
+                    result = storage_adapter.vector_store.get(memory_id)
+                    if result and result.payload:
+                        data_content = result.payload.get("data", "")
+                        if data_content:
+                            memory["content"] = data_content
+                except Exception as e:
+                    logger.warning(f"Failed to get content from storage payload for memory {memory_id}: {e}")
+            
             return memory
             
         except APIError:
@@ -158,14 +237,26 @@ class MemoryService:
             List of memories
         """
         try:
-            memories = self.memory.get_all(
+            result = self.memory.get_all(
                 user_id=user_id,
                 agent_id=agent_id,
                 limit=limit,
                 offset=offset,
             )
             
-            return memories
+            # Extract results from the dictionary response
+            # get_all returns {"results": [...], "relations": [...]}
+            memories_list = result.get("results", [])
+            
+            # Filter out non-dict items and ensure all items are dictionaries
+            filtered_memories = []
+            for item in memories_list:
+                if isinstance(item, dict):
+                    filtered_memories.append(item)
+                else:
+                    logger.warning(f"Skipping non-dict item in memories list: {type(item)} - {item}")
+            
+            return filtered_memories
             
         except Exception as e:
             logger.error(f"Failed to list memories: {e}", exc_info=True)
@@ -224,6 +315,11 @@ class MemoryService:
                 agent_id=agent_id,
                 metadata=final_metadata,
             )
+            
+            # Ensure result contains id field (storage.update_memory returns payload without id)
+            if result and "id" not in result:
+                result["id"] = memory_id
+                result["memory_id"] = memory_id
             
             logger.info(f"Memory updated: {memory_id}")
             return result

@@ -57,7 +57,7 @@ async def search_memories_post(
     
     return APIResponse(
         success=True,
-        data=response_data.model_dump(),
+        data=response_data.model_dump(mode='json'),
         message="Search completed successfully",
     )
 
@@ -101,6 +101,6 @@ async def search_memories_get(
     
     return APIResponse(
         success=True,
-        data=response_data.model_dump(),
+        data=response_data.model_dump(mode='json'),
         message="Search completed successfully",
     )

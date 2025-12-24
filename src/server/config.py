@@ -5,7 +5,7 @@ Configuration management for PowerMem API Server
 import os
 from typing import List, Optional
 from pydantic_settings import BaseSettings
-from pydantic import Field, ConfigDict
+from pydantic import Field, ConfigDict, field_validator, model_validator
 
 
 class ServerConfig(BaseSettings):
@@ -27,6 +27,16 @@ class ServerConfig(BaseSettings):
     # Authentication settings
     auth_enabled: bool = Field(default=True, env="POWERMEM_AUTH_ENABLED")
     api_keys: str = Field(default="", env="POWERMEM_API_KEYS")
+    
+    @model_validator(mode='after')
+    def parse_auth_enabled_from_env(self):
+        """Parse auth_enabled from environment variable, handling string 'false'"""
+        # Read directly from environment to bypass Pydantic's bool parsing
+        env_value = os.getenv('POWERMEM_AUTH_ENABLED', '').strip().lower()
+        if env_value:
+            # Only update if explicitly set in environment
+            self.auth_enabled = env_value in ('true', '1', 'yes', 'on', 'enabled')
+        return self
     
     # Rate limiting settings
     rate_limit_enabled: bool = Field(default=True, env="POWERMEM_RATE_LIMIT_ENABLED")
@@ -63,3 +73,33 @@ class ServerConfig(BaseSettings):
 
 # Global config instance
 config = ServerConfig()
+
+# Manually override config values from .env file if set
+# This handles the case where Pydantic doesn't properly parse certain values
+try:
+    env_file_path = os.path.join(os.getcwd(), '.env')
+    if os.path.exists(env_file_path):
+        with open(env_file_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#') and '=' in line:
+                    key, value = line.split('=', 1)
+                    key = key.strip()
+                    value = value.strip().strip('"').strip("'")
+                    key_upper = key.upper()
+                    
+                    # Handle auth_enabled
+                    if key_upper == 'POWERMEM_AUTH_ENABLED':
+                        config.auth_enabled = value.lower() in ('true', '1', 'yes', 'on', 'enabled')
+                    # Handle api_keys
+                    elif key_upper == 'POWERMEM_API_KEYS':
+                        config.api_keys = value
+except Exception:
+    # Fallback to environment variables
+    _auth_env = os.getenv('POWERMEM_AUTH_ENABLED', '').strip().lower()
+    if _auth_env:
+        config.auth_enabled = _auth_env in ('true', '1', 'yes', 'on', 'enabled')
+    
+    _api_keys_env = os.getenv('POWERMEM_API_KEYS', '').strip()
+    if _api_keys_env:
+        config.api_keys = _api_keys_env

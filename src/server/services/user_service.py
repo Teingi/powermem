@@ -144,11 +144,19 @@ class UserService:
                     status_code=400,
                 )
             
-            memories = self.user_memory.memory.get_all(
+            result = self.user_memory.memory.get_all(
                 user_id=user_id,
                 limit=limit,
                 offset=offset,
             )
+            
+            # get_all returns a dict with "results" key, extract the list
+            if isinstance(result, dict):
+                memories = result.get("results", [])
+            elif isinstance(result, list):
+                memories = result
+            else:
+                memories = []
             
             return memories
             
@@ -184,13 +192,27 @@ class UserService:
                 )
             
             # Get all memories for the user
-            memories = self.user_memory.memory.get_all(user_id=user_id)
+            result = self.user_memory.memory.get_all(user_id=user_id)
+            
+            # get_all returns a dict with "results" key, extract the list
+            if isinstance(result, dict):
+                memories = result.get("results", [])
+            elif isinstance(result, list):
+                memories = result
+            else:
+                memories = []
             
             deleted_count = 0
             failed_count = 0
             
             for memory in memories:
                 try:
+                    # Ensure memory is a dict before accessing
+                    if not isinstance(memory, dict):
+                        logger.warning(f"Skipping invalid memory format: {type(memory)}")
+                        failed_count += 1
+                        continue
+                    
                     memory_id = memory.get("id") or memory.get("memory_id")
                     if memory_id:
                         success = self.user_memory.memory.delete(
@@ -201,8 +223,12 @@ class UserService:
                             deleted_count += 1
                         else:
                             failed_count += 1
+                    else:
+                        logger.warning(f"Memory missing ID: {memory}")
+                        failed_count += 1
                 except Exception as e:
-                    logger.warning(f"Failed to delete memory {memory.get('id')}: {e}")
+                    memory_id_str = str(memory.get('id', 'unknown')) if isinstance(memory, dict) else 'unknown'
+                    logger.warning(f"Failed to delete memory {memory_id_str}: {e}")
                     failed_count += 1
             
             logger.info(f"Deleted {deleted_count} memories for user {user_id}")
