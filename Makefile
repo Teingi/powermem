@@ -1,4 +1,4 @@
-.PHONY: help install install-dev test test-unit test-integration test-e2e test-coverage test-fast test-slow lint format clean build build-package build-check publish-pypi publish-testpypi install-build-tools upload docs bump-version
+.PHONY: help install install-dev test test-unit test-integration test-e2e test-coverage test-fast test-slow lint format clean build build-package build-check publish-pypi publish-testpypi install-build-tools upload docs bump-version server-start server-stop server-restart server-status server-logs
 
 help: ## Show help information
 	@echo "powermem Project Build Tools"
@@ -189,6 +189,124 @@ bump-version: ## Bump version number (usage: make bump-version VERSION=0.2.0)
 	@echo "  - examples/langchain/requirements.txt"
 	@echo ""
 	@echo "Note: Don't forget to update VERSION_HISTORY in src/powermem/version.py manually!"
+
+# Server management
+SERVER_PID_FILE := .server.pid
+SERVER_HOST ?= 0.0.0.0
+SERVER_PORT ?= 8000
+SERVER_WORKERS ?= 4
+
+server-start: ## Start the PowerMem API server
+	@echo "Starting PowerMem API server..."
+	@if [ -f $(SERVER_PID_FILE) ]; then \
+		echo "Server is already running (PID: $$(cat $(SERVER_PID_FILE)))"; \
+		echo "Use 'make server-stop' to stop it first, or 'make server-restart' to restart"; \
+		exit 1; \
+	fi
+	@powermem-server --host $(SERVER_HOST) --port $(SERVER_PORT) --workers $(SERVER_WORKERS) > server.log 2>&1 & \
+	echo $$! > $(SERVER_PID_FILE); \
+	echo "Server started with PID: $$!"; \
+	echo "Server running at http://$(SERVER_HOST):$(SERVER_PORT)"; \
+	echo "API docs available at http://$(SERVER_HOST):$(SERVER_PORT)/docs"; \
+	echo "Logs are being written to server.log"; \
+	echo "Use 'make server-stop' to stop the server"
+
+server-start-reload: ## Start the PowerMem API server with auto-reload (development mode)
+	@echo "Starting PowerMem API server with auto-reload..."
+	@if [ -f $(SERVER_PID_FILE) ]; then \
+		echo "Server is already running (PID: $$(cat $(SERVER_PID_FILE)))"; \
+		echo "Use 'make server-stop' to stop it first"; \
+		exit 1; \
+	fi
+	@powermem-server --host $(SERVER_HOST) --port $(SERVER_PORT) --reload > server.log 2>&1 & \
+	echo $$! > $(SERVER_PID_FILE); \
+	echo "Server started with PID: $$! (auto-reload enabled)"; \
+	echo "Server running at http://$(SERVER_HOST):$(SERVER_PORT)"; \
+	echo "API docs available at http://$(SERVER_HOST):$(SERVER_PORT)/docs"; \
+	echo "Logs are being written to server.log"; \
+	echo "Use 'make server-stop' to stop the server"
+
+server-stop: ## Stop the PowerMem API server
+	@if [ ! -f $(SERVER_PID_FILE) ]; then \
+		echo "Server PID file not found. Checking for running processes..."; \
+		PID=$$(lsof -t -i:$(SERVER_PORT) 2>/dev/null || echo ""); \
+		if [ -z "$$PID" ]; then \
+			echo "No server process found on port $(SERVER_PORT)"; \
+			exit 0; \
+		else \
+			echo "Found process $$PID on port $(SERVER_PORT), stopping..."; \
+			kill $$PID 2>/dev/null || kill -9 $$PID 2>/dev/null; \
+			echo "Server stopped"; \
+			exit 0; \
+		fi; \
+	fi
+	@PID=$$(cat $(SERVER_PID_FILE) 2>/dev/null || echo ""); \
+	if [ -z "$$PID" ]; then \
+		echo "PID file exists but is empty"; \
+		rm -f $(SERVER_PID_FILE); \
+		exit 0; \
+	fi; \
+	if ps -p $$PID > /dev/null 2>&1; then \
+		echo "Stopping server (PID: $$PID)..."; \
+		kill $$PID 2>/dev/null || kill -9 $$PID 2>/dev/null; \
+		sleep 1; \
+		if ps -p $$PID > /dev/null 2>&1; then \
+			echo "Force killing server (PID: $$PID)..."; \
+			kill -9 $$PID 2>/dev/null; \
+		fi; \
+		echo "Server stopped"; \
+	else \
+		echo "Server process (PID: $$PID) not found, cleaning up PID file"; \
+	fi; \
+	rm -f $(SERVER_PID_FILE); \
+	echo "✓ Server stopped"
+
+server-restart: server-stop server-start ## Restart the PowerMem API server
+	@echo "✓ Server restarted"
+
+server-status: ## Check the status of the PowerMem API server
+	@if [ -f $(SERVER_PID_FILE) ]; then \
+		PID=$$(cat $(SERVER_PID_FILE) 2>/dev/null || echo ""); \
+		if [ -z "$$PID" ]; then \
+			echo "Server PID file exists but is empty"; \
+			rm -f $(SERVER_PID_FILE); \
+			exit 1; \
+		fi; \
+		if ps -p $$PID > /dev/null 2>&1; then \
+			echo "✓ Server is running (PID: $$PID)"; \
+			echo "  URL: http://$(SERVER_HOST):$(SERVER_PORT)"; \
+			echo "  Docs: http://$(SERVER_HOST):$(SERVER_PORT)/docs"; \
+			echo "  Health: http://$(SERVER_HOST):$(SERVER_PORT)/api/v1/health"; \
+		else \
+			echo "✗ Server is not running (stale PID file)"; \
+			rm -f $(SERVER_PID_FILE); \
+			exit 1; \
+		fi; \
+	else \
+		PID=$$(lsof -t -i:$(SERVER_PORT) 2>/dev/null || echo ""); \
+		if [ -z "$$PID" ]; then \
+			echo "✗ Server is not running"; \
+			exit 1; \
+		else \
+			echo "✓ Server is running on port $(SERVER_PORT) (PID: $$PID)"; \
+			echo "  URL: http://$(SERVER_HOST):$(SERVER_PORT)"; \
+			echo "  Docs: http://$(SERVER_HOST):$(SERVER_PORT)/docs"; \
+		fi; \
+	fi
+
+server-logs: ## Show server logs (tail -f server.log)
+	@if [ ! -f server.log ]; then \
+		echo "No log file found (server.log)"; \
+		exit 1; \
+	fi
+	@tail -f server.log
+
+server-logs-last: ## Show last 50 lines of server logs
+	@if [ ! -f server.log ]; then \
+		echo "No log file found (server.log)"; \
+		exit 1; \
+	fi
+	@tail -n 50 server.log
 
 # CI/CD helpers
 ci-test: install-test test-unit test-integration ## Run tests for CI (unit + integration)
