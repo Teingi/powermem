@@ -192,9 +192,18 @@ bump-version: ## Bump version number (usage: make bump-version VERSION=0.2.0)
 
 # Server management
 SERVER_PID_FILE := .server.pid
-SERVER_HOST ?= 0.0.0.0
-SERVER_PORT ?= 8000
-SERVER_WORKERS ?= 4
+
+# Load server configuration from .env file if it exists
+# This allows users to configure POWERMEM_SERVER_PORT, POWERMEM_SERVER_HOST, etc. in .env
+# Read from .env file, stripping quotes and whitespace
+ENV_SERVER_HOST := $(shell grep -E '^POWERMEM_SERVER_HOST=' .env 2>/dev/null | cut -d '=' -f2- | sed 's/^[[:space:]]*//;s/[[:space:]]*$$//' | sed "s/^['\"]//;s/['\"]$$//")
+ENV_SERVER_PORT := $(shell grep -E '^POWERMEM_SERVER_PORT=' .env 2>/dev/null | cut -d '=' -f2- | sed 's/^[[:space:]]*//;s/[[:space:]]*$$//' | sed "s/^['\"]//;s/['\"]$$//")
+ENV_SERVER_WORKERS := $(shell grep -E '^POWERMEM_SERVER_WORKERS=' .env 2>/dev/null | cut -d '=' -f2- | sed 's/^[[:space:]]*//;s/[[:space:]]*$$//' | sed "s/^['\"]//;s/['\"]$$//")
+
+# Use values from .env if they exist and are non-empty, otherwise use defaults
+SERVER_HOST := $(or $(ENV_SERVER_HOST),0.0.0.0)
+SERVER_PORT := $(or $(ENV_SERVER_PORT),8000)
+SERVER_WORKERS := $(or $(ENV_SERVER_WORKERS),4)
 
 server-start: ## Start the PowerMem API server
 	@echo "Starting PowerMem API server..."
