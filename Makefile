@@ -1,4 +1,4 @@
-.PHONY: help install install-dev test test-unit test-integration test-e2e test-coverage test-fast test-slow lint format clean build build-package build-check publish-pypi publish-testpypi install-build-tools upload docs bump-version server-start server-stop server-restart server-status server-logs
+.PHONY: help install install-dev test test-unit test-integration test-e2e test-coverage test-fast test-slow lint format clean build build-package build-check publish-pypi publish-testpypi install-build-tools upload docs bump-version server-start server-stop server-restart server-status server-logs docker-build docker-run docker-up docker-down docker-logs docker-stop docker-restart docker-clean docker-ps
 
 help: ## Show help information
 	@echo "powermem Project Build Tools"
@@ -316,6 +316,132 @@ server-logs-last: ## Show last 50 lines of server logs
 		exit 1; \
 	fi
 	@tail -n 50 server.log
+
+# Docker commands
+DOCKER_IMAGE := powermem-server
+DOCKER_TAG := latest
+DOCKER_COMPOSE_FILE := docker/docker-compose.yml
+
+docker-build: ## Build Docker image
+	@echo "Building Docker image $(DOCKER_IMAGE):$(DOCKER_TAG)..."
+	docker build -t $(DOCKER_IMAGE):$(DOCKER_TAG) -f docker/Dockerfile .
+	@echo "✓ Docker image built successfully"
+
+docker-build-mirror: ## Build Docker image with pip mirror source (usage: make docker-build-mirror MIRROR=tsinghua)
+	@if [ -z "$(MIRROR)" ]; then \
+		echo "Error: MIRROR is required. Usage: make docker-build-mirror MIRROR=tsinghua"; \
+		echo "Available mirrors: tsinghua, aliyun"; \
+		exit 1; \
+	fi
+	@case "$(MIRROR)" in \
+		tsinghua) \
+			PIP_URL="https://pypi.tuna.tsinghua.edu.cn/simple"; \
+			PIP_HOST="pypi.tuna.tsinghua.edu.cn"; \
+			DEBIAN_MIRROR="mirrors.tuna.tsinghua.edu.cn"; \
+			;; \
+		aliyun) \
+			PIP_URL="https://mirrors.aliyun.com/pypi/simple"; \
+			PIP_HOST="mirrors.aliyun.com"; \
+			DEBIAN_MIRROR="mirrors.aliyun.com"; \
+			;; \
+		*) \
+			echo "Error: Unknown mirror '$(MIRROR)'. Available: tsinghua, aliyun"; \
+			exit 1; \
+			;; \
+	esac; \
+	echo "Building Docker image $(DOCKER_IMAGE):$(DOCKER_TAG) with $(MIRROR) mirror..."; \
+	docker build -t $(DOCKER_IMAGE):$(DOCKER_TAG) -f docker/Dockerfile \
+		--build-arg PIP_INDEX_URL=$$PIP_URL \
+		--build-arg PIP_TRUSTED_HOST=$$PIP_HOST \
+		--build-arg DEBIAN_MIRROR=$$DEBIAN_MIRROR .
+	@echo "✓ Docker image built successfully with $(MIRROR) mirror"
+
+docker-build-tag: ## Build Docker image with custom tag (usage: make docker-build-tag TAG=v0.2.1)
+	@if [ -z "$(TAG)" ]; then \
+		echo "Error: TAG is required. Usage: make docker-build-tag TAG=v0.2.1"; \
+		exit 1; \
+	fi
+	@echo "Building Docker image $(DOCKER_IMAGE):$(TAG)..."
+	docker build -t $(DOCKER_IMAGE):$(TAG) -f docker/Dockerfile .
+	@echo "✓ Docker image built successfully with tag $(TAG)"
+
+docker-run: ## Run Docker container
+	@echo "Running Docker container..."
+	@if [ ! -f .env ]; then \
+		echo "Warning: .env file not found. Container will use default configuration."; \
+	fi
+	docker run -d \
+		--name powermem-server \
+		-p 8000:8000 \
+		-v $$(pwd)/.env:/app/.env:ro \
+		--env-file .env \
+		$(DOCKER_IMAGE):$(DOCKER_TAG) || \
+		(echo "Container may already exist. Use 'make docker-stop' first or 'make docker-restart'"; exit 1)
+	@echo "✓ Container started"
+	@echo "Server running at http://localhost:8000"
+	@echo "API docs at http://localhost:8000/docs"
+
+docker-up: ## Start services using docker-compose
+	@echo "Starting services with docker-compose..."
+	docker-compose -f $(DOCKER_COMPOSE_FILE) up -d
+	@echo "✓ Services started"
+	@echo "Server running at http://localhost:8000"
+	@echo "API docs at http://localhost:8000/docs"
+
+docker-down: ## Stop services using docker-compose
+	@echo "Stopping services with docker-compose..."
+	docker-compose -f $(DOCKER_COMPOSE_FILE) down
+	@echo "✓ Services stopped"
+
+docker-logs: ## Show Docker container logs (docker-compose)
+	@docker-compose -f $(DOCKER_COMPOSE_FILE) logs -f
+
+docker-logs-container: ## Show Docker container logs (single container)
+	@docker logs -f powermem-server 2>/dev/null || echo "Container 'powermem-server' not found. Use 'make docker-run' first."
+
+docker-stop: ## Stop Docker container
+	@echo "Stopping Docker container..."
+	@docker stop powermem-server 2>/dev/null && docker rm powermem-server 2>/dev/null && echo "✓ Container stopped and removed" || echo "Container not found or already stopped"
+
+docker-restart: docker-stop docker-run ## Restart Docker container
+	@echo "✓ Container restarted"
+
+docker-restart-compose: docker-down docker-up ## Restart services using docker-compose
+	@echo "✓ Services restarted"
+
+docker-ps: ## Show running Docker containers
+	@echo "Running containers:"
+	@docker ps --filter "name=powermem-server" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+
+docker-status: ## Check Docker container status
+	@if docker ps --filter "name=powermem-server" --format "{{.Names}}" | grep -q powermem-server; then \
+		echo "✓ Container is running"; \
+		docker ps --filter "name=powermem-server" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"; \
+	else \
+		echo "✗ Container is not running"; \
+		exit 1; \
+	fi
+
+docker-clean: ## Clean Docker resources (containers, images, volumes)
+	@echo "Cleaning Docker resources..."
+	@docker stop powermem-server 2>/dev/null || true
+	@docker rm powermem-server 2>/dev/null || true
+	@docker-compose -f $(DOCKER_COMPOSE_FILE) down -v 2>/dev/null || true
+	@echo "✓ Docker resources cleaned"
+
+docker-clean-all: ## Clean all Docker resources including images
+	@echo "Cleaning all Docker resources (including images)..."
+	@docker stop powermem-server 2>/dev/null || true
+	@docker rm powermem-server 2>/dev/null || true
+	@docker-compose -f $(DOCKER_COMPOSE_FILE) down -v 2>/dev/null || true
+	@docker rmi $(DOCKER_IMAGE):$(DOCKER_TAG) 2>/dev/null || true
+	@echo "✓ All Docker resources cleaned"
+
+docker-rebuild: docker-clean docker-build ## Rebuild Docker image from scratch
+	@echo "✓ Docker image rebuilt"
+
+docker-rebuild-up: docker-rebuild docker-up ## Rebuild and start services
+	@echo "✓ Docker image rebuilt and services started"
 
 # CI/CD helpers
 ci-test: install-test test-unit test-integration ## Run tests for CI (unit + integration)
