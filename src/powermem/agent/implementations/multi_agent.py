@@ -302,6 +302,7 @@ class MultiAgentMemoryManager(AgentMemoryManagerBase):
                 'memory_type': memory_type.value,
                 'agent_id': agent_id,
                 'created_at': memory_data['created_at'],
+                'updated_at': memory_data['updated_at'],
                 'metadata': memory_data['metadata'],
             }
             

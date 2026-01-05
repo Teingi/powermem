@@ -228,6 +228,7 @@ class MultiUserMemoryManager(AgentMemoryManagerBase):
                 'user_id': user_id,
                 'agent_id': agent_id,
                 'created_at': memory_data['created_at'],
+                'updated_at': memory_data['updated_at'],
                 'metadata': memory_data['metadata'],
             }
             
