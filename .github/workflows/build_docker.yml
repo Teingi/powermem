@@ -21,6 +21,16 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Get SDK version
+        id: sdk-version
+        run: |
+          # Extract version from version.py file
+          VERSION=$(grep -E '^__version__\s*=' src/powermem/version.py | sed -E "s/^__version__\s*=\s*['\"](.*)['\"]/\1/")
+          echo "SDK version: $VERSION"
+          echo "sdk-version=$VERSION" >> $GITHUB_OUTPUT
+          echo "image-tag=$VERSION" >> $GITHUB_OUTPUT
+          echo "Using SDK version ($VERSION) as Docker image tag"
+
       - name: Determine if should push
         id: should-push
         run: |
@@ -60,7 +70,7 @@ jobs:
           push: true
           tags: |
             ${{ vars.DOCKER_PUSH_BASE }}/powermem-server:latest
-            ${{ vars.DOCKER_PUSH_BASE }}/powermem-server:${{ github.ref_name }}
+            ${{ vars.DOCKER_PUSH_BASE }}/powermem-server:${{ steps.sdk-version.outputs.image-tag }}
 
       - name: Debug should-push output
         run: |
@@ -78,13 +88,17 @@ jobs:
           mkdir -p docker-images
           
           IMAGE_NAME="powermem-server"
-          IMAGE_TAG="${{ github.ref_name }}"
+          SDK_VERSION="${{ steps.sdk-version.outputs.sdk-version }}"
+          IMAGE_VERSION="${{ steps.sdk-version.outputs.image-tag }}"
+          
+          echo "SDK version: $SDK_VERSION"
+          echo "Image version tag: $IMAGE_VERSION"
           
           # Build and save for each platform
           for platform in linux/amd64 linux/arm64; do
             platform_suffix=$(echo $platform | tr '/' '-')
-            image_tag="${IMAGE_NAME}:${platform_suffix}"
-            output_file="docker-images/${IMAGE_NAME}-${platform_suffix}.tar"
+            image_tag="${IMAGE_NAME}:${IMAGE_VERSION}"
+            output_file="docker-images/${IMAGE_NAME}-${IMAGE_VERSION}-${platform_suffix}.tar"
             
             echo "Building image for platform: $platform"
             
