@@ -32,16 +32,16 @@ jobs:
           
           # Only push when it's a push event and the ref starts with refs/tags/v
           if [[ "$EVENT_NAME" == "push" ]] && [[ "$REF" == refs/tags/v* ]]; then
-            echo "should_push=true" >> $GITHUB_OUTPUT
+            echo "should-push=true" >> $GITHUB_OUTPUT
             echo "Will push to remote repository"
           else
-            echo "should_push=false" >> $GITHUB_OUTPUT
+            echo "should-push=false" >> $GITHUB_OUTPUT
             echo "Will save as artifacts"
           fi
           
           # Debug: verify the output
-          echo "Output should_push value:"
-          grep should_push $GITHUB_OUTPUT || echo "No should_push found in output"
+          echo "Output should-push value:"
+          grep should-push $GITHUB_OUTPUT || echo "No should-push found in output"
 
       - name: Log in to Docker hub (for tag push only)
         if: steps.should-push.outputs.should-push == 'true'
@@ -90,7 +90,7 @@ jobs:
             
             # Build the image for the specific platform and load it
             docker buildx build \
-              --context . \
+              . \
               --file docker/Dockerfile \
               --platform $platform \
               --load \
