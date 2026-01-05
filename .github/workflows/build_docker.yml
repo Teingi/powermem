@@ -38,6 +38,10 @@ jobs:
             echo "should_push=false" >> $GITHUB_OUTPUT
             echo "Will save as artifacts"
           fi
+          
+          # Debug: verify the output
+          echo "Output should_push value:"
+          grep should_push $GITHUB_OUTPUT || echo "No should_push found in output"
 
       - name: Log in to Docker hub (for tag push only)
         if: steps.should-push.outputs.should-push == 'true'
@@ -58,8 +62,18 @@ jobs:
             ${{ vars.DOCKER_PUSH_BASE }}/powermem-server:latest
             ${{ vars.DOCKER_PUSH_BASE }}/powermem-server:${{ github.ref_name }}
 
+      - name: Debug should-push output
+        run: |
+          echo "should-push output value: '${{ steps.should-push.outputs.should-push }}'"
+          echo "Condition check: should-push == 'false'"
+          if [ "${{ steps.should-push.outputs.should-push }}" == "false" ]; then
+            echo "✓ Condition is true, will execute build step"
+          else
+            echo "✗ Condition is false, step will be skipped"
+          fi
+
       - name: Build and save Docker images (for PR and branches)
-        if: steps.should-push.outputs.should-push == 'false'
+        if: steps.should-push.outputs.should-push != 'true'
         run: |
           mkdir -p docker-images
           
@@ -103,7 +117,7 @@ jobs:
           echo "To load these images, use: docker load -i <tar-file>"
 
       - name: Upload Docker image artifacts (for PR and branches)
-        if: steps.should-push.outputs.should-push == 'false'
+        if: steps.should-push.outputs.should-push != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: powermem-server-docker-images
