@@ -24,10 +24,19 @@ jobs:
       - name: Determine if should push
         id: should-push
         run: |
-          if [[ "${{ github.event_name }}" == "push" && "${{ startsWith(github.ref, 'refs/tags/v') }}" == "true" ]]; then
+          EVENT_NAME="${{ github.event_name }}"
+          REF="${{ github.ref }}"
+          
+          echo "Event name: $EVENT_NAME"
+          echo "Ref: $REF"
+          
+          # Only push when it's a push event and the ref starts with refs/tags/v
+          if [[ "$EVENT_NAME" == "push" ]] && [[ "$REF" == refs/tags/v* ]]; then
             echo "should_push=true" >> $GITHUB_OUTPUT
+            echo "Will push to remote repository"
           else
             echo "should_push=false" >> $GITHUB_OUTPUT
+            echo "Will save as artifacts"
           fi
 
       - name: Log in to Docker hub (for tag push only)
