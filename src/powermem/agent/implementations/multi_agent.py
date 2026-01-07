@@ -336,6 +336,7 @@ class MultiAgentMemoryManager(AgentMemoryManagerBase):
             
             # Use the existing Memory.add() method
             # Get the Snowflake ID returned from database to ensure consistency
+            # Use infer=False to use simple mode since intelligent processing is already done at agent layer
             add_result = self._memory_instance.add(
                 messages=memory_data['content'],
                 user_id=memory_data.get('user_id'),
@@ -347,7 +348,8 @@ class MultiAgentMemoryManager(AgentMemoryManagerBase):
                     'retention_score': memory_data.get('retention_score'),
                     'importance_level': memory_data.get('importance_level'),
                     **memory_data.get('metadata', {})
-                }
+                },
+                infer=False  # Use simple mode to avoid intelligent processing returning empty results
             )
             
             # Get the Snowflake ID from database
@@ -519,8 +521,9 @@ class MultiAgentMemoryManager(AgentMemoryManagerBase):
                     continue
                 
                 # Convert database format to agent memory format
-                # Database uses 'document' field, but also check 'data' and 'content' for compatibility
-                content = db_memory.get('document') or db_memory.get('data') or db_memory.get('content', '')
+                # Storage adapter.get_all_memories() returns 'memory' field (mapped from payload.data)
+                # Keep 'document' as fallback for database raw field name compatibility
+                content = db_memory.get('memory') or db_memory.get('document', '')
                 
                 memory_data = {
                     'id': memory_id,

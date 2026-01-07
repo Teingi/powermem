@@ -557,8 +557,9 @@ class MultiUserMemoryManager(AgentMemoryManagerBase):
                 processed_memory_ids.add(memory_id)
                 
                 # Convert database format to user memory format
-                # Database uses 'document' field, but also check 'data' and 'content' for compatibility
-                content = db_memory.get('document') or db_memory.get('data') or db_memory.get('content', '')
+                # Storage adapter.get_all_memories() returns 'memory' field (mapped from payload.data)
+                # Keep 'document' as fallback for database raw field name compatibility
+                content = db_memory.get('memory') or db_memory.get('document', '')
                 
                 memory_data = {
                     'id': memory_id,
