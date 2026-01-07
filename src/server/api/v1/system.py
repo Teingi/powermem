@@ -2,8 +2,9 @@
 System management API routes
 """
 
-from fastapi import APIRouter, Depends, Request, Response
+from fastapi import APIRouter, Depends, Request, Response, Query
 from slowapi import Limiter
+from typing import Optional
 
 from ...models.response import APIResponse, HealthResponse, StatusResponse
 from ...middleware.auth import verify_api_key
@@ -98,35 +99,57 @@ async def get_metrics(
     )
 
 
-@router.post(
-    "/reset",
+@router.delete(
+    "/delete-all-memories",
     response_model=APIResponse,
-    summary="Reset all memories",
-    description="Reset all memories (requires admin permissions - placeholder)",
+    summary="Delete all memories",
+    description="Delete all memories matching the provided filters (requires admin permissions). "
+                "This endpoint uses Memory.delete_all() to match the powermem SDK API. "
+                "If no filters provided, deletes all memories.",
 )
 @limiter.limit(get_rate_limit_string())
-async def reset_memories(
+async def delete_all_memories(
     request: Request,
+    user_id: Optional[str] = Query(None, description="Filter by user ID"),
+    agent_id: Optional[str] = Query(None, description="Filter by agent ID"),
+    run_id: Optional[str] = Query(None, description="Filter by run ID"),
     api_key: str = Depends(verify_api_key),
 ):
-    """Reset all memories"""
-    # Placeholder implementation
-    # In production, this would require admin permissions and actually reset the memory store
+    """
+    Delete all memories matching the provided filters.
+    
+    This endpoint uses Memory.delete_all() to match the powermem SDK API.
+    If no filters are provided, all memories will be deleted.
+    """
     from powermem import Memory
+    from ...models.errors import ErrorCode, APIError
     
     try:
         memory = Memory(config=auto_config())
-        memory.reset()
+        result = memory.delete_all(
+            user_id=user_id,
+            agent_id=agent_id,
+            run_id=run_id,
+        )
+        
+        filters = {}
+        if user_id:
+            filters["user_id"] = user_id
+        if agent_id:
+            filters["agent_id"] = agent_id
+        if run_id:
+            filters["run_id"] = run_id
+        
+        filter_desc = f" with filters: {filters}" if filters else ""
         
         return APIResponse(
             success=True,
-            data={},
-            message="All memories reset successfully",
+            data={"deleted": result, "filters": filters},
+            message=f"All memories{filter_desc} deleted successfully",
         )
     except Exception as e:
-        from ...models.errors import ErrorCode, APIError
         raise APIError(
             code=ErrorCode.INTERNAL_ERROR,
-            message=f"Failed to reset memories: {str(e)}",
+            message=f"Failed to delete all memories: {str(e)}",
             status_code=500,
         )
