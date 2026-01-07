@@ -318,7 +318,7 @@ server-logs-last: ## Show last 50 lines of server logs
 	@tail -n 50 server.log
 
 # Docker commands
-DOCKER_IMAGE := powermem-server
+DOCKER_IMAGE := oceanbase/powermem-server
 DOCKER_TAG := latest
 DOCKER_COMPOSE_FILE := docker/docker-compose.yml
 

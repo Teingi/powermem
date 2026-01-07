@@ -113,13 +113,13 @@ powermem-server --host 0.0.0.0 --port 8000
 
 # 方法 2：Docker を使用
 # Docker イメージをビルドして実行
-docker build -t powermem-server:latest -f docker/Dockerfile .
+docker build -t oceanbase/powermem-server:latest -f docker/Dockerfile .
 docker run -d \
   --name powermem-server \
   -p 8000:8000 \
   -v $(pwd)/.env:/app/.env:ro \
   --env-file .env \
-  powermem-server:latest
+  oceanbase/powermem-server:latest
 
 # または Docker Compose を使用（推奨）
 docker-compose -f docker/docker-compose.yml up -d

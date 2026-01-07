@@ -25,7 +25,7 @@ This guide provides instructions for building and running PowerMem Server using 
 
 ```bash
 # Build the Docker image (from project root)
-docker build -t powermem-server:latest -f docker/Dockerfile .
+docker build -t oceanbase/powermem-server:latest -f docker/Dockerfile .
 
 # Run the container with shared .env file (recommended)
 # This allows both SDK and Server to use the same configuration
@@ -34,7 +34,7 @@ docker run -d \
   -p 8000:8000 \
   -v $(pwd)/.env:/app/.env:ro \
   --env-file .env \
-  powermem-server:latest
+  oceanbase/powermem-server:latest
 ```
 
 The server will be available at `http://localhost:8000`.
@@ -67,14 +67,14 @@ docker-compose -f docker/docker-compose.yml down
 
 ```bash
 # Build from project root directory
-docker build -t powermem-server:latest -f docker/Dockerfile .
+docker build -t oceanbase/powermem-server:latest -f docker/Dockerfile .
 ```
 
 ### Build with Custom Tag
 
 ```bash
 # Build from project root directory
-docker build -t powermem-server:v0.2.1 -f docker/Dockerfile .
+docker build -t oceanbase/powermem-server:v0.2.1 -f docker/Dockerfile .
 ```
 
 ### Build with Mirror Sources (for slow network)
@@ -83,24 +83,24 @@ If you're experiencing slow download speeds or network timeouts, you can use mir
 
 ```bash
 # Using Tsinghua mirror (China) - speeds up both pip and apt-get
-docker build -t powermem-server:latest -f docker/Dockerfile \
+docker build -t oceanbase/powermem-server:latest -f docker/Dockerfile \
   --build-arg PIP_INDEX_URL=https://pypi.tuna.tsinghua.edu.cn/simple \
   --build-arg PIP_TRUSTED_HOST=pypi.tuna.tsinghua.edu.cn \
   --build-arg DEBIAN_MIRROR=mirrors.tuna.tsinghua.edu.cn .
 
 # Using Aliyun mirror (China) - speeds up both pip and apt-get
-docker build -t powermem-server:latest -f docker/Dockerfile \
+docker build -t oceanbase/powermem-server:latest -f docker/Dockerfile \
   --build-arg PIP_INDEX_URL=https://mirrors.aliyun.com/pypi/simple \
   --build-arg PIP_TRUSTED_HOST=mirrors.aliyun.com \
   --build-arg DEBIAN_MIRROR=mirrors.aliyun.com .
 
 # Using only pip mirror (if apt-get is fast enough)
-docker build -t powermem-server:latest -f docker/Dockerfile \
+docker build -t oceanbase/powermem-server:latest -f docker/Dockerfile \
   --build-arg PIP_INDEX_URL=https://pypi.tuna.tsinghua.edu.cn/simple \
   --build-arg PIP_TRUSTED_HOST=pypi.tuna.tsinghua.edu.cn .
 
 # Using only Debian mirror (if pip is fast enough)
-docker build -t powermem-server:latest -f docker/Dockerfile \
+docker build -t oceanbase/powermem-server:latest -f docker/Dockerfile \
   --build-arg DEBIAN_MIRROR=mirrors.aliyun.com .
 ```
 
@@ -124,7 +124,7 @@ Currently, the Dockerfile uses a multi-stage build to optimize image size. The b
 docker run -d \
   --name powermem-server \
   -p 8000:8000 \
-  powermem-server:latest
+  oceanbase/powermem-server:latest
 ```
 
 ### Run with Environment Variables
@@ -139,7 +139,7 @@ docker run -d \
   -e POWERMEM_SERVER_API_KEYS=key1,key2,key3 \
   -e POWERMEM_SERVER_AUTH_ENABLED=true \
   -e POWERMEM_SERVER_LOG_LEVEL=INFO \
-  powermem-server:latest
+  oceanbase/powermem-server:latest
 ```
 
 ### Run with Environment File
@@ -164,7 +164,7 @@ docker run -d \
   --name powermem-server \
   -p 8000:8000 \
   --env-file .env \
-  powermem-server:latest
+  oceanbase/powermem-server:latest
 ```
 
 ### Run with Shared .env File (SDK and Server)
@@ -177,7 +177,7 @@ docker run -d \
   -p 8000:8000 \
   -v $(pwd)/.env:/app/.env:ro \
   --env-file .env \
-  powermem-server:latest
+  oceanbase/powermem-server:latest
 ```
 
 **Note**: The `--env-file` flag loads environment variables from `.env` into the container's environment, while the volume mount (`-v`) makes the `.env` file accessible inside the container at `/app/.env` so the Server's configuration loader can read it directly. This ensures both SDK and Server use the exact same configuration values.
@@ -198,7 +198,7 @@ docker run -d \
   -v ./logs:/app/logs \
   -v ./config:/app/config \
   --env-file .env \
-  powermem-server:latest
+  oceanbase/powermem-server:latest
 ```
 
 ## Configuration
@@ -222,7 +222,7 @@ docker run -d \
   -p 8000:8000 \
   -v $(pwd)/.env:/app/.env:ro \
   --env-file .env \
-  powermem-server:latest
+  oceanbase/powermem-server:latest
 ```
 
 This approach:
@@ -239,7 +239,7 @@ docker run -d \
   --name powermem-server \
   -p 8000:8000 \
   --env-file .env \
-  powermem-server:latest
+  oceanbase/powermem-server:latest
 ```
 
 **Note**: With Docker Compose, the `.env` file is automatically mounted and loaded. See the `docker/docker-compose.yml` file for details.
@@ -378,7 +378,7 @@ docker run -d \
   --memory="2g" \
   --cpus="2" \
   -p 8000:8000 \
-  powermem-server:latest
+  oceanbase/powermem-server:latest
 ```
 
 5. **Health Checks**: The image includes a health check. Monitor container health:
@@ -398,7 +398,7 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    image: powermem-server:latest
+    image: oceanbase/powermem-server:latest
     container_name: powermem-server
     restart: always
     ports:
@@ -502,7 +502,7 @@ docker run -d \
   --name powermem-server \
   -p 8001:8000 \
   -e POWERMEM_SERVER_PORT=8000 \
-  powermem-server:latest
+  oceanbase/powermem-server:latest
 ```
 
 ### Database Connection Issues
@@ -543,7 +543,7 @@ docker run -d \
   --name powermem-server \
   -p 8000:8000 \
   --env-file .env \
-  powermem-server:latest
+  oceanbase/powermem-server:latest
 ```
 
 **Note**: When using `--env-file`, the Server will read from environment variables, but the SDK running locally will still read from the `.env` file. This is fine as long as both have the same values.

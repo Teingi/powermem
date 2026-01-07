@@ -22,13 +22,13 @@ powermem-server --host 0.0.0.0 --port 8000
 
 # Method 2: Using Docker
 # Build and run with Docker
-docker build -t powermem-server:latest -f docker/Dockerfile .
+docker build -t oceanbase/powermem-server:latest -f docker/Dockerfile .
 docker run -d \
   --name powermem-server \
   -p 8000:8000 \
   -v $(pwd)/.env:/app/.env:ro \
   --env-file .env \
-  powermem-server:latest
+  oceanbase/powermem-server:latest
 
 # Or use Docker Compose (recommended)
 docker-compose -f docker/docker-compose.yml up -d

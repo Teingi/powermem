@@ -17,7 +17,7 @@ This directory contains all Docker-related files for PowerMem Server.
 From the project root directory:
 
 ```bash
-docker build -t powermem-server:latest -f docker/Dockerfile .
+docker build -t oceanbase/powermem-server:latest -f docker/Dockerfile .
 ```
 
 ### Run with Docker Compose
@@ -38,7 +38,7 @@ docker run -d \
   -p 8000:8000 \
   -v $(pwd)/.env:/app/.env:ro \
   --env-file .env \
-  powermem-server:latest
+  oceanbase/powermem-server:latest
 ```
 
 ## Documentation
