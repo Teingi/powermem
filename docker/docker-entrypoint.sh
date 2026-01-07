@@ -11,8 +11,8 @@ validate_config() {
     log "Validating configuration..."
     
     # Check if API keys are set when auth is enabled
-    if [ "${POWERMEM_AUTH_ENABLED:-true}" = "true" ] && [ -z "${POWERMEM_API_KEYS}" ]; then
-        log "Warning: POWERMEM_AUTH_ENABLED is true but POWERMEM_API_KEYS is not set"
+    if [ "${POWERMEM_SERVER_AUTH_ENABLED:-true}" = "true" ] && [ -z "${POWERMEM_SERVER_API_KEYS}" ]; then
+        log "Warning: POWERMEM_SERVER_AUTH_ENABLED is true but POWERMEM_SERVER_API_KEYS is not set"
         log "Server will start but API authentication may fail"
     fi
     
@@ -43,9 +43,9 @@ main() {
     log "  Host: ${POWERMEM_SERVER_HOST:-0.0.0.0}"
     log "  Port: ${POWERMEM_SERVER_PORT:-8000}"
     log "  Workers: ${POWERMEM_SERVER_WORKERS:-4}"
-    log "  Log Level: ${POWERMEM_LOG_LEVEL:-INFO}"
-    log "  Auth Enabled: ${POWERMEM_AUTH_ENABLED:-true}"
-    log "  CORS Enabled: ${POWERMEM_CORS_ENABLED:-true}"
+    log "  Log Level: ${POWERMEM_SERVER_LOG_LEVEL:-INFO}"
+    log "  Auth Enabled: ${POWERMEM_SERVER_AUTH_ENABLED:-true}"
+    log "  CORS Enabled: ${POWERMEM_SERVER_CORS_ENABLED:-true}"
     
     # Execute the command
     log "Launching server..."

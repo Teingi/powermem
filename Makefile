@@ -212,12 +212,12 @@ server-start: ## Start the PowerMem API server
 		echo "Use 'make server-stop' to stop it first, or 'make server-restart' to restart"; \
 		exit 1; \
 	fi
-	@powermem-server --host $(SERVER_HOST) --port $(SERVER_PORT) --workers $(SERVER_WORKERS) > server.log 2>&1 & \
+	@powermem-server --host $(SERVER_HOST) --port $(SERVER_PORT) --workers $(SERVER_WORKERS) > /dev/null 2>&1 & \
 	echo $$! > $(SERVER_PID_FILE); \
 	echo "Server started with PID: $$!"; \
 	echo "Server running at http://$(SERVER_HOST):$(SERVER_PORT)"; \
 	echo "API docs available at http://$(SERVER_HOST):$(SERVER_PORT)/docs"; \
-	echo "Logs are being written to server.log"; \
+	echo "Logs are being written to server.log (configured via POWERMEM_SERVER_LOG_FILE)"; \
 	echo "Use 'make server-stop' to stop the server"
 
 server-start-reload: ## Start the PowerMem API server with auto-reload (development mode)
@@ -227,12 +227,12 @@ server-start-reload: ## Start the PowerMem API server with auto-reload (developm
 		echo "Use 'make server-stop' to stop it first"; \
 		exit 1; \
 	fi
-	@powermem-server --host $(SERVER_HOST) --port $(SERVER_PORT) --reload > server.log 2>&1 & \
+	@powermem-server --host $(SERVER_HOST) --port $(SERVER_PORT) --reload > /dev/null 2>&1 & \
 	echo $$! > $(SERVER_PID_FILE); \
 	echo "Server started with PID: $$! (auto-reload enabled)"; \
 	echo "Server running at http://$(SERVER_HOST):$(SERVER_PORT)"; \
 	echo "API docs available at http://$(SERVER_HOST):$(SERVER_PORT)/docs"; \
-	echo "Logs are being written to server.log"; \
+	echo "Logs are being written to server.log (configured via POWERMEM_SERVER_LOG_FILE)"; \
 	echo "Use 'make server-stop' to stop the server"
 
 server-stop: ## Stop the PowerMem API server

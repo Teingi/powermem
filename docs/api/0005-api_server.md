@@ -90,25 +90,25 @@ POWERMEM_SERVER_WORKERS=4
 POWERMEM_SERVER_RELOAD=false
 
 # Authentication
-POWERMEM_AUTH_ENABLED=true
-POWERMEM_API_KEYS=your_key_1,your_key_2,your_key_3
+POWERMEM_SERVER_AUTH_ENABLED=true
+POWERMEM_SERVER_API_KEYS=your_key_1,your_key_2,your_key_3
 
 # Rate Limiting
-POWERMEM_RATE_LIMIT_ENABLED=true
-POWERMEM_RATE_LIMIT_PER_MINUTE=100
+POWERMEM_SERVER_RATE_LIMIT_ENABLED=true
+POWERMEM_SERVER_RATE_LIMIT_PER_MINUTE=100
 
 # Logging
-POWERMEM_LOG_LEVEL=INFO
-POWERMEM_LOG_FORMAT=json
+POWERMEM_SERVER_LOG_LEVEL=INFO
+POWERMEM_SERVER_LOG_FORMAT=json
 
 # API Settings
-POWERMEM_API_TITLE=PowerMem API
-POWERMEM_API_VERSION=v1
-POWERMEM_API_DESCRIPTION=PowerMem HTTP API Server - Intelligent Memory System
+POWERMEM_SERVER_API_TITLE=PowerMem API
+POWERMEM_SERVER_API_VERSION=v1
+POWERMEM_SERVER_API_DESCRIPTION=PowerMem HTTP API Server - Intelligent Memory System
 
 # CORS
-POWERMEM_CORS_ENABLED=true
-POWERMEM_CORS_ORIGINS=*
+POWERMEM_SERVER_CORS_ENABLED=true
+POWERMEM_SERVER_CORS_ORIGINS=*
 ```
 
 See `.env.example` for a complete list of configuration options.
@@ -136,7 +136,7 @@ curl http://localhost:8000/api/v1/health?api_key=your_api_key
 For development, you can disable authentication by setting:
 
 ```bash
-POWERMEM_AUTH_ENABLED=false
+POWERMEM_SERVER_AUTH_ENABLED=false
 ```
 
 **Warning**: Never disable authentication in production environments.
@@ -535,8 +535,8 @@ When rate limit is exceeded, the API returns:
 You can configure rate limits using:
 
 ```bash
-POWERMEM_RATE_LIMIT_ENABLED=true
-POWERMEM_RATE_LIMIT_PER_MINUTE=100
+POWERMEM_SERVER_RATE_LIMIT_ENABLED=true
+POWERMEM_SERVER_RATE_LIMIT_PER_MINUTE=100
 ```
 
 ## Code Examples
@@ -758,8 +758,8 @@ spec:
 The server supports structured logging in JSON format:
 
 ```bash
-POWERMEM_LOG_FORMAT=json
-POWERMEM_LOG_LEVEL=INFO
+POWERMEM_SERVER_LOG_FORMAT=json
+POWERMEM_SERVER_LOG_LEVEL=INFO
 ```
 
 Logs include:
@@ -804,14 +804,14 @@ curl http://localhost:8000/api/v1/metrics -H "X-API-Key: your_api_key"
 
 ### Authentication Errors
 
-- Verify API key is set correctly: `POWERMEM_API_KEYS=your_key`
-- Check if authentication is enabled: `POWERMEM_AUTH_ENABLED=true`
+- Verify API key is set correctly: `POWERMEM_SERVER_API_KEYS=your_key`
+- Check if authentication is enabled: `POWERMEM_SERVER_AUTH_ENABLED=true`
 - Ensure API key is included in request headers
 
 ### Rate Limit Errors
 
-- Increase rate limit: `POWERMEM_RATE_LIMIT_PER_MINUTE=200`
-- Disable rate limiting for development: `POWERMEM_RATE_LIMIT_ENABLED=false`
+- Increase rate limit: `POWERMEM_SERVER_RATE_LIMIT_PER_MINUTE=200`
+- Disable rate limiting for development: `POWERMEM_SERVER_RATE_LIMIT_ENABLED=false`
 
 ### Connection Errors
 

@@ -5,6 +5,7 @@ CLI command for starting the PowerMem API server
 import click
 import uvicorn
 from ..config import config
+from ..middleware.logging import setup_logging
 
 
 @click.command()
@@ -31,6 +32,13 @@ def server(host, port, workers, reload, log_level):
         config.reload = True
     if log_level:
         config.log_level = log_level
+    
+    # Debug: Print current log format (can be removed later)
+    import sys
+    print(f"[DEBUG] Current log_format: {config.log_format}", file=sys.stderr)
+    
+    # Setup logging BEFORE starting uvicorn to ensure all logs have timestamps
+    setup_logging()
     
     # Start server
     uvicorn.run(

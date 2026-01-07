@@ -136,9 +136,9 @@ docker run -d \
   -e POWERMEM_SERVER_HOST=0.0.0.0 \
   -e POWERMEM_SERVER_PORT=8000 \
   -e POWERMEM_SERVER_WORKERS=4 \
-  -e POWERMEM_API_KEYS=key1,key2,key3 \
-  -e POWERMEM_AUTH_ENABLED=true \
-  -e POWERMEM_LOG_LEVEL=INFO \
+  -e POWERMEM_SERVER_API_KEYS=key1,key2,key3 \
+  -e POWERMEM_SERVER_AUTH_ENABLED=true \
+  -e POWERMEM_SERVER_LOG_LEVEL=INFO \
   powermem-server:latest
 ```
 
@@ -150,11 +150,11 @@ Create a `.env` file:
 POWERMEM_SERVER_HOST=0.0.0.0
 POWERMEM_SERVER_PORT=8000
 POWERMEM_SERVER_WORKERS=4
-POWERMEM_API_KEYS=your-api-key-1,your-api-key-2
-POWERMEM_AUTH_ENABLED=true
-POWERMEM_LOG_LEVEL=INFO
-POWERMEM_CORS_ENABLED=true
-POWERMEM_CORS_ORIGINS=*
+POWERMEM_SERVER_API_KEYS=your-api-key-1,your-api-key-2
+POWERMEM_SERVER_AUTH_ENABLED=true
+POWERMEM_SERVER_LOG_LEVEL=INFO
+POWERMEM_SERVER_CORS_ENABLED=true
+POWERMEM_SERVER_CORS_ORIGINS=*
 ```
 
 Run with the environment file:
@@ -262,37 +262,37 @@ The `.env` file contains configuration for both the PowerMem SDK and Server. The
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `POWERMEM_AUTH_ENABLED` | `true` | Enable API key authentication |
-| `POWERMEM_API_KEYS` | `` | Comma-separated list of API keys |
+| `POWERMEM_SERVER_AUTH_ENABLED` | `true` | Enable API key authentication |
+| `POWERMEM_SERVER_API_KEYS` | `` | Comma-separated list of API keys |
 
 ### Rate Limiting Settings
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `POWERMEM_RATE_LIMIT_ENABLED` | `true` | Enable rate limiting |
-| `POWERMEM_RATE_LIMIT_PER_MINUTE` | `100` | Requests per minute per IP |
+| `POWERMEM_SERVER_RATE_LIMIT_ENABLED` | `true` | Enable rate limiting |
+| `POWERMEM_SERVER_RATE_LIMIT_PER_MINUTE` | `100` | Requests per minute per IP |
 
 ### Logging Settings
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `POWERMEM_LOG_LEVEL` | `INFO` | Log level (DEBUG, INFO, WARNING, ERROR, CRITICAL) |
-| `POWERMEM_LOG_FORMAT` | `json` | Log format (json or text) |
+| `POWERMEM_SERVER_LOG_LEVEL` | `INFO` | Log level (DEBUG, INFO, WARNING, ERROR, CRITICAL) |
+| `POWERMEM_SERVER_LOG_FORMAT` | `json` | Log format (json or text) |
 
 ### CORS Settings
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `POWERMEM_CORS_ENABLED` | `true` | Enable CORS |
-| `POWERMEM_CORS_ORIGINS` | `*` | Comma-separated list of allowed origins |
+| `POWERMEM_SERVER_CORS_ENABLED` | `true` | Enable CORS |
+| `POWERMEM_SERVER_CORS_ORIGINS` | `*` | Comma-separated list of allowed origins |
 
 ### API Settings
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `POWERMEM_API_TITLE` | `PowerMem API` | API title |
-| `POWERMEM_API_VERSION` | `v1` | API version |
-| `POWERMEM_API_DESCRIPTION` | `PowerMem HTTP API Server - Intelligent Memory System` | API description |
+| `POWERMEM_SERVER_API_TITLE` | `PowerMem API` | API title |
+| `POWERMEM_SERVER_API_VERSION` | `v1` | API version |
+| `POWERMEM_SERVER_API_DESCRIPTION` | `PowerMem HTTP API Server - Intelligent Memory System` | API description |
 
 ### SDK Configuration Variables (Shared with Server)
 
@@ -326,10 +326,10 @@ services:
       - POWERMEM_SERVER_HOST=0.0.0.0
       - POWERMEM_SERVER_PORT=8000
       - POWERMEM_SERVER_WORKERS=4
-      - POWERMEM_API_KEYS=${POWERMEM_API_KEYS:-}
-      - POWERMEM_AUTH_ENABLED=${POWERMEM_AUTH_ENABLED:-true}
-      - POWERMEM_LOG_LEVEL=${POWERMEM_LOG_LEVEL:-INFO}
-      - POWERMEM_CORS_ENABLED=${POWERMEM_CORS_ENABLED:-true}
+      - POWERMEM_SERVER_API_KEYS=${POWERMEM_SERVER_API_KEYS:-}
+      - POWERMEM_SERVER_AUTH_ENABLED=${POWERMEM_SERVER_AUTH_ENABLED:-true}
+      - POWERMEM_SERVER_LOG_LEVEL=${POWERMEM_SERVER_LOG_LEVEL:-INFO}
+      - POWERMEM_SERVER_CORS_ENABLED=${POWERMEM_SERVER_CORS_ENABLED:-true}
       - POWERMEM_DATABASE_URL=${POWERMEM_DATABASE_URL:-}
     env_file:
       - .env
@@ -405,7 +405,7 @@ services:
       - "8000:8000"
     environment:
       - POWERMEM_SERVER_WORKERS=8
-      - POWERMEM_LOG_LEVEL=INFO
+      - POWERMEM_SERVER_LOG_LEVEL=INFO
     env_file:
       - .env.production
     deploy:

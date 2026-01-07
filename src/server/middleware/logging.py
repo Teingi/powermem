@@ -3,10 +3,12 @@ Logging middleware for PowerMem API
 """
 
 import logging
+import os
 import sys
 import json
 import time
 import uuid
+from logging.handlers import RotatingFileHandler
 from typing import Callable
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -20,24 +22,109 @@ logger = logging.getLogger("server")
 
 
 def setup_logging():
-    """Setup logging configuration"""
+    """Setup logging configuration
+    
+    This function can be safely called multiple times.
+    It will reconfigure loggers if called again.
+    """
     log_level = getattr(logging, config.log_level.upper(), logging.INFO)
     
     # Create formatter
     if config.log_format == "json":
         formatter = JsonFormatter()
+        text_formatter = None  # JSON format doesn't need text formatter
     else:
+        # Improved text format with timestamp
+        # Use right-aligned 7-character width for level name to accommodate WARNING/CRITICAL
         formatter = logging.Formatter(
-            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+            "%(asctime)s %(levelname)7s %(name)s: %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S"
         )
+        text_formatter = formatter
     
-    # Setup handler
-    handler = logging.StreamHandler(sys.stdout)
-    handler.setFormatter(formatter)
+    # Setup file handler if log_file is configured
+    file_handler = None
+    if config.log_file:
+        try:
+            # Create log file directory if it doesn't exist
+            log_file_path = os.path.abspath(config.log_file)
+            log_dir = os.path.dirname(log_file_path)
+            if log_dir and not os.path.exists(log_dir):
+                os.makedirs(log_dir, exist_ok=True)
+            
+            # Use RotatingFileHandler with append mode to preserve history
+            # Max file size: 10MB, keep 5 backup files
+            file_handler = RotatingFileHandler(
+                log_file_path,
+                mode='a',  # Append mode to preserve history
+                maxBytes=10 * 1024 * 1024,  # 10MB
+                backupCount=5,
+                encoding='utf-8'
+            )
+            file_handler.setLevel(log_level)
+            if config.log_format == "json":
+                file_handler.setFormatter(JsonFormatter())
+            else:
+                file_handler.setFormatter(text_formatter)
+        except Exception as e:
+            # If file logging fails, log to stderr and continue with console logging only
+            print(f"Warning: Failed to setup file logging: {e}", file=sys.stderr)
+            file_handler = None
     
-    # Configure logger
+    # Configure Uvicorn loggers FIRST (before they start logging)
+    # This ensures the initial startup messages have timestamps
+    uvicorn_loggers = [
+        logging.getLogger("uvicorn"),
+        logging.getLogger("uvicorn.error"),
+        logging.getLogger("uvicorn.access"),
+    ]
+    
+    for uvicorn_logger in uvicorn_loggers:
+        uvicorn_logger.setLevel(log_level)
+        # Remove existing handlers to avoid duplicates
+        uvicorn_logger.handlers.clear()
+        
+        # Create console handler for uvicorn
+        uvicorn_console_handler = logging.StreamHandler(sys.stdout)
+        if config.log_format == "json":
+            uvicorn_console_handler.setFormatter(JsonFormatter())
+        else:
+            # Use the same text formatter for consistency
+            uvicorn_console_handler.setFormatter(text_formatter)
+        uvicorn_logger.addHandler(uvicorn_console_handler)
+        
+        # Add file handler if configured
+        if file_handler:
+            # Create a new file handler for each logger (they share the same file)
+            uvicorn_file_handler = RotatingFileHandler(
+                os.path.abspath(config.log_file),
+                mode='a',
+                maxBytes=10 * 1024 * 1024,
+                backupCount=5,
+                encoding='utf-8'
+            )
+            uvicorn_file_handler.setLevel(log_level)
+            if config.log_format == "json":
+                uvicorn_file_handler.setFormatter(JsonFormatter())
+            else:
+                uvicorn_file_handler.setFormatter(text_formatter)
+            uvicorn_logger.addHandler(uvicorn_file_handler)
+        
+        uvicorn_logger.propagate = False
+    
+    # Setup handler for application logger
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setFormatter(formatter)
+    
+    # Configure application logger
     logger.setLevel(log_level)
-    logger.addHandler(handler)
+    # Remove existing handlers to avoid duplicates
+    logger.handlers.clear()
+    logger.addHandler(console_handler)
+    
+    # Add file handler if configured
+    if file_handler:
+        logger.addHandler(file_handler)
     
     # Prevent duplicate logs
     logger.propagate = False
@@ -45,6 +132,9 @@ def setup_logging():
 
 class JsonFormatter(logging.Formatter):
     """JSON formatter for structured logging"""
+    
+    def __init__(self, datefmt=None):
+        super().__init__(datefmt=datefmt or "%Y-%m-%d %H:%M:%S")
     
     def format(self, record):
         log_data = {
@@ -61,12 +151,22 @@ class JsonFormatter(logging.Formatter):
             log_data["user_id"] = record.user_id
         if hasattr(record, "agent_id"):
             log_data["agent_id"] = record.agent_id
+        if hasattr(record, "method"):
+            log_data["method"] = record.method
+        if hasattr(record, "path"):
+            log_data["path"] = record.path
+        if hasattr(record, "status_code"):
+            log_data["status_code"] = record.status_code
+        if hasattr(record, "duration_ms"):
+            log_data["duration_ms"] = round(record.duration_ms, 2)
+        if hasattr(record, "client"):
+            log_data["client"] = record.client
         
         # Add exception info if present
         if record.exc_info:
             log_data["exception"] = self.formatException(record.exc_info)
         
-        return json.dumps(log_data)
+        return json.dumps(log_data, ensure_ascii=False)
 
 
 class LoggingMiddleware(BaseHTTPMiddleware):
