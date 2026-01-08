@@ -115,6 +115,29 @@ async def get_user_memories(
 
 
 @router.delete(
+    "/{user_id}/profile",
+    response_model=APIResponse,
+    summary="Delete user profile",
+    description="Delete the user profile for a specific user",
+)
+@limiter.limit(get_rate_limit_string())
+async def delete_user_profile(
+    request: Request,
+    user_id: str,
+    api_key: str = Depends(verify_api_key),
+    service: UserService = Depends(get_user_service),
+):
+    """Delete user profile"""
+    result = service.delete_user_profile(user_id=user_id)
+    
+    return APIResponse(
+        success=True,
+        data=result,
+        message=f"User profile for {user_id} deleted successfully",
+    )
+
+
+@router.delete(
     "/{user_id}/memories",
     response_model=APIResponse,
     summary="Delete user memories",

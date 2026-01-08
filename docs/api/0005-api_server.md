@@ -1287,6 +1287,46 @@ curl -X GET "http://localhost:8000/api/v1/users/user-123/profile" \
 | User without profile | New user | Returns empty profile_content |
 
 
+---
+
+### Delete User Profile
+**Endpoint**: `DELETE /api/v1/users/{user_id}/profile`
+
+**Description**: Delete the user profile for a specific user
+
+**Request Example**:
+
+```bash
+curl -X DELETE "http://localhost:8000/api/v1/users/user-123/profile" \
+  -H "X-API-Key: test-api-key-123"
+```
+
+**Response Example**:
+
+```json
+{
+    "success": true,
+    "data": {
+        "user_id": "user-123",
+        "deleted": true
+    },
+    "message": "User profile for user-123 deleted successfully",
+    "timestamp": "2025-12-24T10:45:30.123456Z"
+}
+```
+
+**Usage Notes**:
+
+| Scenario | Request Parameters | Expected Result |
+| --- | --- | --- |
+| Normal deletion | Existing user_id with profile | Returns 200, profile deleted successfully |
+| Non-existent user | user_id=unknown | Returns 404 Not Found |
+| User without profile | User has no profile | Returns 404 Not Found |
+| Query after deletion | Query same user again | Returns 404 Not Found |
+
+
+---
+
 ### Get User Memories
 **Endpoint**: `GET /api/v1/users/{user_id}/memories`
 
