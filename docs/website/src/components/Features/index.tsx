@@ -95,7 +95,7 @@ const translations: Record<string, Record<string, string>> = {
     'features.subtitle': '为 AI 应用提供完整的智能内存管理解决方案',
     'feature.developer.title': '开发者友好',
     'feature.developer.en': 'Developer Friendly',
-    'feature.developer.desc': '提供简单的 Python SDK，自动从 .env 文件加载配置，使开发者能够快速集成到现有项目中。还支持 MCP 服务器和 HTTP API 服务器两种接入方式',
+    'feature.developer.desc': '提供简单的 Python SDK，自动从 .env 文件加载配置，使开发者能够快速集成到现有项目中。还支持 MCP Server 和 HTTP API Server 两种接入方式',
     'feature.developer.detail1': '轻量级集成',
     'feature.intelligent.title': '智能内存管理',
     'feature.intelligent.en': 'Intelligent Memory Management',
