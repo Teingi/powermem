@@ -50,7 +50,7 @@
 ## 🚀 核心特性
 
 ### 👨‍💻 开发者友好
-- 🔌 **[轻量级接入方式](docs/examples/scenario_1_basic_usage.md)**：提供简洁的 Python SDK 支持，自动从 `.env` 文件加载配置，让开发者快速集成到现有项目中
+- 🔌 **[轻量级接入方式](docs/examples/scenario_1_basic_usage.md)**：提供简洁的 Python SDK 支持，自动从 `.env` 文件加载配置，让开发者快速集成到现有项目中。还支持 [MCP 服务器](docs/api/0004-mcp.md) 和 [HTTP API 服务器](docs/api/0005-api_server.md) 两种接入方式
 
 ### 🧠 智能记忆管理
 - 🔍 **[记忆的智能提取](docs/examples/scenario_2_intelligent_memory.md)**：通过 LLM 自动从对话中提取关键事实，智能检测重复、更新冲突信息并合并相关记忆，确保记忆库的准确性和一致性
@@ -113,8 +113,7 @@ PowerMem 还提供了生产就绪的 HTTP API 服务器，通过 RESTful API 暴
 powermem-server --host 0.0.0.0 --port 8000
 
 # 方法 2：使用 Docker
-# 构建并运行 Docker 容器
-docker build -t oceanbase/powermem-server:latest -f docker/Dockerfile .
+# 运行 Docker 容器
 docker run -d \
   --name powermem-server \
   -p 8000:8000 \
