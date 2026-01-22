@@ -1,4 +1,14 @@
 <p align="center">
+  <b>🎉 2026 OceanBase 社区嘉年华 · 上海站 🎉</b><br/>
+  诚邀您参与社区年度盛会，共话技术未来！<br/>
+  📅 2026/01/31 10:00 - 18:00 | 📍 上海市杨浦区政立路481号大创智公共服务平台1楼<br/>
+  🚀 下午特设 <b>Vibe Coding (AI Coding)</b> 环节，现场领题挑战，赢取丰厚大奖！<br/>
+  👉 <a href="https://open.oceanbase.com/activities/4923843?activityCode=4923843&officerId=4784"><b>立即报名预约</b></a> | 🔗 <a href="https://github.com/oceanbase/seekdb/issues/123"><b>查看活动 Issue</b></a>
+</p>
+
+---
+
+<p align="center">
     <a href="https://github.com/oceanbase/oceanbase">
         <img alt="OceanBase Logo" src="docs/images/oceanbase_Logo.png" width="50%" />
     </a>
