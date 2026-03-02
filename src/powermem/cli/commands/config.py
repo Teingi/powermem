@@ -213,6 +213,9 @@ def show_cmd(ctx: CLIContext, section, show_secrets):
         if not show_secrets:
             config = _mask_secrets(config)
         
+        # Do not display connection_args under vector_store (sensitive connection details)
+        config = _strip_vector_store_connection_args(config)
+        
         # Format output
         output = format_output(
             config,
@@ -499,6 +502,21 @@ def _mask_secrets(config: dict, parent_key: str = "") -> dict:
             masked[key] = value
     
     return masked
+
+
+def _strip_vector_store_connection_args(config: dict) -> dict:
+    """Remove connection_args from vector_store section so they are not shown in config display."""
+    if not isinstance(config, dict):
+        return config
+    result = dict(config)
+    vs = result.get("vector_store")
+    if isinstance(vs, dict):
+        inner = vs.get("config")
+        if isinstance(inner, dict) and "connection_args" in inner:
+            vs = dict(vs)
+            vs["config"] = {k: v for k, v in inner.items() if k != "connection_args"}
+            result["vector_store"] = vs
+    return result
 
 
 def _resolve_default_env_file() -> str:
