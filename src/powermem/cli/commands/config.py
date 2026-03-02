@@ -286,7 +286,31 @@ def _validate_loaded_config(config: Dict[str, Any], strict: bool) -> Dict[str, A
                 if not inner_config.get(field):
                     errors.append(f"PostgreSQL connection missing: {field}")
 
+        # EMBEDDING_DIMS must match OCEANBASE_EMBEDDING_MODEL_DIMS / POSTGRES_EMBEDDING_MODEL_DIMS
+        if provider in ("oceanbase", "postgres", "pgvector"):
+            embedder_dims_raw = (config.get("embedder") or {}).get("config", {}).get("embedding_dims")
+            vs_dims_raw = inner_config.get("embedding_model_dims")
+            embedder_dims = _parse_dims(embedder_dims_raw)
+            vs_dims = _parse_dims(vs_dims_raw)
+            if embedder_dims is not None and vs_dims is not None and embedder_dims != vs_dims:
+                dims_var = "OCEANBASE_EMBEDDING_MODEL_DIMS" if provider == "oceanbase" else "POSTGRES_EMBEDDING_MODEL_DIMS"
+                errors.append(
+                    f"EMBEDDING_DIMS ({embedder_dims}) must match {dims_var} ({vs_dims}) when using {provider}"
+                )
+
     return {"valid": len(errors) == 0, "errors": errors, "warnings": warnings}
+
+
+def _parse_dims(value: Any) -> Optional[int]:
+    """Parse embedding dimension to int; return None if missing or invalid."""
+    if value is None:
+        return None
+    if isinstance(value, int):
+        return value if value > 0 else None
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
 
 
 def _load_config_with_env_file(env_file: Optional[str]) -> Dict[str, Any]:
