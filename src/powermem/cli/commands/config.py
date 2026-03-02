@@ -435,9 +435,9 @@ def test_cmd(ctx: CLIContext, component):
         try:
             print_info("Testing embedder connection...")
             memory = ctx.memory
-            if hasattr(memory, 'embedder') and memory.embedder:
+            if hasattr(memory, 'embedding') and memory.embedding:
                 # Try to generate an embedding
-                embedding = memory.embedder.embed("test")
+                embedding = memory.embedding.embed("test")
                 if embedding:
                     dims = len(embedding) if isinstance(embedding, list) else "N/A"
                     results["embedder"] = {
@@ -1121,8 +1121,8 @@ def init_cmd(ctx: CLIContext, env_file: Optional[str], dry_run: bool, test: bool
                 print_info("Testing embedder connection...")
                 try:
                     memory = test_ctx.memory
-                    if hasattr(memory, "embedder") and memory.embedder:
-                        embedding = memory.embedder.embed("test")
+                    if hasattr(memory, "embedding") and memory.embedding:
+                        embedding = memory.embedding.embed("test")
                         if embedding:
                             dims = len(embedding) if isinstance(embedding, list) else "N/A"
                             print_success(f"Embedder: Connected (dims={dims})")
