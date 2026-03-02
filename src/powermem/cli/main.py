@@ -262,17 +262,13 @@ Register-ArgumentCompleter -Native -CommandName powermem-cli -ScriptBlock {
 
 
 # Import and register command groups
-from .commands.memory import memory_group
+from .commands.memory import add_cmd, search_cmd, get_cmd, update_cmd, delete_cmd, list_cmd, delete_all_cmd
 from .commands.config import config_group
 from .commands.stats import stats_cmd
 from .commands.manage import manage_group
 from .commands.interactive import interactive_cmd, shell_cmd
 
-# Register memory commands at root level for convenience
-cli.add_command(memory_group)
-
-# Also add individual memory commands to root for direct access
-from .commands.memory import add_cmd, search_cmd, get_cmd, update_cmd, delete_cmd, list_cmd, delete_all_cmd
+# Memory commands at root: add, search, get, update, delete, list, delete-all
 
 cli.add_command(add_cmd)
 cli.add_command(search_cmd)
