@@ -56,11 +56,12 @@ def format_env_value(value: str) -> str:
     """
     Format a value for .env output.
     Use double quotes when needed and escape special characters.
+    Empty string is written as nothing (KEY=) to avoid OCEANBASE_PASSWORD="" style.
     """
     if value is None:
         return ""
     if value == "":
-        return '""'
+        return ""
     needs_quotes = any(c.isspace() for c in value) or any(c in value for c in ['#', '"', "'"])
     if not needs_quotes:
         return value
@@ -112,7 +113,10 @@ def _split_unquoted_comment(rest: str) -> tuple[str, str]:
 def _format_value_like(existing_value_token: str, new_value: str) -> str:
     """
     Format `new_value` trying to mimic the quoting style of `existing_value_token`.
+    Empty value is always written as nothing (KEY=) to avoid KEY="".
     """
+    if (new_value or "") == "":
+        return ""
     token = (existing_value_token or "").strip()
     if len(token) >= 2 and token[0] == token[-1] and token[0] in ("'", '"'):
         quote = token[0]
@@ -120,7 +124,7 @@ def _format_value_like(existing_value_token: str, new_value: str) -> str:
             # single quotes can't safely contain single quotes in .env; fall back to default formatter
             if "'" in (new_value or ""):
                 return format_env_value(new_value)
-            return f"'{new_value}'" if new_value != "" else "''"
+            return f"'{new_value}'"
         escaped = (new_value or "").replace("\\", "\\\\").replace('"', '\\"')
         return f'"{escaped}"'
     return format_env_value(new_value)

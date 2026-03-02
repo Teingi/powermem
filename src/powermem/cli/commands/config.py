@@ -648,7 +648,7 @@ def _wizard_database(existing: Dict[str, str]) -> Dict[str, str]:
             show_default=True,
         )
         pw = _prompt_keep_or_set("OceanBase password (OCEANBASE_PASSWORD)", existing.get("OCEANBASE_PASSWORD"), hide_input=True)
-        if pw is not None:
+        if pw is not None and (pw != "" or existing.get("OCEANBASE_PASSWORD")):
             updates["OCEANBASE_PASSWORD"] = pw
         updates["OCEANBASE_DATABASE"] = click.prompt(
             "OceanBase database name",
@@ -682,7 +682,7 @@ def _wizard_database(existing: Dict[str, str]) -> Dict[str, str]:
         show_default=True,
     )
     pw = _prompt_keep_or_set("PostgreSQL password (POSTGRES_PASSWORD)", existing.get("POSTGRES_PASSWORD"), hide_input=True)
-    if pw is not None:
+    if pw is not None and (pw != "" or existing.get("POSTGRES_PASSWORD")):
         updates["POSTGRES_PASSWORD"] = pw
     updates["POSTGRES_DATABASE"] = click.prompt(
         "PostgreSQL database name",
@@ -741,7 +741,7 @@ def _wizard_database_quickstart(existing: Dict[str, str]) -> Dict[str, str]:
             existing.get("OCEANBASE_PASSWORD"),
             hide_input=True,
         )
-        if pw is not None:
+        if pw is not None and (pw != "" or existing.get("OCEANBASE_PASSWORD")):
             updates["OCEANBASE_PASSWORD"] = pw
         updates["OCEANBASE_DATABASE"] = click.prompt(
             "OceanBase database name",
@@ -774,7 +774,7 @@ def _wizard_database_quickstart(existing: Dict[str, str]) -> Dict[str, str]:
         existing.get("POSTGRES_PASSWORD"),
         hide_input=True,
     )
-    if pw is not None:
+    if pw is not None and (pw != "" or existing.get("POSTGRES_PASSWORD")):
         updates["POSTGRES_PASSWORD"] = pw
     updates["POSTGRES_DATABASE"] = click.prompt(
         "PostgreSQL database name",
