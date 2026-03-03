@@ -238,36 +238,54 @@ Register-ArgumentCompleter -Native -CommandName pmem,powermem-cli -ScriptBlock $
         sys.exit(1)
 
     home = os.path.expanduser("~")
-    install_paths = {
-        "bash": os.path.join(home, ".bashrc"),
-        "zsh": os.path.join(home, ".zshrc"),
-        "fish": os.path.join(home, ".config", "fish", "completions", "pmem.fish"),
-        "powershell": None,
-    }
-
-    click.echo(f"Shell completion script for {shell}:")
-    click.echo("-" * 50)
-    click.echo(script.strip())
-    click.echo("-" * 50)
 
     if shell == "fish":
         fish_dir = os.path.join(home, ".config", "fish", "completions")
         fish_file = os.path.join(fish_dir, "pmem.fish")
+        click.echo(f"Shell completion script for {shell}:")
+        click.echo("-" * 50)
+        click.echo(script.strip())
+        click.echo("-" * 50)
         if click.confirm(f"Install to {fish_file}?"):
             os.makedirs(fish_dir, exist_ok=True)
             with open(fish_file, "w") as f:
                 f.write(script.strip())
             click.echo(click.style(f"[SUCCESS] Installed to {fish_file}", fg="green"))
     elif shell == "powershell":
+        click.echo("Shell completion script for powershell:")
+        click.echo("-" * 50)
+        click.echo(script.strip())
+        click.echo("-" * 50)
         click.echo("\nTo install, add the script above to your PowerShell profile: $PROFILE")
     else:
-        rc_file = install_paths[shell]
-        if rc_file and os.path.exists(os.path.dirname(rc_file) or "."):
-            if click.confirm(f"Append to {rc_file}?"):
-                with open(rc_file, "a") as f:
-                    f.write("\n\n# PowerMem CLI completion\n" + script.strip() + "\n")
-                click.echo(click.style(f"[SUCCESS] Added to {rc_file}", fg="green"))
-                click.echo(f"Run 'source {rc_file}' or open a new terminal to activate.")
+        # bash / zsh: write script to a dedicated file, add one source line to rc (idempotent)
+        config_dir = os.path.join(home, ".config", "powermem")
+        script_file = os.path.join(config_dir, f"{shell}_completion")
+        rc_file = os.path.join(home, ".bashrc" if shell == "bash" else ".zshrc")
+        source_line = f'\n# PowerMem CLI completion\n[ -f "{script_file}" ] && . "{script_file}"\n'
+
+        os.makedirs(config_dir, exist_ok=True)
+        with open(script_file, "w") as f:
+            f.write(script.strip())
+        click.echo(click.style(f"[SUCCESS] Wrote completion script to {script_file}", fg="green"))
+
+        if os.path.exists(rc_file):
+            with open(rc_file) as f:
+                rc_content = f.read()
+            if script_file in rc_content:
+                click.echo(f"Already sourced in {rc_file}; no change.")
+            else:
+                if click.confirm(f"Add source line to {rc_file}?"):
+                    with open(rc_file, "a") as f:
+                        f.write(source_line)
+                    click.echo(click.style(f"[SUCCESS] Added source to {rc_file}", fg="green"))
+                else:
+                    click.echo(f"To enable, add to {rc_file}:")
+                    click.echo(f'  [ -f "{script_file}" ] && . "{script_file}"')
+        else:
+            click.echo(f"To enable, create {rc_file} and add:")
+            click.echo(f'  [ -f "{script_file}" ] && . "{script_file}"')
+        click.echo("Run 'source " + rc_file + "' or open a new terminal to activate.")
 
 
 # Import and register command groups
