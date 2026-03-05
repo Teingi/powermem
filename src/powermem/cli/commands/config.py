@@ -13,7 +13,7 @@ import os
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-from ..main import pass_context, CLIContext
+from ..main import pass_context, CLIContext, json_option
 from ..utils.output import (
     format_output,
     print_success,
@@ -191,8 +191,9 @@ def _prompt_optional_float(label: str, current: Optional[str], default: float) -
     help="Configuration section to show (default: all)"
 )
 @click.option("--show-secrets", is_flag=True, help="Show API keys and passwords (USE WITH CAUTION)")
+@json_option
 @pass_context
-def show_cmd(ctx: CLIContext, section, show_secrets):
+def show_cmd(ctx: CLIContext, section, show_secrets, json_output):
     """
     Display current configuration.
     
@@ -202,6 +203,7 @@ def show_cmd(ctx: CLIContext, section, show_secrets):
         pmem config show --section llm
         pmem config show --json
     """
+    ctx.json_output = ctx.json_output or json_output
     try:
         config = ctx.config
         
@@ -328,8 +330,9 @@ def _load_config_with_env_file(env_file: Optional[str]) -> Dict[str, Any]:
     help="Path to .env file to validate"
 )
 @click.option("--strict", is_flag=True, help="Enable strict validation mode")
+@json_option
 @pass_context
-def validate_cmd(ctx: CLIContext, env_file, strict):
+def validate_cmd(ctx: CLIContext, env_file, strict, json_output):
     """
     Validate configuration file.
     
@@ -339,6 +342,7 @@ def validate_cmd(ctx: CLIContext, env_file, strict):
         pmem config validate --env-file .env.production
         pmem config validate --strict
     """
+    ctx.json_output = ctx.json_output or json_output
     try:
         print_info("Validating configuration...")
         config = _load_config_with_env_file(env_file or ctx.env_file)
@@ -378,8 +382,9 @@ def validate_cmd(ctx: CLIContext, env_file, strict):
               type=click.Choice(["database", "llm", "embedder", "all"]),
               default="all",
               help="Component to test (default: all)")
+@json_option
 @pass_context
-def test_cmd(ctx: CLIContext, component):
+def test_cmd(ctx: CLIContext, component, json_output):
     """
     Test configuration connectivity.
     
@@ -389,6 +394,7 @@ def test_cmd(ctx: CLIContext, component):
         pmem config test --component database
         pmem config test --component llm
     """
+    ctx.json_output = ctx.json_output or json_output
     results = {
         "database": None,
         "llm": None,

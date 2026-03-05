@@ -16,7 +16,7 @@ import json
 import sys
 from typing import Optional, Dict, Any
 
-from ..main import pass_context, CLIContext
+from ..main import pass_context, CLIContext, json_option
 from ..utils.output import (
     format_output,
     print_success,
@@ -52,9 +52,10 @@ def memory_group():
     help="Memory type"
 )
 @click.option("--no-infer", is_flag=True, help="Disable intelligent inference")
+@json_option
 @pass_context
 def add_cmd(ctx: CLIContext, content, user_id, agent_id, run_id, metadata,
-            scope, memory_type, no_infer):
+            scope, memory_type, no_infer, json_output):
     """
     Add a new memory.
     
@@ -63,6 +64,7 @@ def add_cmd(ctx: CLIContext, content, user_id, agent_id, run_id, metadata,
         pmem add "User prefers dark mode" --user-id user123
         pmem add "API key is stored in vault" --metadata '{"category": "security"}'
     """
+    ctx.json_output = ctx.json_output or json_output
     try:
         # Parse metadata if provided
         meta_dict = None
@@ -120,9 +122,10 @@ def add_cmd(ctx: CLIContext, content, user_id, agent_id, run_id, metadata,
     "--filters", "-f",
     help="Additional filters as JSON string"
 )
+@json_option
 @pass_context
 def search_cmd(ctx: CLIContext, query, user_id, agent_id, run_id, limit,
-               threshold, filters):
+               threshold, filters, json_output):
     """
     Search for memories.
     
@@ -131,6 +134,7 @@ def search_cmd(ctx: CLIContext, query, user_id, agent_id, run_id, limit,
         pmem search "user preferences" --user-id user123
         pmem search "dark mode" --limit 5 --json
     """
+    ctx.json_output = ctx.json_output or json_output
     try:
         # Parse filters if provided
         filter_dict = None
@@ -172,8 +176,9 @@ def search_cmd(ctx: CLIContext, query, user_id, agent_id, run_id, limit,
 @click.argument("memory_id", required=True, type=int)
 @click.option("--user-id", "-u", help="User ID for access control")
 @click.option("--agent-id", "-a", help="Agent ID for access control")
+@json_option
 @pass_context
-def get_cmd(ctx: CLIContext, memory_id, user_id, agent_id):
+def get_cmd(ctx: CLIContext, memory_id, user_id, agent_id, json_output):
     """
     Get a specific memory by ID.
     
@@ -185,6 +190,7 @@ def get_cmd(ctx: CLIContext, memory_id, user_id, agent_id):
         pmem get 123456789
         pmem get 123456789 --user-id user123
     """
+    ctx.json_output = ctx.json_output or json_output
     try:
         result = ctx.memory.get(
             memory_id=memory_id,
@@ -221,8 +227,9 @@ def get_cmd(ctx: CLIContext, memory_id, user_id, agent_id):
     "--metadata", "-m",
     help="New metadata as JSON string"
 )
+@json_option
 @pass_context
-def update_cmd(ctx: CLIContext, memory_id, content, user_id, agent_id, metadata):
+def update_cmd(ctx: CLIContext, memory_id, content, user_id, agent_id, metadata, json_output):
     """
     Update an existing memory.
     
@@ -231,6 +238,7 @@ def update_cmd(ctx: CLIContext, memory_id, content, user_id, agent_id, metadata)
         pmem update 123456789 "Updated content"
         pmem update 123456789 "New content" --metadata '{"updated": true}'
     """
+    ctx.json_output = ctx.json_output or json_output
     try:
         # Parse metadata if provided
         meta_dict = None
@@ -328,9 +336,10 @@ def delete_cmd(ctx: CLIContext, memory_id, user_id, agent_id, yes):
     "--filters", "-f",
     help="Additional filters as JSON string"
 )
+@json_option
 @pass_context
 def list_cmd(ctx: CLIContext, user_id, agent_id, run_id, limit, offset,
-             sort_by, order, filters):
+             sort_by, order, filters, json_output):
     """
     List all memories.
     
@@ -340,6 +349,7 @@ def list_cmd(ctx: CLIContext, user_id, agent_id, run_id, limit, offset,
         pmem list --limit 20 --offset 0
         pmem list --sort-by created_at --order desc
     """
+    ctx.json_output = ctx.json_output or json_output
     try:
         # Parse filters if provided
         filter_dict = None
