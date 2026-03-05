@@ -279,7 +279,44 @@ class OutputFormatter:
         lines.append("=" * 50)
         return "\n".join(lines)
     
-    # Config formatting
+    # Config formatting: order and (Required)/(Optional) follow .env.example; timezone is separate (before Database)
+    _CONFIG_SECTIONS = [
+        ("Timezone", ""),
+        ("Database", "Required"),
+        ("LLM", "Required"),
+        ("Embedding", "Required"),
+        ("Rerank", "Optional"),
+        ("Agent", "Optional"),
+        ("Intelligent Memory", "Optional"),
+        ("Performance", "Optional"),
+        ("Security", "Optional"),
+        ("Telemetry", "Optional"),
+        ("Audit", "Optional"),
+        ("Logging", "Optional"),
+        ("Graph Store", "Optional"),
+        ("Sparse Embedding", "Optional"),
+        ("Query Rewrite", "Optional"),
+        ("PowerMem HTTP API Server", "Optional"),
+    ]
+    _CONFIG_SECTION_KEYS = [
+        ["timezone"],
+        ["vector_store"],
+        ["llm"],
+        ["embedder"],
+        ["reranker"],
+        ["agent_memory"],
+        ["intelligent_memory", "memory_decay"],
+        ["performance"],
+        ["security"],
+        ["telemetry"],
+        ["audit"],
+        ["logging"],
+        ["graph_store"],
+        ["sparse_embedder"],
+        ["query_rewrite"],
+        ["server"],
+    ]
+
     def _format_config_plain(self, config: Dict[str, Any]) -> str:
         """Format configuration as plain text."""
         lines = []
@@ -296,33 +333,58 @@ class OutputFormatter:
         return "\n".join(lines)
     
     def _format_config_table(self, config: Dict[str, Any]) -> str:
-        """Format configuration as a table."""
+        """Format configuration in the order of .env.example (15 blocks); show all keys in each block."""
         lines = []
         lines.append("=" * 60)
         lines.append("PowerMem Configuration")
         lines.append("=" * 60)
-        
-        # Main sections
-        sections = ["llm", "embedder", "vector_store", "graph_store", 
-                   "intelligent_memory", "agent_memory", "reranker"]
-        
-        for section in sections:
-            section_config = config.get(section, {})
-            if section_config:
-                lines.append(f"\n[{section.upper()}]")
-                if isinstance(section_config, dict):
-                    provider = section_config.get("provider", "N/A")
-                    enabled = section_config.get("enabled", True)
-                    lines.append(f"  Provider: {provider}")
-                    if "enabled" in section_config:
-                        lines.append(f"  Enabled: {enabled}")
-                    
-                    # Show config details (masked)
-                    inner_config = section_config.get("config", {})
-                    if isinstance(inner_config, dict):
-                        for key, value in inner_config.items():
-                            lines.append(f"  {key}: {value}")
-        
+
+        def format_section_value(value: Any, indent: str, keys_shown_above: Optional[set] = None) -> None:
+            """Output config keys in uppercase; skip unset/empty; skip key if already shown at parent level (e.g. ENABLED once)."""
+            if keys_shown_above is None:
+                keys_shown_above = set()
+            if isinstance(value, dict):
+                for k, v in value.items():
+                    if k.lower() in keys_shown_above:
+                        continue
+                    if v is None:
+                        continue
+                    if isinstance(v, str) and v.strip() == "":
+                        continue
+                    if isinstance(v, dict):
+                        if not v:
+                            continue
+                        key_display = k.upper()
+                        lines.append(f"{indent}{key_display}:")
+                        format_section_value(v, indent + "  ", keys_shown_above)
+                    else:
+                        key_display = k.upper()
+                        lines.append(f"{indent}{key_display}: {v}")
+                    keys_shown_above.add(k.lower())
+            else:
+                lines.append(f"{indent}{value}")
+
+        for i, (title, tag) in enumerate(self._CONFIG_SECTIONS):
+            config_keys = self._CONFIG_SECTION_KEYS[i] if i < len(self._CONFIG_SECTION_KEYS) else []
+            header = f"[{title.upper()}]" if not tag else f"[{title.upper()} ({tag})]"
+            lines.append(f"\n{header}")
+            has_any = False
+            for key in config_keys:
+                section_config = config.get(key)
+                if section_config is not None:
+                    has_any = True
+                    indent = "  "
+                    if len(config_keys) > 1:
+                        sublabel = key.upper().replace("_", " ")
+                        lines.append(f"  {sublabel}:")
+                        indent = "    "
+                    if isinstance(section_config, dict):
+                        format_section_value(section_config, indent)
+                    else:
+                        lines.append(f"{indent}{section_config}")
+            if not has_any:
+                lines.append("  (not set)")
+
         lines.append("\n" + "=" * 60)
         return "\n".join(lines)
     
