@@ -1020,8 +1020,8 @@ def init_cmd(ctx: CLIContext, env_file: Optional[str], dry_run: bool, test: bool
             target_path = click.prompt("Enter target .env file path", default=target_path, show_default=True)
     else:
         if not click.confirm("File does not exist. Create it?", default=True):
-            print_error("Aborted.")
-            sys.exit(1)
+            print_info("Cancelled.")
+            sys.exit(0)
 
     # If the target file doesn't exist, use `.env.example` as the source of defaults,
     # so prompts match the template values and subsequent writes preserve its layout.
