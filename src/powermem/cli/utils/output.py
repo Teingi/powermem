@@ -86,8 +86,8 @@ class OutputFormatter:
         lines = []
         memory_id = memory.get("id") or memory.get("memory_id", "N/A")
         content = memory.get("memory") or memory.get("content", "N/A")
-        user_id = memory.get("user_id", "N/A")
-        agent_id = memory.get("agent_id", "N/A")
+        user_id = self._nullable_display(memory.get("user_id"))
+        agent_id = self._nullable_display(memory.get("agent_id"))
         created_at = memory.get("created_at", "N/A")
         
         lines.append(f"ID: {memory_id}")
@@ -111,12 +111,12 @@ class OutputFormatter:
         
         memory_id = memory.get("id") or memory.get("memory_id", "N/A")
         content = memory.get("memory") or memory.get("content", "N/A")
-        user_id = memory.get("user_id", "N/A")
-        agent_id = memory.get("agent_id", "N/A")
-        run_id = memory.get("run_id", "N/A")
+        user_id = self._nullable_display(memory.get("user_id"))
+        agent_id = self._nullable_display(memory.get("agent_id"))
+        run_id = self._nullable_display(memory.get("run_id"))
         created_at = memory.get("created_at", "N/A")
         updated_at = memory.get("updated_at", "N/A")
-        
+
         lines.append(f"{'ID:':<15} {memory_id}")
         lines.append(f"{'Content:':<15} {self._truncate(content, 80)}")
         lines.append(f"{'User ID:':<15} {user_id}")
@@ -163,8 +163,8 @@ class OutputFormatter:
         # Rows
         for memory in memories:
             memory_id = str(memory.get("id") or memory.get("memory_id", "N/A"))[:18]
-            user_id = str(memory.get("user_id", "N/A"))[:13]
-            agent_id = str(memory.get("agent_id", "N/A"))[:13]
+            user_id = self._nullable_display(memory.get("user_id"))[:13]
+            agent_id = self._nullable_display(memory.get("agent_id"))[:13]
             content = memory.get("memory") or memory.get("content", "N/A")
             content = self._truncate(content, 38)
             
@@ -210,10 +210,10 @@ class OutputFormatter:
             memory_id = str(memory.get("id") or memory.get("memory_id", "N/A"))[:18]
             score = memory.get("score", 0)
             score_str = f"{score:.4f}" if isinstance(score, float) else str(score)
-            user_id = str(memory.get("user_id", "N/A"))[:10]
+            user_id = self._nullable_display(memory.get("user_id"))[:10]
             content = memory.get("memory") or memory.get("content", "N/A")
             content = self._truncate(content, 43)
-            
+
             lines.append(f"{memory_id:<20} {score_str:<10} {user_id:<12} {content:<45}")
         
         lines.append("=" * len(header))
@@ -396,6 +396,13 @@ class OutputFormatter:
         if len(text) > max_length:
             return text[:max_length - 3] + "..."
         return text
+
+    @staticmethod
+    def _nullable_display(value: Any) -> str:
+        """Display value for nullable DB fields: None or empty string -> 'NULL' (consistent with database)."""
+        if value is None or (isinstance(value, str) and value.strip() == ""):
+            return "NULL"
+        return str(value)
 
 
 def format_output(
