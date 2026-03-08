@@ -257,6 +257,10 @@ def update_cmd(ctx: CLIContext, memory_id, content, user_id, agent_id, metadata,
             metadata=meta_dict,
         )
         
+        if result is None:
+            print_error(f"Memory not found or access denied: {memory_id}")
+            sys.exit(1)
+        
         if ctx.json_output:
             click.echo(format_output(result, "generic", json_output=True))
         else:
