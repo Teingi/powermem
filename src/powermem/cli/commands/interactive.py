@@ -363,7 +363,8 @@ Examples:
             if result:
                 print_success(f"Memory deleted: ID={memory_id}")
             else:
-                print_error(f"Failed to delete memory: {memory_id}")
+                # Consistent with update: same prompt for not found or access denied (issue #299)
+                print_error(f"Memory not found or access denied: {memory_id}")
                 
         except Exception as e:
             print_error(f"Failed: {e}")
