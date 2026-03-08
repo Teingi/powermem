@@ -320,13 +320,16 @@ Examples:
         content = " ".join(positional[1:])
         
         try:
-            self.ctx.memory.update(
+            result = self.ctx.memory.update(
                 memory_id=memory_id,
                 content=content,
                 user_id=self._get_user_id(options),
                 agent_id=self._get_agent_id(options),
             )
-            print_success(f"Memory updated: ID={memory_id}")
+            if result is None or not isinstance(result, dict) or not result:
+                print_error(f"Memory not found or access denied: {memory_id}")
+            else:
+                print_success(f"Memory updated: ID={memory_id}")
             
         except Exception as e:
             print_error(f"Failed: {e}")

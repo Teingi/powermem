@@ -257,7 +257,8 @@ def update_cmd(ctx: CLIContext, memory_id, content, user_id, agent_id, metadata,
             metadata=meta_dict,
         )
         
-        if result is None:
+        # None or invalid result means not found or permission denied (see issue #298)
+        if result is None or not isinstance(result, dict) or not result:
             print_error(f"Memory not found or access denied: {memory_id}")
             sys.exit(1)
         
