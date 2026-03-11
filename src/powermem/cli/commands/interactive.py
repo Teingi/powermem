@@ -27,9 +27,9 @@ class InteractiveSession:
 PowerMem Interactive Mode
 =========================
 
-Available commands:
+Available commands (you can also use "memory <cmd> ..." e.g. memory add "..."):
   add <content> [--user-id <id>] [--agent-id <id>]
-      Add a new memory
+      Add a new memory (same as CLI: pmem memory add ...)
       
   search <query> [--user-id <id>] [--limit <n>] [--threshold <t>]
       Search for memories (--threshold: min similarity, e.g. 0.3)
@@ -129,6 +129,12 @@ Examples:
         
         cmd = parts[0].lower()
         args = parts[1:]
+        
+        # Support "memory add ..." / "memory search ..." etc. so interactive mode
+        # is consistent with CLI command-line usage (pmem memory add ...).
+        if cmd == "memory" and args:
+            cmd = args[0].lower()
+            args = args[1:]
         
         # Route to command handler
         handlers = {
