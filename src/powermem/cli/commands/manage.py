@@ -257,9 +257,9 @@ def restore_cmd(ctx: CLIContext, input_file, user_id, agent_id, dry_run, skip_du
 
 @click.command(name="cleanup")
 @click.option("--threshold", "-t", type=float, default=0.1,
-              help="Retention score threshold for deletion (default: 0.1)")
+              help="Retention score threshold for deletion, in (0, 1] (default: 0.1)")
 @click.option("--archive-threshold", type=float, default=0.3,
-              help="Retention score threshold for archiving (default: 0.3)")
+              help="Retention score threshold for archiving, in (0, 1]; must be > threshold (default: 0.3)")
 @click.option("--user-id", "-u", help="Filter by user ID")
 @click.option("--agent-id", "-a", help="Filter by agent ID")
 @click.option("--dry-run", is_flag=True, help="Preview cleanup without making changes")
@@ -280,6 +280,31 @@ def cleanup_cmd(ctx: CLIContext, threshold, archive_threshold, user_id, agent_id
     """
     ctx.json_output = ctx.json_output or json_output
     try:
+        # Validate threshold: retention score is in [0, 1], threshold must be in (0, 1]
+        if threshold <= 0:
+            print_error(
+                f"Invalid --threshold {threshold}: must be greater than 0. "
+                "Retention score is in [0, 1]; threshold 0 or negative would be unreasonable."
+            )
+            sys.exit(1)
+        if threshold > 1:
+            print_error(
+                f"Invalid --threshold {threshold}: retention score is in [0, 1], "
+                "so threshold must not exceed 1. Use a value between 0 and 1 (e.g. 0.1, 0.3)."
+            )
+            sys.exit(1)
+        if archive_threshold <= 0 or archive_threshold > 1:
+            print_error(
+                f"Invalid --archive-threshold {archive_threshold}: must be in (0, 1]."
+            )
+            sys.exit(1)
+        if threshold >= archive_threshold:
+            print_error(
+                f"Invalid: --threshold ({threshold}) must be less than --archive-threshold ({archive_threshold}). "
+                "Memories with score < threshold are deleted; those between threshold and archive-threshold are archived."
+            )
+            sys.exit(1)
+
         print_info("Analyzing memories for cleanup...")
         
         # Get all memories to analyze
