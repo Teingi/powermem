@@ -483,6 +483,16 @@ def migrate_cmd(ctx: CLIContext, target_store, source_store, delete_source, dry_
     """
     ctx.json_output = ctx.json_output or json_output
     try:
+        # Migrate (sub-store) is only supported with OceanBase; intercept for SQLite etc.
+        storage_type = (getattr(ctx.memory, "storage_type", None) or "").lower()
+        if storage_type != "oceanbase":
+            print_error(
+                f"Migration is only supported with OceanBase storage. "
+                f"Current storage: {storage_type or 'unknown'}. "
+                "Use OceanBase as DATABASE_PROVIDER to use sub-stores and migrate."
+            )
+            sys.exit(1)
+
         print_info(f"Preparing migration to sub-store {target_store}...")
         
         if dry_run:
