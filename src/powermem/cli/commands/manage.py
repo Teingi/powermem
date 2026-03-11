@@ -471,7 +471,10 @@ def migrate_cmd(ctx: CLIContext, target_store, source_store, delete_source, dry_
     """
     Migrate data between stores.
     
-    Used to move memories between main store and sub-stores.
+    Used to move memories between main store and sub-stores. Sub-stores must be
+    defined in your config under 'sub_stores' before running migrate .
+    There is no CLI command to create sub-stores; 
+    they are configured in config only.
     
     \b
     Examples:
@@ -522,10 +525,22 @@ def migrate_cmd(ctx: CLIContext, target_store, source_store, delete_source, dry_
         
         # Perform migration
         print_info("Starting migration...")
-        result = ctx.memory.migrate_to_sub_store(
-            sub_store_index=target_store,
-            delete_source=delete_source,
-        )
+        try:
+            result = ctx.memory.migrate_to_sub_store(
+                sub_store_index=target_store,
+                delete_source=delete_source,
+            )
+        except ValueError as e:
+            if "No sub stores configured" in str(e):
+                print_error(
+                    "No sub stores configured. Sub-stores must be defined in your config "
+                    "(e.g. config file or environment) under 'sub_stores' before running migrate. "
+                )
+                print_info(
+                    "Tip: There is no CLI command to create sub-stores; add them in config and restart."
+                )
+                sys.exit(1)
+            raise
         
         print_success("Migration completed")
         
