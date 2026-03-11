@@ -489,17 +489,22 @@ def migrate_cmd(ctx: CLIContext, target_store, source_store, delete_source, dry_
             stats = ctx.memory.get_statistics()
             total = stats.get("total_memories", 0)
             
+            source_display = "Main store" if source_store is None else f"Sub-store {source_store}"
+            target_display = f"Sub-store {target_store}"
+            
             click.echo(f"\nMigration Preview:")
-            click.echo(f"  Source: {'Main store' if source_store is None else f'Sub-store {source_store}'}")
-            click.echo(f"  Target: Sub-store {target_store}")
+            click.echo(f"  Source: {source_display}")
+            click.echo(f"  Target: {target_display}")
             click.echo(f"  Memories to migrate: ~{total}")
             click.echo(f"  Delete source: {delete_source}")
             
             if ctx.json_output:
                 click.echo(format_output({
                     "dry_run": True,
-                    "source": source_store,
-                    "target": target_store,
+                    "source": source_display,
+                    "target": target_display,
+                    "source_store_index": source_store,
+                    "target_store_index": target_store,
                     "estimated_count": total,
                     "delete_source": delete_source,
                 }, "generic", json_output=True))
@@ -525,9 +530,11 @@ def migrate_cmd(ctx: CLIContext, target_store, source_store, delete_source, dry_
         print_success("Migration completed")
         
         if ctx.json_output:
+            target_display = f"Sub-store {target_store}"
             click.echo(format_output({
                 "status": "success",
-                "target": target_store,
+                "target": target_display,
+                "target_store_index": target_store,
                 "delete_source": delete_source,
                 "result": result,
             }, "generic", json_output=True))
