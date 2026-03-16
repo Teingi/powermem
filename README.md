@@ -36,6 +36,10 @@
 
 <img src="docs/images/benchmark_metrics_en.svg" alt="PowerMem LOCOMO Benchmark Metrics" width="900"/>
 
+*PowerMem integrated with [OpenClaw](https://github.com/openclaw-ai/openclaw): intelligent memory for AI agents.*
+
+<img src="docs/images/openclaw_powermem.jpeg" alt="PowerMem with OpenClaw" width="900"/>
+
 </div>
 
 - 🎯 **Accurate**: **[48.77% Accuracy Improvement]** More accurate than full-context in the LOCOMO benchmark (78.70% VS 52.9%)

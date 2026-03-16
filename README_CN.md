@@ -37,6 +37,10 @@
 
 <img src="docs/images/benchmark_metrics_cn.svg" alt="PowerMem LOCOMO 压测指标" width="900"/>
 
+*PowerMem 与 [OpenClaw](https://github.com/openclaw-ai/openclaw) 集成：为 AI 智能体提供智能记忆。*
+
+<img src="docs/images/openclaw_powermem.jpeg" alt="PowerMem 与 OpenClaw" width="900"/>
+
 </div>
 
 - 🎯 **更准**：**[准确率提升 48.77%]** 在 LOCOMO 基准测试中，相比于 full-context 更准确（78.70% VS 52.9%）

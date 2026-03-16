@@ -36,6 +36,10 @@
 
 <img src="docs/images/benchmark_metrics_jp.svg" alt="PowerMem LOCOMO ベンチマーク指標" width="900"/>
 
+*PowerMem と [OpenClaw](https://github.com/openclaw-ai/openclaw) の連携：AI エージェント向けインテリジェントメモリ。*
+
+<img src="docs/images/openclaw_powermem.jpeg" alt="PowerMem と OpenClaw" width="900"/>
+
 </div>
 
 - 🎯 **より正確**：**[精度 48.77% 向上]** LOCOMO ベンチマークで full-context より正確（78.70% VS 52.9%）
