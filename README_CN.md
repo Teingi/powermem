@@ -5,6 +5,14 @@
 </p>
 
 <p align="center">
+
+*PowerMem 与 [OpenClaw](https://github.com/openclaw-ai/openclaw) 集成：为 AI 智能体提供智能记忆。*
+
+<img src="docs/images/openclaw_powermem.jpeg" alt="PowerMem 与 OpenClaw" width="900"/>
+
+</p>
+
+<p align="center">
     <a href="https://pepy.tech/project/powermem">
         <img src="https://img.shields.io/pypi/dm/powermem" alt="PowerMem PyPI - Downloads">
     </a>
@@ -36,10 +44,6 @@
 <div align="center">
 
 <img src="docs/images/benchmark_metrics_cn.svg" alt="PowerMem LOCOMO 压测指标" width="900"/>
-
-*PowerMem 与 [OpenClaw](https://github.com/openclaw-ai/openclaw) 集成：为 AI 智能体提供智能记忆。*
-
-<img src="docs/images/openclaw_powermem.jpeg" alt="PowerMem 与 OpenClaw" width="900"/>
 
 </div>
 

@@ -5,6 +5,14 @@
 </p>
 
 <p align="center">
+
+*PowerMem integrated with [OpenClaw](https://github.com/openclaw-ai/openclaw): intelligent memory for AI agents.*
+
+<img src="docs/images/openclaw_powermem.jpeg" alt="PowerMem with OpenClaw" width="900"/>
+
+</p>
+
+<p align="center">
     <a href="https://pepy.tech/project/powermem">
         <img src="https://img.shields.io/pypi/dm/powermem" alt="PowerMem PyPI - Downloads">
     </a>
@@ -35,10 +43,6 @@
 <div align="center">
 
 <img src="docs/images/benchmark_metrics_en.svg" alt="PowerMem LOCOMO Benchmark Metrics" width="900"/>
-
-*PowerMem integrated with [OpenClaw](https://github.com/openclaw-ai/openclaw): intelligent memory for AI agents.*
-
-<img src="docs/images/openclaw_powermem.jpeg" alt="PowerMem with OpenClaw" width="900"/>
 
 </div>
 
