@@ -3,7 +3,7 @@ import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
-  title: 'PowerMem',
+  title: 'SeekMem',
   tagline: 'Build Persistent Memory for AI Applications',
   favicon: 'img/favicon.svg',
 
@@ -15,7 +15,7 @@ const config: Config = {
   baseUrl: '/',
 
   organizationName: 'oceanbase',
-  projectName: 'powermem',
+  projectName: 'seekmem',
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -62,16 +62,16 @@ const config: Config = {
   ],
 
   themeConfig: {
-    image: 'img/powermem-social-card.jpg',
+    image: 'img/seekmem-social-card.jpg',
     colorMode: {
       respectPrefersColorScheme: false,
       defaultMode: 'dark',
       disableSwitch: true,
     },
     navbar: {
-      title: 'PowerMem',
+      title: 'SeekMem',
       logo: {
-        alt: 'PowerMem Logo',
+        alt: 'SeekMem Logo',
         src: 'img/logo.svg',
       },
       items: [
@@ -97,7 +97,7 @@ const config: Config = {
           position: 'left',
         },
         {
-          href: 'https://github.com/oceanbase/powermem',
+          href: 'https://github.com/oceanbase/seekmem',
           label: 'GitHub',
           position: 'right',
         },
@@ -138,7 +138,7 @@ const config: Config = {
           items: [
             {
               label: 'GitHub',
-              href: 'https://github.com/oceanbase/powermem',
+              href: 'https://github.com/oceanbase/seekmem',
             },
             {
               label: 'Discord',

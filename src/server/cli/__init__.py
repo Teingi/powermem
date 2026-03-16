@@ -1,3 +1,3 @@
 """
-CLI tools for PowerMem API Server
+CLI tools for SeekMem API Server
 """

@@ -9,9 +9,9 @@ import pytest
 import uuid
 import asyncio
 from unittest.mock import MagicMock, patch
-from powermem import AsyncMemory
-from powermem.storage.sqlite.sqlite_vector_store import SQLiteVectorStore
-from powermem.integrations.embeddings.mock import MockEmbeddings
+from seekmem import AsyncMemory
+from seekmem.storage.sqlite.sqlite_vector_store import SQLiteVectorStore
+from seekmem.integrations.embeddings.mock import MockEmbeddings
 
 
 class TestAsyncMemoryIntegration:
@@ -39,14 +39,14 @@ class TestAsyncMemoryIntegration:
         }
         
         # Mock LLM to return simple responses
-        patcher_llm = patch('powermem.integrations.llm.factory.LLMFactory.create')
+        patcher_llm = patch('seekmem.integrations.llm.factory.LLMFactory.create')
         mock_llm_factory = patcher_llm.start()
         mock_llm = MagicMock()
         mock_llm.generate_response.return_value = {"content": "Test memory content"}
         mock_llm_factory.return_value = mock_llm
         
         # Mock EmbedderFactory to handle the 2-parameter call
-        patcher_embedder = patch('powermem.core.async_memory.EmbedderFactory.create')
+        patcher_embedder = patch('seekmem.core.async_memory.EmbedderFactory.create')
         mock_embedder_factory = patcher_embedder.start()
         mock_embedder_factory.return_value = MockEmbeddings()
         

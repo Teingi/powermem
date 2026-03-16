@@ -1,5 +1,5 @@
 """
-Service layer for PowerMem API Server
+Service layer for SeekMem API Server
 """
 
 from .memory_service import MemoryService

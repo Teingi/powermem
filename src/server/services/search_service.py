@@ -1,10 +1,10 @@
 """
-Search service for PowerMem API
+Search service for SeekMem API
 """
 
 import logging
 from typing import Any, Dict, List, Optional
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 from ..models.errors import ErrorCode, APIError
 from ..utils.metrics import get_metrics_collector
 
@@ -19,7 +19,7 @@ class SearchService:
         Initialize search service.
         
         Args:
-            config: PowerMem configuration (uses auto_config if None)
+            config: SeekMem configuration (uses auto_config if None)
         """
         if config is None:
             config = auto_config()

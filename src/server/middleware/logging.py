@@ -1,5 +1,5 @@
 """
-Logging middleware for PowerMem API
+Logging middleware for SeekMem API
 """
 
 import logging

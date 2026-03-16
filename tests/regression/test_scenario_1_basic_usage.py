@@ -7,7 +7,7 @@ import os
 
 from typing import Any, Dict, Optional
 from dotenv import load_dotenv
-from powermem import create_memory
+from seekmem import create_memory
 
 # Check if .env exists and load it
 env_path = os.path.join(os.path.dirname(__file__), "..", "..", ".env")

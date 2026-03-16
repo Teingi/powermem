@@ -1,11 +1,11 @@
 # UserMemory Guide
 
-UserMemory is PowerMem's advanced user profile management module. It automatically extracts and maintains user profile information from conversations while also managing conversation event memory.
+UserMemory is SeekMem's advanced user profile management module. It automatically extracts and maintains user profile information from conversations while also managing conversation event memory.
 
 ## Prerequisites
 
 - Python 3.10+
-- PowerMem installed (`pip install powermem`)
+- SeekMem installed (`pip install seekmem`)
 - LLM and embedding services configured (for profile extraction)
 - Vector store configured (for storing memories and profiles)
 
@@ -31,7 +31,7 @@ UserMemory adds user profile management on top of `Memory`:
 Initialization of `UserMemory` is similar to `Memory` and accepts the same configuration options:
 
 ```python
-from powermem import UserMemory, auto_config
+from seekmem import UserMemory, auto_config
 
 # Use auto configuration (loads from .env)
 config = auto_config()
@@ -41,7 +41,7 @@ user_memory = UserMemory(config=config)
 ### Configure with dict
 
 ```python
-from powermem import UserMemory
+from seekmem import UserMemory
 
 config = {
     'llm': {
@@ -67,7 +67,7 @@ config = {
                 'port': 2881,
                 'user': 'root@sys',
                 'password': 'password',
-                'db_name': 'powermem'
+                'db_name': 'seekmem'
             }
         }
     }
@@ -560,7 +560,7 @@ else:
 Below is a complete example demonstrating the main features of `UserMemory`:
 
 ```python
-from powermem import UserMemory, auto_config
+from seekmem import UserMemory, auto_config
 
 # Initialize
 config = auto_config()
@@ -651,6 +651,6 @@ for i, result in enumerate(search_results.get('results', []), 1):
 
 ## Related Documents
 
-- [Getting Started](0001-getting_started.md) — learn the basics of PowerMem
+- [Getting Started](0001-getting_started.md) — learn the basics of SeekMem
 - [Configuration Guide](0003-configuration.md) — detailed configuration
 - [Multi‑agent Guide](0005-multi_agent.md) — using multiple agents

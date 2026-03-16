@@ -12,7 +12,7 @@ function useGitHubStars() {
   const [stars, setStars] = useState<number | null>(null);
 
   useEffect(() => {
-    fetch('https://api.github.com/repos/oceanbase/powermem')
+    fetch('https://api.github.com/repos/oceanbase/seekmem')
       .then((res) => res.json())
       .then((data) => {
         if (data.stargazers_count && data.stargazers_count > 1000) {
@@ -33,7 +33,7 @@ export default function Hero() {
   const isZh = i18n.currentLocale === 'zh';
 
   const codeExample = isZh
-    ? `from powermem import Memory, auto_config
+    ? `from seekmem import Memory, auto_config
 
 # 自动从 .env 加载配置
 config = auto_config()
@@ -44,7 +44,7 @@ memory.add("用户喜欢咖啡", user_id="user123")
 
 # 搜索记忆
 memories = memory.search("用户偏好", user_id="user123")`
-    : `from powermem import Memory, auto_config
+    : `from seekmem import Memory, auto_config
 
 # Auto-load from .env
 config = auto_config()
@@ -109,7 +109,7 @@ memories = memory.search("user preferences", user_id="user123")`;
             </Link>
             <Link
               className="button button--secondary button--lg"
-              href="https://github.com/oceanbase/powermem"
+              href="https://github.com/oceanbase/seekmem"
             >
               <CodeIcon className={styles.buttonIcon} />
               {isZh ? '查看代码' : 'View Code'}

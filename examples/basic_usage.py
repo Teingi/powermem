@@ -1,5 +1,5 @@
 """
-Basic usage example for powermem
+Basic usage example for seekmem
 
 This example demonstrates basic memory operations.
 
@@ -13,7 +13,7 @@ Or simply run without config - it will use mock providers for demonstration.
 
 import os
 from dotenv import load_dotenv
-from powermem import create_memory
+from seekmem import create_memory
 
 
 def main():

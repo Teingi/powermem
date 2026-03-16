@@ -19,7 +19,7 @@ def _validate_and_parse_config(config: Dict[str, Any]) -> Tuple[ObVecClient, str
     Validate configuration and create database connection
     
     Args:
-        config: PowerMem configuration dictionary
+        config: SeekMem configuration dictionary
         
     Returns:
         Tuple[ObVecClient, str]: (database connection object, table name)
@@ -29,14 +29,14 @@ def _validate_and_parse_config(config: Dict[str, Any]) -> Tuple[ObVecClient, str
         ValueError: Invalid configuration content
         RuntimeError: Connection failed
     """
-    from powermem.configs import MemoryConfig
+    from seekmem.configs import MemoryConfig
     
     # 1. Validate config type
     if not isinstance(config, (dict, MemoryConfig)):
         raise TypeError(
             f"Expected dict or MemoryConfig instance, got {type(config).__name__}. "
             f"Please pass a config dict:\n"
-            f"  from powermem import auto_config\n"
+            f"  from seekmem import auto_config\n"
             f"  config = auto_config()\n"
             f"  ScriptManager.run('upgrade-sparse-vector', config)"
         )
@@ -107,7 +107,7 @@ def upgrade_sparse_vector(config: Dict[str, Any]) -> bool:
     (existing columns and indexes will be skipped).
     
     Args:
-        config: PowerMem configuration dictionary containing OceanBase connection settings
+        config: SeekMem configuration dictionary containing OceanBase connection settings
         
     Returns:
         bool: Returns True on success, False on failure
@@ -117,7 +117,7 @@ def upgrade_sparse_vector(config: Dict[str, Any]) -> bool:
         ValueError: Storage type is not OceanBase or config is invalid
         RuntimeError: Database version does not support sparse vectors
     """
-    from powermem.utils.oceanbase_util import OceanBaseUtil
+    from seekmem.utils.oceanbase_util import OceanBaseUtil
     
     # Validate config and create connection
     obvector, collection_name = _validate_and_parse_config(config)
@@ -159,7 +159,7 @@ def upgrade_sparse_vector(config: Dict[str, Any]) -> bool:
 
 def _add_sparse_embedding_column(obvector: ObVecClient, table_name: str) -> None:
     """Add sparse_embedding column to table"""
-    from powermem.utils.oceanbase_util import OceanBaseUtil
+    from seekmem.utils.oceanbase_util import OceanBaseUtil
     
     if OceanBaseUtil.check_column_exists(obvector, table_name, 'sparse_embedding'):
         logger.info("sparse_embedding column already exists, skipping")
@@ -182,7 +182,7 @@ def _add_sparse_embedding_column(obvector: ObVecClient, table_name: str) -> None
 
 def _create_sparse_embedding_index(obvector: ObVecClient, table_name: str) -> None:
     """Create sparse vector index on table"""
-    from powermem.utils.oceanbase_util import OceanBaseUtil
+    from seekmem.utils.oceanbase_util import OceanBaseUtil
     
     if OceanBaseUtil.check_index_exists(obvector, table_name, 'sparse_embedding_idx'):
         logger.info("sparse_embedding_idx already exists, skipping")
@@ -220,7 +220,7 @@ def downgrade_sparse_vector(config: Dict[str, Any]) -> bool:
     Warning: This operation will delete all sparse vector data and is irreversible!
     
     Args:
-        config: PowerMem configuration dictionary containing OceanBase connection settings
+        config: SeekMem configuration dictionary containing OceanBase connection settings
         
     Returns:
         bool: Returns True on success, False on failure
@@ -229,7 +229,7 @@ def downgrade_sparse_vector(config: Dict[str, Any]) -> bool:
         TypeError: Invalid configuration type
         ValueError: Storage type is not OceanBase or config is invalid
     """
-    from powermem.utils.oceanbase_util import OceanBaseUtil
+    from seekmem.utils.oceanbase_util import OceanBaseUtil
     
     # Validate config and create connection
     obvector, collection_name = _validate_and_parse_config(config)
@@ -260,7 +260,7 @@ def downgrade_sparse_vector(config: Dict[str, Any]) -> bool:
 
 def _drop_sparse_embedding_index(obvector: ObVecClient, table_name: str) -> None:
     """Drop sparse vector index from table"""
-    from powermem.utils.oceanbase_util import OceanBaseUtil
+    from seekmem.utils.oceanbase_util import OceanBaseUtil
     
     if not OceanBaseUtil.check_index_exists(obvector, table_name, 'sparse_embedding_idx'):
         logger.info("sparse_embedding_idx does not exist, skipping")
@@ -282,7 +282,7 @@ def _drop_sparse_embedding_index(obvector: ObVecClient, table_name: str) -> None
 
 def _drop_sparse_embedding_column(obvector: ObVecClient, table_name: str) -> None:
     """Drop sparse_embedding column from table"""
-    from powermem.utils.oceanbase_util import OceanBaseUtil
+    from seekmem.utils.oceanbase_util import OceanBaseUtil
     
     if not OceanBaseUtil.check_column_exists(obvector, table_name, 'sparse_embedding'):
         logger.info("sparse_embedding column does not exist, skipping")

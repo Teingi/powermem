@@ -16,8 +16,8 @@ import argparse
 import pytest
 import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "..", "src"))
-from powermem import UserMemory
-from powermem import auto_config
+from seekmem import UserMemory
+from seekmem import auto_config
 
 def init_user_memory(config=None, agent_id="test_agent"):
     """

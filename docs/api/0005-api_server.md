@@ -1,12 +1,12 @@
 # HTTP API Server
 
-PowerMem HTTP API Server provides a production-ready RESTful API interface for PowerMem, enabling any application that supports HTTP calls to integrate PowerMem's intelligent memory capabilities.
+SeekMem HTTP API Server provides a production-ready RESTful API interface for SeekMem, enabling any application that supports HTTP calls to integrate SeekMem's intelligent memory capabilities.
 
 ## Overview
 
-The PowerMem HTTP API Server is built with FastAPI and provides:
+The SeekMem HTTP API Server is built with FastAPI and provides:
 
-- **RESTful API endpoints** for all core PowerMem operations
+- **RESTful API endpoints** for all core SeekMem operations
 - **API Key authentication** for secure access
 - **Rate limiting** to protect server resources
 - **Automatic API documentation** (Swagger UI and ReDoc)
@@ -16,26 +16,26 @@ The PowerMem HTTP API Server is built with FastAPI and provides:
 
 ### Starting the API Server
 ```bash
-# Method 1: Install from powermem package, use CLI command
-pip install powermem
-powermem-server --host 0.0.0.0 --port 8000
+# Method 1: Install from seekmem package, use CLI command
+pip install seekmem
+seekmem-server --host 0.0.0.0 --port 8000
 
 # Method 2: Using Docker
 # Build and run with Docker
-docker build -t oceanbase/powermem-server:latest -f docker/Dockerfile .
+docker build -t oceanbase/seekmem-server:latest -f docker/Dockerfile .
 docker run -d \
-  --name powermem-server \
+  --name seekmem-server \
   -p 8000:8000 \
   -v $(pwd)/.env:/app/.env:ro \
   --env-file .env \
-  oceanbase/powermem-server:latest
+  oceanbase/seekmem-server:latest
 
 # Or use Docker Compose (recommended)
 docker-compose -f docker/docker-compose.yml up -d
 
 # Method 3: From source code, use Makefile
-git clone git@github.com:oceanbase/powermem.git
-cd powermem
+git clone git@github.com:oceanbase/seekmem.git
+cd seekmem
 # Start server (production mode)
 make server-start
 
@@ -72,82 +72,82 @@ mkdir -p src/server/dashboard
 cp -r dashboard/dist/* src/server/dashboard/
 ```
 
-### PowerMem .env Configuration
-The PowerMem SDK configuration is the same as the previous v0.2.0 version, with the addition of PowerMem server configuration section 12. PowerMem HTTP API Server Configuration. In most cases, the default configuration can be kept.
+### SeekMem .env Configuration
+The SeekMem SDK configuration is the same as the previous v0.2.0 version, with the addition of SeekMem server configuration section 12. SeekMem HTTP API Server Configuration. In most cases, the default configuration can be kept.
 
 ```bash
 =============================================================================
-# 12. PowerMem HTTP API Server Configuration
+# 12. SeekMem HTTP API Server Configuration
 # =============================================================================
-# Configuration for the PowerMem HTTP API Server
+# Configuration for the SeekMem HTTP API Server
 # =============================================================================
 
 # -----------------------------------------------------------------------------
 # Server Settings
 # -----------------------------------------------------------------------------
 # Server host address (0.0.0.0 to listen on all interfaces)
-POWERMEM_SERVER_HOST=0.0.0.0
+SEEKMEM_SERVER_HOST=0.0.0.0
 
 # Server port number
-POWERMEM_SERVER_PORT=8000
+SEEKMEM_SERVER_PORT=8000
 
 # Number of worker processes (only used when reload=false)
-POWERMEM_SERVER_WORKERS=4
+SEEKMEM_SERVER_WORKERS=4
 
 # Enable auto-reload for development (true/false)
-POWERMEM_SERVER_RELOAD=false
+SEEKMEM_SERVER_RELOAD=false
 
 # -----------------------------------------------------------------------------
 # Authentication Settings
 # -----------------------------------------------------------------------------
 # Enable API key authentication (true/false)
-POWERMEM_SERVER_AUTH_ENABLED=false
+SEEKMEM_SERVER_AUTH_ENABLED=false
 
 # API keys (comma-separated list)
-# Example: POWERMEM_SERVER_API_KEYS=key1,key2,key3
-POWERMEM_SERVER_API_KEYS=
+# Example: SEEKMEM_SERVER_API_KEYS=key1,key2,key3
+SEEKMEM_SERVER_API_KEYS=
 
 # -----------------------------------------------------------------------------
 # Rate Limiting Settings
 # -----------------------------------------------------------------------------
 # Enable rate limiting (true/false)
-POWERMEM_SERVER_RATE_LIMIT_ENABLED=true
+SEEKMEM_SERVER_RATE_LIMIT_ENABLED=true
 
 # Rate limit per minute per IP address
-POWERMEM_SERVER_RATE_LIMIT_PER_MINUTE=100
+SEEKMEM_SERVER_RATE_LIMIT_PER_MINUTE=100
 
 # -----------------------------------------------------------------------------
 # Logging Settings
 # -----------------------------------------------------------------------------
-POWERMEM_SERVER_LOG_FILE=server.log
+SEEKMEM_SERVER_LOG_FILE=server.log
 
 # Log level: DEBUG, INFO, WARNING, ERROR, CRITICAL
-POWERMEM_SERVER_LOG_LEVEL=INFO
+SEEKMEM_SERVER_LOG_LEVEL=INFO
 
 # Log format: json or text
-POWERMEM_SERVER_LOG_FORMAT=text
+SEEKMEM_SERVER_LOG_FORMAT=text
 
 # -----------------------------------------------------------------------------
 # API Settings
 # -----------------------------------------------------------------------------
 # API title (shown in Swagger UI)
-POWERMEM_SERVER_API_TITLE=PowerMem API
+SEEKMEM_SERVER_API_TITLE=SeekMem API
 
 # API version
-POWERMEM_SERVER_API_VERSION=v1
+SEEKMEM_SERVER_API_VERSION=v1
 
 # API description (shown in Swagger UI)
-POWERMEM_SERVER_API_DESCRIPTION=PowerMem HTTP API Server - Intelligent Memory System
+SEEKMEM_SERVER_API_DESCRIPTION=SeekMem HTTP API Server - Intelligent Memory System
 
 # -----------------------------------------------------------------------------
 # CORS Settings
 # -----------------------------------------------------------------------------
 # Enable CORS (true/false)
-POWERMEM_SERVER_CORS_ENABLED=true
+SEEKMEM_SERVER_CORS_ENABLED=true
 
 # CORS allowed origins (comma-separated, use * for all origins)
-# Example: POWERMEM_SERVER_CORS_ORIGINS=http://localhost:3000,https://example.com
-POWERMEM_SERVER_CORS_ORIGINS=*
+# Example: SEEKMEM_SERVER_CORS_ORIGINS=http://localhost:3000,https://example.com
+SEEKMEM_SERVER_CORS_ORIGINS=*
 
 ```
 
@@ -171,11 +171,11 @@ When authentication is enabled, configure the `.env` file:
 
 ```bash
 # Enable API key authentication (true/false)
-POWERMEM_AUTH_ENABLED=true
+SEEKMEM_AUTH_ENABLED=true
 
 # API keys (comma-separated list)
-# Example: POWERMEM_API_KEYS=key1,key2,key3
-POWERMEM_API_KEYS=test-api-key-123
+# Example: SEEKMEM_API_KEYS=key1,key2,key3
+SEEKMEM_API_KEYS=test-api-key-123
 ```
 
 All endpoints that require authentication must include the API Key in the request header:
@@ -281,30 +281,30 @@ curl -X GET "http://localhost:8000/api/v1/system/metrics" \
 **Response Example**:
 
 ```json
-# HELP powermem_api_requests_total Total number of API requests
-# TYPE powermem_api_requests_total counter
-powermem_api_requests_total{method="GET",endpoint="/api/v1/system/status",status="200"} 1
+# HELP seekmem_api_requests_total Total number of API requests
+# TYPE seekmem_api_requests_total counter
+seekmem_api_requests_total{method="GET",endpoint="/api/v1/system/status",status="200"} 1
 
-# HELP powermem_memory_operations_total Total number of memory operations
-# TYPE powermem_memory_operations_total counter
+# HELP seekmem_memory_operations_total Total number of memory operations
+# TYPE seekmem_memory_operations_total counter
 
-# HELP powermem_api_request_duration_seconds API request duration in seconds
-# TYPE powermem_api_request_duration_seconds histogram
-powermem_api_request_duration_seconds_bucket{method="GET",endpoint="/api/v1/system/status",le="0.01"} 0
-powermem_api_request_duration_seconds_bucket{method="GET",endpoint="/api/v1/system/status",le="0.05"} 1
-powermem_api_request_duration_seconds_bucket{method="GET",endpoint="/api/v1/system/status",le="0.1"} 0
-powermem_api_request_duration_seconds_bucket{method="GET",endpoint="/api/v1/system/status",le="0.2"} 0
-powermem_api_request_duration_seconds_bucket{method="GET",endpoint="/api/v1/system/status",le="0.5"} 0
-powermem_api_request_duration_seconds_bucket{method="GET",endpoint="/api/v1/system/status",le="1.0"} 0
-powermem_api_request_duration_seconds_bucket{method="GET",endpoint="/api/v1/system/status",le="2.5"} 0
-powermem_api_request_duration_seconds_bucket{method="GET",endpoint="/api/v1/system/status",le="5.0"} 0
-powermem_api_request_duration_seconds_bucket{method="GET",endpoint="/api/v1/system/status",le="10.0"} 0
-powermem_api_request_duration_seconds_bucket{method="GET",endpoint="/api/v1/system/status",le="+Inf"} 0
-powermem_api_request_duration_seconds_sum{method="GET",endpoint="/api/v1/system/status"} 0.017825
-powermem_api_request_duration_seconds_count{method="GET",endpoint="/api/v1/system/status"} 1
+# HELP seekmem_api_request_duration_seconds API request duration in seconds
+# TYPE seekmem_api_request_duration_seconds histogram
+seekmem_api_request_duration_seconds_bucket{method="GET",endpoint="/api/v1/system/status",le="0.01"} 0
+seekmem_api_request_duration_seconds_bucket{method="GET",endpoint="/api/v1/system/status",le="0.05"} 1
+seekmem_api_request_duration_seconds_bucket{method="GET",endpoint="/api/v1/system/status",le="0.1"} 0
+seekmem_api_request_duration_seconds_bucket{method="GET",endpoint="/api/v1/system/status",le="0.2"} 0
+seekmem_api_request_duration_seconds_bucket{method="GET",endpoint="/api/v1/system/status",le="0.5"} 0
+seekmem_api_request_duration_seconds_bucket{method="GET",endpoint="/api/v1/system/status",le="1.0"} 0
+seekmem_api_request_duration_seconds_bucket{method="GET",endpoint="/api/v1/system/status",le="2.5"} 0
+seekmem_api_request_duration_seconds_bucket{method="GET",endpoint="/api/v1/system/status",le="5.0"} 0
+seekmem_api_request_duration_seconds_bucket{method="GET",endpoint="/api/v1/system/status",le="10.0"} 0
+seekmem_api_request_duration_seconds_bucket{method="GET",endpoint="/api/v1/system/status",le="+Inf"} 0
+seekmem_api_request_duration_seconds_sum{method="GET",endpoint="/api/v1/system/status"} 0.017825
+seekmem_api_request_duration_seconds_count{method="GET",endpoint="/api/v1/system/status"} 1
 
-# HELP powermem_errors_total Total number of errors
-# TYPE powermem_errors_total counter
+# HELP seekmem_errors_total Total number of errors
+# TYPE seekmem_errors_total counter
 ```
 
 

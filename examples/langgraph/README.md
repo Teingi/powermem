@@ -1,6 +1,6 @@
-# AI Customer Service Bot with LangGraph + PowerMem + OceanBase
+# AI Customer Service Bot with LangGraph + SeekMem + OceanBase
 
-This example demonstrates how to build an AI Customer Service Bot using **PowerMem** for intelligent memory management, **LangGraph** for stateful conversation workflows, and **OceanBase** as the database backend.
+This example demonstrates how to build an AI Customer Service Bot using **SeekMem** for intelligent memory management, **LangGraph** for stateful conversation workflows, and **OceanBase** as the database backend.
 
 ## Features
 
@@ -23,7 +23,7 @@ This example demonstrates how to build an AI Customer Service Bot using **PowerM
          │
          ▼
 ┌─────────────────┐
-│  PowerMem       │  Intelligent memory management
+│  SeekMem       │  Intelligent memory management
 │  (Memory Layer) │  - Fact extraction
 │                 │  - Semantic search
 │                 │  - Context retrieval
@@ -61,7 +61,7 @@ pip install -r requirements.txt
 
 ```bash
 # Core dependencies
-pip install powermem python-dotenv
+pip install seekmem python-dotenv
 
 # LangGraph dependencies
 pip install langgraph>=1.0.0 langchain>=1.1.0 langchain-core>=1.1.0 langchain-openai>=1.1.0 langchain-community>=0.4.1
@@ -73,7 +73,7 @@ pip install pyobvector sqlalchemy
 **Option 3: Install all at once**
 
 ```bash
-pip install powermem python-dotenv langgraph>=1.0.0 langchain>=1.1.0 langchain-core>=1.1.0 langchain-openai>=1.1.0 langchain-community>=0.4.1 pyobvector sqlalchemy
+pip install seekmem python-dotenv langgraph>=1.0.0 langchain>=1.1.0 langchain-core>=1.1.0 langchain-openai>=1.1.0 langchain-community>=0.4.1 pyobvector sqlalchemy
 ```
 
 ### 2. Configure OceanBase
@@ -94,7 +94,7 @@ OCEANBASE_HOST=127.0.0.1
 OCEANBASE_PORT=2881
 OCEANBASE_USER=root@sys
 OCEANBASE_PASSWORD=your_password
-OCEANBASE_DATABASE=powermem
+OCEANBASE_DATABASE=seekmem
 OCEANBASE_COLLECTION=customer_memories
 
 # LLM Configuration
@@ -180,12 +180,12 @@ class CustomerServiceState(TypedDict):
 
 The graph consists of several nodes:
 
-1. **load_context**: Loads customer context from PowerMem
+1. **load_context**: Loads customer context from SeekMem
 2. **classify_intent**: Classifies customer intent (order inquiry, issue, general)
 3. **handle_order_inquiry**: Processes order-related questions
 4. **handle_issue_resolution**: Handles customer issues and complaints
 5. **handle_general**: Handles general inquiries
-6. **save_conversation**: Saves conversation to PowerMem
+6. **save_conversation**: Saves conversation to SeekMem
 
 ### 3. Conditional Routing
 
@@ -203,9 +203,9 @@ workflow.add_conditional_edges(
 )
 ```
 
-### 4. PowerMem Integration
+### 4. SeekMem Integration
 
-PowerMem is used to:
+SeekMem is used to:
 - **Store conversations** with intelligent fact extraction
 - **Retrieve context** based on current query
 - **Track customer preferences** and order history
@@ -227,8 +227,8 @@ Customer: Hello, I'd like to check the status of my order #ORD-12345
 [Node: classify_intent] Classifying intent...
   Classified intent: order_inquiry
 [Node: handle_order_inquiry] Processing order inquiry...
-[Node: save_conversation] Saving conversation to PowerMem...
-  ✓ Conversation saved to PowerMem
+[Node: save_conversation] Saving conversation to SeekMem...
+  ✓ Conversation saved to SeekMem
 
 Bot: I can help you with your order inquiry. I found some previous order 
      information in your history. Your order #ORD-12345 is currently being 
@@ -380,6 +380,6 @@ pip install langgraph>=1.0.0 langchain>=1.1.0 langchain-core>=1.1.0 langchain-op
 
 For issues or questions:
 - Check the [main README](../../README.md)
-- Review [PowerMem documentation](../../docs/)
+- Review [SeekMem documentation](../../docs/)
 - Open an issue on GitHub
 

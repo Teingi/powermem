@@ -1,5 +1,5 @@
 """
-Error handling middleware for PowerMem API
+Error handling middleware for SeekMem API
 """
 
 import logging
@@ -14,9 +14,9 @@ from ..utils.metrics import get_metrics_collector
 from datetime import datetime, timezone
 
 try:
-    from powermem.utils.utils import get_current_datetime
+    from seekmem.utils.utils import get_current_datetime
 except ImportError:
-    # Fallback if powermem utils not available
+    # Fallback if seekmem utils not available
     def get_current_datetime():
         return datetime.now(timezone.utc)
 

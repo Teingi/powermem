@@ -1,6 +1,6 @@
 # Development Guide
 
-This guide provides comprehensive instructions for developers who want to contribute to PowerMem, including how to set up the development environment, build the project, and add new integrations.
+This guide provides comprehensive instructions for developers who want to contribute to SeekMem, including how to set up the development environment, build the project, and add new integrations.
 
 ## Table of Contents
 
@@ -34,8 +34,8 @@ This guide provides comprehensive instructions for developers who want to contri
 1. **Clone the repository:**
 
 ```bash
-git clone https://github.com/oceanbase/powermem.git
-cd powermem
+git clone https://github.com/oceanbase/seekmem.git
+cd seekmem
 ```
 
 2. **Install development dependencies:**
@@ -183,7 +183,7 @@ To add a new vector store provider, you need to:
 
 ### Step 1: Create Vector Store Implementation
 
-Create a new file in `src/powermem/storage/your_provider/your_provider.py`:
+Create a new file in `src/seekmem/storage/your_provider/your_provider.py`:
 
 ```python
 """
@@ -192,8 +192,8 @@ YourProvider vector store implementation
 import logging
 from typing import Any, Dict, List, Optional
 
-from powermem.storage.base import VectorStoreBase, OutputData
-from powermem.utils.utils import generate_snowflake_id
+from seekmem.storage.base import VectorStoreBase, OutputData
+from seekmem.utils.utils import generate_snowflake_id
 
 logger = logging.getLogger(__name__)
 
@@ -322,7 +322,7 @@ class YourProviderVectorStore(VectorStoreBase):
 
 ### Step 2: Create Configuration Class
 
-Create a configuration file in `src/powermem/storage/config/your_provider.py`:
+Create a configuration file in `src/seekmem/storage/config/your_provider.py`:
 
 ```python
 """
@@ -331,7 +331,7 @@ Configuration for YourProvider vector store
 from typing import Optional
 from pydantic import Field
 
-from powermem.storage.config.base import BaseVectorStoreConfig
+from seekmem.storage.config.base import BaseVectorStoreConfig
 
 
 class YourProviderConfig(BaseVectorStoreConfig):
@@ -345,10 +345,10 @@ class YourProviderConfig(BaseVectorStoreConfig):
         extra = "allow"
 ```
 
-Update `src/powermem/storage/configs.py` to include your config:
+Update `src/seekmem/storage/configs.py` to include your config:
 
 ```python
-from powermem.storage.config.your_provider import YourProviderConfig
+from seekmem.storage.config.your_provider import YourProviderConfig
 
 class VectorStoreConfig(BaseModel):
     # ...
@@ -362,16 +362,16 @@ class VectorStoreConfig(BaseModel):
 
 ### Step 3: Register in Factory
 
-Update `src/powermem/storage/factory.py`:
+Update `src/seekmem/storage/factory.py`:
 
 ```python
 class VectorStoreFactory:
     provider_to_class = {
-        "oceanbase": "powermem.storage.oceanbase.oceanbase.OceanBaseVectorStore",
-        "sqlite": "powermem.storage.sqlite.sqlite_vector_store.SQLiteVectorStore",
-        "pgvector": "powermem.storage.pgvector.pgvector.PGVectorStore",
-        "postgres": "powermem.storage.pgvector.pgvector.PGVectorStore",
-        "your_provider": "powermem.storage.your_provider.your_provider.YourProviderVectorStore",  # Add this
+        "oceanbase": "seekmem.storage.oceanbase.oceanbase.OceanBaseVectorStore",
+        "sqlite": "seekmem.storage.sqlite.sqlite_vector_store.SQLiteVectorStore",
+        "pgvector": "seekmem.storage.pgvector.pgvector.PGVectorStore",
+        "postgres": "seekmem.storage.pgvector.pgvector.PGVectorStore",
+        "your_provider": "seekmem.storage.your_provider.your_provider.YourProviderVectorStore",  # Add this
     }
 ```
 
@@ -381,7 +381,7 @@ Create test file `tests/integration/test_your_provider_vector_store.py`:
 
 ```python
 import pytest
-from powermem.storage.factory import VectorStoreFactory
+from seekmem.storage.factory import VectorStoreFactory
 
 
 def test_your_provider_create_col():
@@ -426,7 +426,7 @@ To add a new LLM provider:
 
 ### Step 1: Create LLM Implementation
 
-Create `src/powermem/integrations/llm/your_provider.py`:
+Create `src/seekmem/integrations/llm/your_provider.py`:
 
 ```python
 """
@@ -434,9 +434,9 @@ YourProvider LLM implementation
 """
 from typing import Dict, List, Optional
 
-from powermem.integrations.llm import LLMBase
-from powermem.integrations.llm.config.base import BaseLLMConfig
-from powermem.integrations.llm.config.your_provider import YourProviderConfig
+from seekmem.integrations.llm import LLMBase
+from seekmem.integrations.llm.config.base import BaseLLMConfig
+from seekmem.integrations.llm.config.your_provider import YourProviderConfig
 
 # Import your provider's SDK
 try:
@@ -521,7 +521,7 @@ class YourProviderLLM(LLMBase):
 
 ### Step 2: Create Configuration Class
 
-Create `src/powermem/integrations/llm/config/your_provider.py`:
+Create `src/seekmem/integrations/llm/config/your_provider.py`:
 
 ```python
 """
@@ -530,7 +530,7 @@ Configuration for YourProvider LLM
 from typing import Optional
 from pydantic import Field
 
-from powermem.integrations.llm.config.base import BaseLLMConfig
+from seekmem.integrations.llm.config.base import BaseLLMConfig
 
 
 class YourProviderConfig(BaseLLMConfig):
@@ -548,15 +548,15 @@ class YourProviderConfig(BaseLLMConfig):
 
 ### Step 3: Register in Factory
 
-Update `src/powermem/integrations/llm/factory.py`:
+Update `src/seekmem/integrations/llm/factory.py`:
 
 ```python
-from powermem.integrations.llm.config.your_provider import YourProviderConfig
+from seekmem.integrations.llm.config.your_provider import YourProviderConfig
 
 class LLMFactory:
     provider_to_class = {
         # ... existing providers ...
-        "your_provider": ("powermem.integrations.llm.your_provider.YourProviderLLM", YourProviderConfig),
+        "your_provider": ("seekmem.integrations.llm.your_provider.YourProviderLLM", YourProviderConfig),
     }
 ```
 
@@ -581,7 +581,7 @@ To add a new embedding provider:
 
 ### Step 1: Create Embedding Implementation
 
-Create `src/powermem/integrations/embeddings/your_provider.py`:
+Create `src/seekmem/integrations/embeddings/your_provider.py`:
 
 ```python
 """
@@ -589,8 +589,8 @@ YourProvider embedding implementation
 """
 from typing import Literal, Optional, List
 
-from powermem.integrations.embeddings import EmbeddingBase
-from powermem.integrations.embeddings.config.base import BaseEmbedderConfig
+from seekmem.integrations.embeddings import EmbeddingBase
+from seekmem.integrations.embeddings.config.base import BaseEmbedderConfig
 
 # Import your provider's SDK
 try:
@@ -642,13 +642,13 @@ class YourProviderEmbedding(EmbeddingBase):
 
 ### Step 2: Register in Factory
 
-Update `src/powermem/integrations/embeddings/factory.py`:
+Update `src/seekmem/integrations/embeddings/factory.py`:
 
 ```python
 class EmbedderFactory:
     provider_to_class = {
         # ... existing providers ...
-        "your_provider": "powermem.integrations.embeddings.your_provider.YourProviderEmbedding",
+        "your_provider": "seekmem.integrations.embeddings.your_provider.YourProviderEmbedding",
     }
 ```
 
@@ -661,7 +661,7 @@ Rerankers improve search results by reordering documents based on relevance to t
 
 ### Step 1: Create Reranker Implementation
 
-Create `src/powermem/integrations/rerank/your_provider.py`:
+Create `src/seekmem/integrations/rerank/your_provider.py`:
 
 ```python
 """
@@ -670,8 +670,8 @@ YourProvider reranker implementation
 import os
 from typing import List, Optional, Tuple
 
-from powermem.integrations.rerank.base import RerankBase
-from powermem.integrations.rerank.config.base import BaseRerankConfig
+from seekmem.integrations.rerank.base import RerankBase
+from seekmem.integrations.rerank.config.base import BaseRerankConfig
 
 # Import your provider's SDK
 try:
@@ -756,13 +756,13 @@ class YourProviderRerank(RerankBase):
 
 ### Step 2: Register in Factory
 
-Update `src/powermem/integrations/rerank/factory.py`:
+Update `src/seekmem/integrations/rerank/factory.py`:
 
 ```python
 class RerankFactory:
     provider_to_class = {
-        "qwen": "powermem.integrations.rerank.qwen.QwenRerank",
-        "your_provider": "powermem.integrations.rerank.your_provider.YourProviderRerank",  # Add this
+        "qwen": "seekmem.integrations.rerank.qwen.QwenRerank",
+        "your_provider": "seekmem.integrations.rerank.your_provider.YourProviderRerank",  # Add this
     }
 ```
 
@@ -771,7 +771,7 @@ class RerankFactory:
 Enable reranker in your configuration:
 
 ```python
-from powermem import Memory
+from seekmem import Memory
 
 config = {
     "reranker": {
@@ -833,7 +833,7 @@ Place tests in:
 
 ```python
 import pytest
-from powermem import Memory
+from seekmem import Memory
 
 
 def test_feature_name():
@@ -965,7 +965,7 @@ make build-check
 ```bash
 make install-local
 # Test the installed package
-python -c "import powermem; print(powermem.__version__)"
+python -c "import seekmem; print(seekmem.__version__)"
 ```
 
 5. **Publish to TestPyPI first** (recommended):
@@ -977,7 +977,7 @@ make publish-testpypi
 6. **Test installation from TestPyPI**:
 
 ```bash
-pip install --index-url https://test.pypi.org/simple/ powermem
+pip install --index-url https://test.pypi.org/simple/ seekmem
 ```
 
 7. **Publish to PyPI**:
@@ -1025,7 +1025,7 @@ export LOG_LEVEL=DEBUG
 1. **Vector Store Connection Issues**:
 
 ```python
-from powermem.storage.factory import VectorStoreFactory
+from seekmem.storage.factory import VectorStoreFactory
 
 # Test connection
 config = {
@@ -1041,7 +1041,7 @@ print(store.col_info())  # Check if connection works
 2. **LLM API Issues**:
 
 ```python
-from powermem.integrations.llm.factory import LLMFactory
+from seekmem.integrations.llm.factory import LLMFactory
 
 # Test LLM connection
 config = {
@@ -1056,7 +1056,7 @@ print(response)
 3. **Embedding Issues**:
 
 ```python
-from powermem.integrations.embeddings.factory import EmbedderFactory
+from seekmem.integrations.embeddings.factory import EmbedderFactory
 
 # Test embedding
 config = {
@@ -1108,7 +1108,7 @@ config = {
 1. **Use Async Operations**:
 
 ```python
-from powermem import AsyncMemory
+from seekmem import AsyncMemory
 
 memory = AsyncMemory()
 # Async operations are more efficient for I/O-bound tasks
@@ -1150,7 +1150,7 @@ pip install dashscope    # For Qwen
 **Solution**: Ensure the file path is correct:
 
 ```python
-from powermem import create_memory
+from seekmem import create_memory
 
 # Explicitly specify config file
 memory = create_memory(config_file=".env")
@@ -1197,7 +1197,7 @@ config = {
 You can customize how facts are extracted from messages:
 
 ```python
-from powermem import Memory
+from seekmem import Memory
 
 custom_prompt = """
 Extract key facts from the following conversation.
@@ -1274,13 +1274,13 @@ memory = Memory(config=config)
 - **API Documentation**: See `docs/api/` for detailed API reference
 - **Examples**: Check `examples/` directory for usage examples
 - **Architecture**: See `docs/architecture/overview.md` for system architecture
-- **Issues**: Report bugs or request features on [GitHub Issues](https://github.com/oceanbase/powermem/issues)
+- **Issues**: Report bugs or request features on [GitHub Issues](https://github.com/oceanbase/seekmem/issues)
 
 ## Getting Help
 
 - **Discord**: Join our [Discord community](https://discord.com/invite/74cF8vbNEs)
-- **GitHub Discussions**: Ask questions in [GitHub Discussions](https://github.com/oceanbase/powermem/discussions)
-- **Documentation**: Browse the [documentation](https://powermem.readthedocs.io)
+- **GitHub Discussions**: Ask questions in [GitHub Discussions](https://github.com/oceanbase/seekmem/discussions)
+- **Documentation**: Browse the [documentation](https://seekmem.readthedocs.io)
 
 ---
 

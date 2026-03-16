@@ -267,7 +267,7 @@
   }
 }
 
-.barFillPowerMem {
+.barFillSeekMem {
   background: linear-gradient(180deg, #3b82f6, #9333ea);
   box-shadow: 
     0 0 20px rgba(59, 130, 246, 0.5),
@@ -277,7 +277,7 @@
   position: relative;
 }
 
-.barFillPowerMem::before {
+.barFillSeekMem::before {
   content: '';
   position: absolute;
   top: 0;
@@ -289,7 +289,7 @@
   pointer-events: none;
 }
 
-.barFillPowerMem::after {
+.barFillSeekMem::after {
   content: '';
   position: absolute;
   top: 0;
@@ -338,7 +338,7 @@
   line-height: 1.2;
 }
 
-.barFillPowerMem .barValue {
+.barFillSeekMem .barValue {
   color: #ffffff;
   text-shadow: 
     0 0 8px rgba(0, 0, 0, 0.8),

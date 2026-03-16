@@ -1,10 +1,10 @@
 # Integrations Guide
 
-Guide to integrating powermem with various frameworks and services.
+Guide to integrating seekmem with various frameworks and services.
 
 ## LangChain Integration
 
-PowerMem integrates seamlessly with LangChain 1.1.0+ using the new Runnable API and LangChain Expression Language (LCEL).
+SeekMem integrates seamlessly with LangChain 1.1.0+ using the new Runnable API and LangChain Expression Language (LCEL).
 
 ### Basic Integration
 
@@ -13,19 +13,19 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables import RunnableLambda
 from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
 from langchain_openai import ChatOpenAI
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 from typing import List, Dict, Any
 
-# Create powermem instance
+# Create seekmem instance
 config = auto_config()
-powermem = Memory(config=config)
+seekmem = Memory(config=config)
 
-# Custom memory class for PowerMem integration
+# Custom memory class for SeekMem integration
 class PowermemMemory:
-    """Custom memory class that integrates PowerMem with LangChain 1.1.0+."""
+    """Custom memory class that integrates SeekMem with LangChain 1.1.0+."""
     
-    def __init__(self, powermem_instance, user_id: str):
-        self.powermem = powermem_instance
+    def __init__(self, seekmem_instance, user_id: str):
+        self.seekmem = seekmem_instance
         self.user_id = user_id
         self.messages: List[BaseMessage] = []
     
@@ -37,21 +37,21 @@ class PowermemMemory:
         """Get all conversation messages."""
         return self.messages
     
-    def save_to_powermem(self, user_input: str, assistant_output: str):
-        """Save conversation to PowerMem with intelligent fact extraction."""
+    def save_to_seekmem(self, user_input: str, assistant_output: str):
+        """Save conversation to SeekMem with intelligent fact extraction."""
         messages = [
             {"role": "user", "content": user_input},
             {"role": "assistant", "content": assistant_output}
         ]
-        self.powermem.add(
+        self.seekmem.add(
             messages=messages,
             user_id=self.user_id,
             infer=True  # Enable intelligent fact extraction
         )
     
     def get_context(self, query: str) -> str:
-        """Retrieve relevant context from PowerMem."""
-        results = self.powermem.search(
+        """Retrieve relevant context from SeekMem."""
+        results = self.seekmem.search(
             query=query,
             user_id=self.user_id,
             limit=5
@@ -71,7 +71,7 @@ from langchain_openai import ChatOpenAI
 
 # Initialize components
 llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0.7)
-memory = PowermemMemory(powermem, user_id="user123")
+memory = PowermemMemory(seekmem, user_id="user123")
 
 # Create prompt template
 prompt = ChatPromptTemplate.from_messages([
@@ -113,12 +113,12 @@ response = chain.invoke({"input": user_input})
 response_text = response.content if hasattr(response, 'content') else str(response)
 
 memory.add_message(AIMessage(content=response_text))
-memory.save_to_powermem(user_input, response_text)
+memory.save_to_seekmem(user_input, response_text)
 ```
 
 ## LangGraph Integration
 
-PowerMem integrates with LangGraph 1.0+ for stateful conversation workflows.
+SeekMem integrates with LangGraph 1.0+ for stateful conversation workflows.
 
 ### Basic Integration
 
@@ -126,12 +126,12 @@ PowerMem integrates with LangGraph 1.0+ for stateful conversation workflows.
 from langgraph.graph import StateGraph, END, START
 from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
 from langchain_openai import ChatOpenAI
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 from typing import TypedDict, Annotated, List
 
-# Create powermem instance
+# Create seekmem instance
 config = auto_config()
-powermem = Memory(config=config)
+seekmem = Memory(config=config)
 
 # Define state schema
 class ConversationState(TypedDict):
@@ -144,13 +144,13 @@ llm = ChatOpenAI(model="gpt-3.5-turbo")
 
 # Define nodes
 def load_context(state: ConversationState) -> ConversationState:
-    """Load relevant context from PowerMem."""
+    """Load relevant context from SeekMem."""
     user_id = state["user_id"]
     last_message = state["messages"][-1] if state["messages"] else None
     query = last_message.content if last_message else ""
     
-    # Search PowerMem
-    results = powermem.search(query=query, user_id=user_id, limit=5)
+    # Search SeekMem
+    results = seekmem.search(query=query, user_id=user_id, limit=5)
     state["context"] = {
         "memories": [mem.get('memory', '') for mem in results.get('results', [])]
     }
@@ -172,13 +172,13 @@ Assistant:"""
     return state
 
 def save_conversation(state: ConversationState) -> ConversationState:
-    """Save conversation to PowerMem."""
+    """Save conversation to SeekMem."""
     messages = state["messages"]
     if len(messages) >= 2:
         user_msg = messages[-2]
         ai_msg = messages[-1]
         
-        powermem.add(
+        seekmem.add(
             messages=[
                 {"role": "user", "content": user_msg.content},
                 {"role": "assistant", "content": ai_msg.content}
@@ -218,7 +218,7 @@ final_state = app.invoke(initial_state)
 ```python
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 app = FastAPI()
 config = auto_config()
@@ -264,7 +264,7 @@ async def search_memories(request: SearchRequest):
 ### Using with Async Frameworks
 
 ```python
-from powermem import AsyncMemory, auto_config
+from seekmem import AsyncMemory, auto_config
 import asyncio
 
 async def async_example():
@@ -295,7 +295,7 @@ results = asyncio.run(async_example())
 ### Implementing Custom LLM Provider
 
 ```python
-from powermem.integrations.llm.base import LLMBase
+from seekmem.integrations.llm.base import LLMBase
 
 class CustomLLM(LLMBase):
     def __init__(self, config):
@@ -322,7 +322,7 @@ class CustomLLM(LLMBase):
 ### Implementing Custom Embedder
 
 ```python
-from powermem.integrations.embeddings.base import EmbedderBase
+from seekmem.integrations.embeddings.base import EmbedderBase
 
 class CustomEmbedder(EmbedderBase):
     def __init__(self, config):
@@ -351,7 +351,7 @@ class CustomEmbedder(EmbedderBase):
 ### Implementing Custom Vector Store
 
 ```python
-from powermem.storage.base import VectorStoreBase
+from seekmem.storage.base import VectorStoreBase
 
 class CustomVectorStore(VectorStoreBase):
     def __init__(self, config):
@@ -389,7 +389,7 @@ EMBEDDING_MODEL=text-embedding-3-large
 ```
 
 ```python
-from powermem import create_memory
+from seekmem import create_memory
 
 memory = create_memory()  # Auto-loads OpenAI config from .env
 ```
@@ -405,7 +405,7 @@ LLM_MODEL=claude-3-opus-20240229
 ```
 
 ```python
-from powermem import create_memory
+from seekmem import create_memory
 
 memory = create_memory()  # Auto-loads Anthropic config
 ```
@@ -424,7 +424,7 @@ EMBEDDING_MODEL=text-embedding-v4
 ```
 
 ```python
-from powermem import create_memory
+from seekmem import create_memory
 
 memory = create_memory()  # Auto-loads Qwen config
 ```

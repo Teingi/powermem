@@ -1,5 +1,5 @@
 """
-PowerMem Scripts Package
+SeekMem Scripts Package
 
 Contains upgrade, downgrade, migration, and maintenance scripts.
 """

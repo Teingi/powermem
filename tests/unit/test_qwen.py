@@ -3,13 +3,13 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from powermem.integrations.llm.config.qwen import QwenConfig
-from powermem.integrations.llm.qwen import QwenLLM
+from seekmem.integrations.llm.config.qwen import QwenConfig
+from seekmem.integrations.llm.qwen import QwenLLM
 
 
 @pytest.fixture
 def mock_dashscope_generation():
-    with patch("powermem.integrations.llm.qwen.Generation") as mock_generation:
+    with patch("seekmem.integrations.llm.qwen.Generation") as mock_generation:
         mock_response = Mock()
         mock_response.status_code = 200
         mock_response.message = "Success"
@@ -352,8 +352,8 @@ def test_dashscope_import_error():
     # Test when dashscope is not installed
     config = QwenConfig(model="qwen-turbo", api_key="test_key")
     
-    with patch("powermem.integrations.llm.qwen.Generation", None), \
-         patch("powermem.integrations.llm.qwen.DashScopeAPIResponse", None), \
+    with patch("seekmem.integrations.llm.qwen.Generation", None), \
+         patch("seekmem.integrations.llm.qwen.DashScopeAPIResponse", None), \
          patch.dict('sys.modules', {'dashscope': None, 'dashscope.api_entities.dashscope_response': None}), \
          pytest.raises(ImportError) as exc_info:
         QwenLLM(config)

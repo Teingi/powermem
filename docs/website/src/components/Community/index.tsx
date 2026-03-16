@@ -12,7 +12,7 @@ const communityLinks = [
     icon: GitHubIcon,
     name: 'GitHub',
     descKey: 'github.desc',
-    href: 'https://github.com/oceanbase/powermem',
+    href: 'https://github.com/oceanbase/seekmem',
     color: 'gray',
   },
   {

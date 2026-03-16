@@ -1,7 +1,7 @@
 .PHONY: help install install-dev test test-unit test-integration test-e2e test-coverage test-fast test-slow lint format clean build build-package build-check build-dashboard publish-pypi publish-testpypi install-build-tools upload docs bump-version server-start server-stop server-restart server-status server-logs server-dashboard-start docker-build docker-run docker-up docker-down docker-logs docker-stop docker-restart docker-clean docker-ps
 
 help: ## Show help information
-	@echo "powermem Project Build Tools"
+	@echo "seekmem Project Build Tools"
 	@echo ""
 	@echo "Available commands:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
@@ -38,13 +38,13 @@ test-slow: ## Run slow tests only
 	pytest -m "slow" -v
 
 test-coverage: ## Run tests with coverage report
-	pytest --cov=src/powermem --cov-report=html --cov-report=term-missing --cov-report=xml -v
+	pytest --cov=src/seekmem --cov-report=html --cov-report=term-missing --cov-report=xml -v
 
 test-coverage-unit: ## Run unit tests with coverage
-	pytest tests/unit/ --cov=src/powermem --cov-report=html --cov-report=term-missing -v
+	pytest tests/unit/ --cov=src/seekmem --cov-report=html --cov-report=term-missing -v
 
 test-coverage-integration: ## Run integration tests with coverage
-	pytest tests/integration/ --cov=src/powermem --cov-report=html --cov-report=term-missing -v
+	pytest tests/integration/ --cov=src/seekmem --cov-report=html --cov-report=term-missing -v
 
 test-watch: ## Run tests in watch mode (requires pytest-watch)
 	ptw tests/ -- -v
@@ -61,7 +61,7 @@ test-marker: ## Run tests with specific marker (usage: make test-marker MARKER=u
 # Code quality
 lint: ## Run linting checks
 	flake8 src tests
-	pylint src/powermem || true
+	pylint src/seekmem || true
 
 format-check: ## Check code formatting
 	black --check src tests
@@ -72,7 +72,7 @@ format: ## Format code
 	isort src tests
 
 type-check: ## Run type checking with mypy
-	mypy src/powermem
+	mypy src/seekmem
 
 # Cleanup
 clean: ## Clean build files
@@ -142,7 +142,7 @@ publish-pypi: build-check ## Publish to PyPI (requires credentials)
 	fi
 	python -m twine upload dist/*
 	@echo "Upload complete!"
-	@echo "Package available at: https://pypi.org/project/powermem/"
+	@echo "Package available at: https://pypi.org/project/seekmem/"
 
 publish-testpypi: build-check ## Publish to TestPyPI (for testing)
 	@echo "Publishing to TestPyPI..."
@@ -154,11 +154,11 @@ publish-testpypi: build-check ## Publish to TestPyPI (for testing)
 	fi
 	python -m twine upload --repository testpypi dist/*
 	@echo "Upload complete!"
-	@echo "Package available at: https://test.pypi.org/project/powermem/"
+	@echo "Package available at: https://test.pypi.org/project/seekmem/"
 
 install-local: build-package ## Install package locally from dist/
 	@echo "Installing package locally..."
-	pip install --force-reinstall dist/powermem-*.whl
+	pip install --force-reinstall dist/seekmem-*.whl
 	@echo "Package installed locally!"
 
 # Benchmark and performance
@@ -178,68 +178,68 @@ bump-version: ## Bump version number (usage: make bump-version VERSION=0.2.0)
 	@echo "Bumping version to $(VERSION)..."
 	@# Update pyproject.toml
 	@sed -i 's/^version = ".*"/version = "$(VERSION)"/' pyproject.toml
-	@# Update src/powermem/version.py
-	@sed -i 's/^__version__ = ".*"/__version__ = "$(VERSION)"/' src/powermem/version.py
-	@# Update src/powermem/core/telemetry.py (all occurrences)
-	@sed -i 's/"version": "0\.[0-9]\+\.[0-9]\+"/"version": "$(VERSION)"/g' src/powermem/core/telemetry.py
-	@# Update src/powermem/core/audit.py
-	@sed -i 's/"version": "0\.[0-9]\+\.[0-9]\+"/"version": "$(VERSION)"/g' src/powermem/core/audit.py
+	@# Update src/seekmem/version.py
+	@sed -i 's/^__version__ = ".*"/__version__ = "$(VERSION)"/' src/seekmem/version.py
+	@# Update src/seekmem/core/telemetry.py (all occurrences)
+	@sed -i 's/"version": "0\.[0-9]\+\.[0-9]\+"/"version": "$(VERSION)"/g' src/seekmem/core/telemetry.py
+	@# Update src/seekmem/core/audit.py
+	@sed -i 's/"version": "0\.[0-9]\+\.[0-9]\+"/"version": "$(VERSION)"/g' src/seekmem/core/audit.py
 	@echo "✓ Version updated to $(VERSION) in all files (excluding examples/)"
 	@echo ""
 	@echo "Updated files:"
 	@echo "  - pyproject.toml"
-	@echo "  - src/powermem/version.py"
-	@echo "  - src/powermem/core/telemetry.py"
-	@echo "  - src/powermem/core/audit.py"
+	@echo "  - src/seekmem/version.py"
+	@echo "  - src/seekmem/core/telemetry.py"
+	@echo "  - src/seekmem/core/audit.py"
 	@echo ""
-	@echo "Note: Don't forget to update VERSION_HISTORY in src/powermem/version.py manually!"
+	@echo "Note: Don't forget to update VERSION_HISTORY in src/seekmem/version.py manually!"
 
 # Server management
 SERVER_PID_FILE := .server.pid
 
 # Load server configuration from .env file if it exists
-# This allows users to configure POWERMEM_SERVER_PORT, POWERMEM_SERVER_HOST, etc. in .env
+# This allows users to configure SEEKMEM_SERVER_PORT, SEEKMEM_SERVER_HOST, etc. in .env
 # Read from .env file, stripping quotes and whitespace
-ENV_SERVER_HOST := $(shell grep -E '^POWERMEM_SERVER_HOST=' .env 2>/dev/null | cut -d '=' -f2- | sed 's/^[[:space:]]*//;s/[[:space:]]*$$//' | sed "s/^['\"]//;s/['\"]$$//")
-ENV_SERVER_PORT := $(shell grep -E '^POWERMEM_SERVER_PORT=' .env 2>/dev/null | cut -d '=' -f2- | sed 's/^[[:space:]]*//;s/[[:space:]]*$$//' | sed "s/^['\"]//;s/['\"]$$//")
-ENV_SERVER_WORKERS := $(shell grep -E '^POWERMEM_SERVER_WORKERS=' .env 2>/dev/null | cut -d '=' -f2- | sed 's/^[[:space:]]*//;s/[[:space:]]*$$//' | sed "s/^['\"]//;s/['\"]$$//")
+ENV_SERVER_HOST := $(shell grep -E '^SEEKMEM_SERVER_HOST=' .env 2>/dev/null | cut -d '=' -f2- | sed 's/^[[:space:]]*//;s/[[:space:]]*$$//' | sed "s/^['\"]//;s/['\"]$$//")
+ENV_SERVER_PORT := $(shell grep -E '^SEEKMEM_SERVER_PORT=' .env 2>/dev/null | cut -d '=' -f2- | sed 's/^[[:space:]]*//;s/[[:space:]]*$$//' | sed "s/^['\"]//;s/['\"]$$//")
+ENV_SERVER_WORKERS := $(shell grep -E '^SEEKMEM_SERVER_WORKERS=' .env 2>/dev/null | cut -d '=' -f2- | sed 's/^[[:space:]]*//;s/[[:space:]]*$$//' | sed "s/^['\"]//;s/['\"]$$//")
 
 # Use values from .env if they exist and are non-empty, otherwise use defaults
 SERVER_HOST := $(or $(ENV_SERVER_HOST),0.0.0.0)
 SERVER_PORT := $(or $(ENV_SERVER_PORT),8000)
 SERVER_WORKERS := $(or $(ENV_SERVER_WORKERS),4)
 
-server-start: ## Start the PowerMem API server
-	@echo "Starting PowerMem API server..."
+server-start: ## Start the SeekMem API server
+	@echo "Starting SeekMem API server..."
 	@if [ -f $(SERVER_PID_FILE) ]; then \
 		echo "Server is already running (PID: $$(cat $(SERVER_PID_FILE)))"; \
 		echo "Use 'make server-stop' to stop it first, or 'make server-restart' to restart"; \
 		exit 1; \
 	fi
-	@powermem-server --host $(SERVER_HOST) --port $(SERVER_PORT) --workers $(SERVER_WORKERS) > /dev/null 2>&1 & \
+	@seekmem-server --host $(SERVER_HOST) --port $(SERVER_PORT) --workers $(SERVER_WORKERS) > /dev/null 2>&1 & \
 	echo $$! > $(SERVER_PID_FILE); \
 	echo "Server started with PID: $$!"; \
 	echo "Server running at http://$(SERVER_HOST):$(SERVER_PORT)"; \
 	echo "API docs available at http://$(SERVER_HOST):$(SERVER_PORT)/docs"; \
-	echo "Logs are being written to server.log (configured via POWERMEM_SERVER_LOG_FILE)"; \
+	echo "Logs are being written to server.log (configured via SEEKMEM_SERVER_LOG_FILE)"; \
 	echo "Use 'make server-stop' to stop the server"
 
-server-start-reload: ## Start the PowerMem API server with auto-reload (development mode)
-	@echo "Starting PowerMem API server with auto-reload..."
+server-start-reload: ## Start the SeekMem API server with auto-reload (development mode)
+	@echo "Starting SeekMem API server with auto-reload..."
 	@if [ -f $(SERVER_PID_FILE) ]; then \
 		echo "Server is already running (PID: $$(cat $(SERVER_PID_FILE)))"; \
 		echo "Use 'make server-stop' to stop it first"; \
 		exit 1; \
 	fi
-	@powermem-server --host $(SERVER_HOST) --port $(SERVER_PORT) --reload > /dev/null 2>&1 & \
+	@seekmem-server --host $(SERVER_HOST) --port $(SERVER_PORT) --reload > /dev/null 2>&1 & \
 	echo $$! > $(SERVER_PID_FILE); \
 	echo "Server started with PID: $$! (auto-reload enabled)"; \
 	echo "Server running at http://$(SERVER_HOST):$(SERVER_PORT)"; \
 	echo "API docs available at http://$(SERVER_HOST):$(SERVER_PORT)/docs"; \
-	echo "Logs are being written to server.log (configured via POWERMEM_SERVER_LOG_FILE)"; \
+	echo "Logs are being written to server.log (configured via SEEKMEM_SERVER_LOG_FILE)"; \
 	echo "Use 'make server-stop' to stop the server"
 
-server-stop: ## Stop the PowerMem API server
+server-stop: ## Stop the SeekMem API server
 	@if [ ! -f $(SERVER_PID_FILE) ]; then \
 		echo "Server PID file not found. Checking for running processes..."; \
 		PID=$$(lsof -t -i:$(SERVER_PORT) 2>/dev/null || echo ""); \
@@ -280,10 +280,10 @@ server-stop: ## Stop the PowerMem API server
 	rm -f $(SERVER_PID_FILE); \
 	echo "✓ Server stopped"
 
-server-restart: server-stop server-start ## Restart the PowerMem API server
+server-restart: server-stop server-start ## Restart the SeekMem API server
 	@echo "✓ Server restarted"
 
-server-status: ## Check the status of the PowerMem API server
+server-status: ## Check the status of the SeekMem API server
 	@if [ -f $(SERVER_PID_FILE) ]; then \
 		PID=$$(cat $(SERVER_PID_FILE) 2>/dev/null || echo ""); \
 		if [ -z "$$PID" ]; then \
@@ -337,7 +337,7 @@ server-dashboard-start: ## Build dashboard, then start server (stops existing se
 	@echo "✓ Dashboard at http://$(SERVER_HOST):$(SERVER_PORT)/dashboard/"
 
 # Docker commands
-DOCKER_IMAGE := oceanbase/powermem-server
+DOCKER_IMAGE := oceanbase/seekmem-server
 DOCKER_TAG := latest
 DOCKER_COMPOSE_FILE := docker/docker-compose.yml
 
@@ -390,7 +390,7 @@ docker-run: ## Run Docker container
 		echo "Warning: .env file not found. Container will use default configuration."; \
 	fi
 	docker run -d \
-		--name powermem-server \
+		--name seekmem-server \
 		-p 8000:8000 \
 		-v $$(pwd)/.env:/app/.env:ro \
 		--env-file .env \
@@ -416,11 +416,11 @@ docker-logs: ## Show Docker container logs (docker-compose)
 	@docker-compose -f $(DOCKER_COMPOSE_FILE) logs -f
 
 docker-logs-container: ## Show Docker container logs (single container)
-	@docker logs -f powermem-server 2>/dev/null || echo "Container 'powermem-server' not found. Use 'make docker-run' first."
+	@docker logs -f seekmem-server 2>/dev/null || echo "Container 'seekmem-server' not found. Use 'make docker-run' first."
 
 docker-stop: ## Stop Docker container
 	@echo "Stopping Docker container..."
-	@docker stop powermem-server 2>/dev/null && docker rm powermem-server 2>/dev/null && echo "✓ Container stopped and removed" || echo "Container not found or already stopped"
+	@docker stop seekmem-server 2>/dev/null && docker rm seekmem-server 2>/dev/null && echo "✓ Container stopped and removed" || echo "Container not found or already stopped"
 
 docker-restart: docker-stop docker-run ## Restart Docker container
 	@echo "✓ Container restarted"
@@ -430,12 +430,12 @@ docker-restart-compose: docker-down docker-up ## Restart services using docker-c
 
 docker-ps: ## Show running Docker containers
 	@echo "Running containers:"
-	@docker ps --filter "name=powermem-server" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+	@docker ps --filter "name=seekmem-server" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 
 docker-status: ## Check Docker container status
-	@if docker ps --filter "name=powermem-server" --format "{{.Names}}" | grep -q powermem-server; then \
+	@if docker ps --filter "name=seekmem-server" --format "{{.Names}}" | grep -q seekmem-server; then \
 		echo "✓ Container is running"; \
-		docker ps --filter "name=powermem-server" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"; \
+		docker ps --filter "name=seekmem-server" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"; \
 	else \
 		echo "✗ Container is not running"; \
 		exit 1; \
@@ -443,15 +443,15 @@ docker-status: ## Check Docker container status
 
 docker-clean: ## Clean Docker resources (containers, images, volumes)
 	@echo "Cleaning Docker resources..."
-	@docker stop powermem-server 2>/dev/null || true
-	@docker rm powermem-server 2>/dev/null || true
+	@docker stop seekmem-server 2>/dev/null || true
+	@docker rm seekmem-server 2>/dev/null || true
 	@docker-compose -f $(DOCKER_COMPOSE_FILE) down -v 2>/dev/null || true
 	@echo "✓ Docker resources cleaned"
 
 docker-clean-all: ## Clean all Docker resources including images
 	@echo "Cleaning all Docker resources (including images)..."
-	@docker stop powermem-server 2>/dev/null || true
-	@docker rm powermem-server 2>/dev/null || true
+	@docker stop seekmem-server 2>/dev/null || true
+	@docker rm seekmem-server 2>/dev/null || true
 	@docker-compose -f $(DOCKER_COMPOSE_FILE) down -v 2>/dev/null || true
 	@docker rmi $(DOCKER_IMAGE):$(DOCKER_TAG) 2>/dev/null || true
 	@echo "✓ All Docker resources cleaned"

@@ -1,11 +1,11 @@
 # Scenario 9: User Profile Management
 
-This scenario demonstrates powermem's UserMemory feature - automatic user profile extraction, management, and integration with memory search.
+This scenario demonstrates seekmem's UserMemory feature - automatic user profile extraction, management, and integration with memory search.
 
 ## Prerequisites
 
 - Python 3.10+
-- powermem installed (`pip install powermem`)
+- seekmem installed (`pip install seekmem`)
 - LLM provider configured (for profile extraction)
 - OceanBase configured as vector store (UserMemory requires OceanBase)
 
@@ -26,7 +26,7 @@ First, let's initialize UserMemory with proper configuration:
 
 ```python
 # user_profile_example.py
-from powermem import UserMemory, auto_config
+from seekmem import UserMemory, auto_config
 
 # Load configuration (auto-loads from .env or uses defaults)
 config = auto_config()
@@ -53,7 +53,7 @@ Add a conversation and automatically extract user profile information:
 
 ```python
 # user_profile_example.py
-from powermem import UserMemory, auto_config
+from seekmem import UserMemory, auto_config
 
 config = auto_config()
 user_memory = UserMemory(config=config)
@@ -97,7 +97,7 @@ Add more conversations to update and refine the user profile:
 
 ```python
 # user_profile_example.py
-from powermem import UserMemory, auto_config
+from seekmem import UserMemory, auto_config
 
 config = auto_config()
 user_memory = UserMemory(config=config)
@@ -159,7 +159,7 @@ Retrieve the user profile directly:
 
 ```python
 # user_profile_example.py
-from powermem import UserMemory, auto_config
+from seekmem import UserMemory, auto_config
 
 config = auto_config()
 user_memory = UserMemory(config=config)
@@ -218,7 +218,7 @@ Search memories without including the profile:
 
 ```python
 # user_profile_example.py
-from powermem import UserMemory, auto_config
+from seekmem import UserMemory, auto_config
 
 config = auto_config()
 user_memory = UserMemory(config=config)
@@ -284,7 +284,7 @@ Practical example (profile + ambiguous query):
 ```python
 
 # user_profile_example.py
-from powermem import UserMemory, auto_config
+from seekmem import UserMemory, auto_config
 
 config = auto_config()
 user_memory = UserMemory(config=config)
@@ -364,7 +364,7 @@ Search memories and include the user profile in results:
 
 ```python
 # user_profile_example.py
-from powermem import UserMemory, auto_config
+from seekmem import UserMemory, auto_config
 
 config = auto_config()
 user_memory = UserMemory(config=config)
@@ -427,7 +427,7 @@ You can specify a native language for profile extraction, ensuring the profile i
 
 ```python
 # user_profile_example.py
-from powermem import UserMemory, auto_config
+from seekmem import UserMemory, auto_config
 
 config = auto_config()
 user_memory = UserMemory(config=config)
@@ -500,7 +500,7 @@ Delete a user profile:
 
 ```python
 # user_profile_example.py
-from powermem import UserMemory, auto_config
+from seekmem import UserMemory, auto_config
 
 config = auto_config()
 user_memory = UserMemory(config=config, agent_id="assistant_agent")
@@ -558,7 +558,7 @@ Here's a complete example combining all the features:
 
 ```python
 # complete_user_profile_example.py
-from powermem import UserMemory, auto_config
+from seekmem import UserMemory, auto_config
 
 def main():
     # Load configuration
@@ -677,7 +677,7 @@ By default, `UserMemory.add()` only extracts profile information from user messa
 
 ```python
 # user_profile_example.py
-from powermem import UserMemory, auto_config
+from seekmem import UserMemory, auto_config
 
 config = auto_config()
 user_memory = UserMemory(config=config)
@@ -739,5 +739,5 @@ Custom filtering (user + system, exclude tool):
 ## Related Documents
 
 - [UserMemory Guide](../guides/0010-user_memory.md) - Detailed guide on UserMemory features
-- [Getting Started](scenario_1_basic_usage.md) - Learn the basics of PowerMem
+- [Getting Started](scenario_1_basic_usage.md) - Learn the basics of SeekMem
 - [Multi-Agent Guide](scenario_3_multi_agent.md) - Using multiple agents with Memory

@@ -1,6 +1,6 @@
-# powermem Architecture
+# seekmem Architecture
 
-powermem is an AI-powered intelligent memory management system that mimics human memory mechanisms to provide persistent memory capabilities for LLM applications. This document provides a comprehensive overview of the system architecture.
+seekmem is an AI-powered intelligent memory management system that mimics human memory mechanisms to provide persistent memory capabilities for LLM applications. This document provides a comprehensive overview of the system architecture.
 
 ## Table of Contents
 
@@ -15,7 +15,7 @@ powermem is an AI-powered intelligent memory management system that mimics human
 
 ## System Overview
 
-powermem implements a sophisticated memory management system inspired by cognitive science, particularly the Ebbinghaus forgetting curve theory. The system manages information through a multi-layered architecture that processes, evaluates, stores, and retrieves memories intelligently.
+seekmem implements a sophisticated memory management system inspired by cognitive science, particularly the Ebbinghaus forgetting curve theory. The system manages information through a multi-layered architecture that processes, evaluates, stores, and retrieves memories intelligently.
 
 ### Key Design Principles
 
@@ -27,7 +27,7 @@ powermem implements a sophisticated memory management system inspired by cogniti
 
 ## Architecture Layers
 
-The powermem system is organized into five main layers:
+The seekmem system is organized into five main layers:
 
 ```
 ┌─────────────────────────────────────────┐
@@ -70,14 +70,14 @@ Both agents and users interact with the system through the API layer.
 The API layer provides multiple interfaces for accessing the memory system:
 
 - **Python SDK**: Primary programmatic interface for Python applications
-- **CLI (`pmem`)**: Command-line interface for memory operations, configuration, backup/restore, and interactive shell (see [CLI Usage Guide](../guides/0012-cli_usage.md))
+- **CLI (`smem`)**: Command-line interface for memory operations, configuration, backup/restore, and interactive shell (see [CLI Usage Guide](../guides/0012-cli_usage.md))
 - **MCP (Model Context Protocol)**: Standardized protocol for model context management
 
 The API layer handles request routing, authentication, and provides a unified interface to the core memory engine.
 
 ### 3. Core Layer (Memory Engine)
 
-The core layer is the heart of powermem, containing three main sub-components:
+The core layer is the heart of seekmem, containing three main sub-components:
 
 #### 3.1 Memory Full Lifecycle Management
 
@@ -279,7 +279,7 @@ The memory processor handles CRUD operations:
 
 ### Storage Types
 
-powermem supports multiple storage paradigms:
+seekmem supports multiple storage paradigms:
 
 1. **Scalar Storage**: Traditional relational database storage for metadata and structured data
 2. **Vector Storage**: High-dimensional vector storage for embedding-based semantic search
@@ -289,7 +289,7 @@ powermem supports multiple storage paradigms:
 
 #### OceanBase (Default)
 
-OceanBase is the default and recommended storage backend for powermem. It provides enterprise-grade distributed database capabilities with native vector storage support, making it ideal for production deployments requiring high scalability and performance.
+OceanBase is the default and recommended storage backend for seekmem. It provides enterprise-grade distributed database capabilities with native vector storage support, making it ideal for production deployments requiring high scalability and performance.
 
 **Key Features:**
 - Enterprise-grade distributed database
@@ -301,7 +301,7 @@ OceanBase is the default and recommended storage backend for powermem. It provid
 
 **OceanBase Optimizations**
 
-powermem includes extensive optimizations specifically designed for OceanBase to maximize performance and efficiency:
+seekmem includes extensive optimizations specifically designed for OceanBase to maximize performance and efficiency:
 
 ##### 1. Automatic Vector Index Configuration
 
@@ -318,7 +318,7 @@ The system automatically configures OceanBase's vector index settings for optima
 
 ##### 2. Hybrid Search Architecture
 
-powermem implements a sophisticated hybrid search system that combines vector similarity search with full-text search:
+seekmem implements a sophisticated hybrid search system that combines vector similarity search with full-text search:
 
 - **Parallel Execution**: Vector search and full-text search execute concurrently using thread pools for maximum performance
 - **Multiple Fusion Methods**:
@@ -396,7 +396,7 @@ Additional performance optimizations:
   - Full-text indexes with specified parsers
   - Regular indexes for common query patterns
 
-These optimizations ensure that powermem delivers optimal performance when using OceanBase as the storage backend, making it suitable for enterprise-scale deployments with high throughput and low latency requirements.
+These optimizations ensure that seekmem delivers optimal performance when using OceanBase as the storage backend, making it suitable for enterprise-scale deployments with high throughput and low latency requirements.
 
 #### PostgreSQL (pgvector)
 
@@ -445,7 +445,7 @@ Large language models provide intelligence capabilities:
 The primary interface for Python applications:
 
 ```python
-from powermem import Memory, create_memory
+from seekmem import Memory, create_memory
 
 # Simple creation
 memory = create_memory()
@@ -468,7 +468,7 @@ Model Context Protocol (MCP) server provides standardized access:
 
 ## Multi-Agent Support
 
-powermem provides comprehensive multi-agent capabilities:
+seekmem provides comprehensive multi-agent capabilities:
 
 ### Agent Isolation
 
@@ -605,4 +605,4 @@ The architecture is designed to support future enhancements:
 
 ## Conclusion
 
-powermem's architecture provides a robust, scalable, and intelligent memory management system that mimics human memory processes while leveraging modern AI capabilities. The layered design ensures flexibility, extensibility, and performance for production deployments.
+seekmem's architecture provides a robust, scalable, and intelligent memory management system that mimics human memory processes while leveraging modern AI capabilities. The layered design ensures flexibility, extensibility, and performance for production deployments.

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-powermem 0.3.0 API Server Basic Functionality Test Script
+seekmem 0.3.0 API Server Basic Functionality Test Script
 
 Tests basic functionality of all API endpoints, including:
 - System endpoints
@@ -321,7 +321,7 @@ class APITester:
             response = self.make_request("GET", "/system/metrics")
             if response.status_code == 200:
                 content = response.text
-                if "powermem_api_requests_total" in content:
+                if "seekmem_api_requests_total" in content:
                     self.log_result("System Metrics-with API Key", True, "Returned 200, Prometheus format metrics")
                 else:
                     self.log_result("System Metrics-with API Key", False, "Expected metrics not found in response")
@@ -339,7 +339,7 @@ class APITester:
             self.check_response_without_auth(
                 response,
                 "System Metrics-without API Key",
-                success_check_func=lambda r: "powermem_api_requests_total" in response.text if hasattr(response, 'text') else True
+                success_check_func=lambda r: "seekmem_api_requests_total" in response.text if hasattr(response, 'text') else True
             )
         except Exception as e:
             self.log_result("System Metrics-without API Key", False, f"Exception: {str(e)}")
@@ -2017,12 +2017,12 @@ class APITester:
                             key = key.strip()
                             value = value.strip().strip('"').strip("'")
                             
-                            if key.upper() == 'POWERMEM_SERVER_AUTH_ENABLED':
+                            if key.upper() == 'SEEKMEM_SERVER_AUTH_ENABLED':
                                 auth_enabled = value.lower() in ('true', '1', 'yes', 'on', 'enabled')
-                            elif key.upper() == 'POWERMEM_AUTH_ENABLED':
+                            elif key.upper() == 'SEEKMEM_AUTH_ENABLED':
                                 # Also check for old format (backward compatibility)
                                 auth_enabled = value.lower() in ('true', '1', 'yes', 'on', 'enabled')
-                            elif key.upper() == 'POWERMEM_SERVER_API_KEYS':
+                            elif key.upper() == 'SEEKMEM_SERVER_API_KEYS':
                                 api_keys = value
             except Exception as e:
                 print(f"Error reading .env file: {e}")
@@ -2073,13 +2073,13 @@ class APITester:
                         key, value = stripped.split('=', 1)
                         key_stripped = key.strip()
                         
-                        if key_stripped.upper() == 'POWERMEM_SERVER_AUTH_ENABLED':
+                        if key_stripped.upper() == 'SEEKMEM_SERVER_AUTH_ENABLED':
                             # Update this line
-                            lines.append(f"POWERMEM_SERVER_AUTH_ENABLED={str(auth_enabled).lower()}\n")
+                            lines.append(f"SEEKMEM_SERVER_AUTH_ENABLED={str(auth_enabled).lower()}\n")
                             auth_enabled_found = True
-                        elif key_stripped.upper() == 'POWERMEM_SERVER_API_KEYS' and api_keys is not None:
+                        elif key_stripped.upper() == 'SEEKMEM_SERVER_API_KEYS' and api_keys is not None:
                             # Update this line
-                            lines.append(f"POWERMEM_SERVER_API_KEYS={api_keys}\n")
+                            lines.append(f"SEEKMEM_SERVER_API_KEYS={api_keys}\n")
                             api_keys_found = True
                         else:
                             # Keep original line
@@ -2095,21 +2095,21 @@ class APITester:
             
             if not auth_enabled_found:
                 if lines and lines[-1].strip():  # If last line is not empty
-                    lines.append(f"\nPOWERMEM_SERVER_AUTH_ENABLED={str(auth_enabled).lower()}\n")
+                    lines.append(f"\nSEEKMEM_SERVER_AUTH_ENABLED={str(auth_enabled).lower()}\n")
                 else:
-                    lines.append(f"POWERMEM_SERVER_AUTH_ENABLED={str(auth_enabled).lower()}\n")
+                    lines.append(f"SEEKMEM_SERVER_AUTH_ENABLED={str(auth_enabled).lower()}\n")
             
             if api_keys is not None and not api_keys_found:
-                lines.append(f"POWERMEM_SERVER_API_KEYS={api_keys}\n")
+                lines.append(f"SEEKMEM_SERVER_API_KEYS={api_keys}\n")
             
             # Write back to file
             with open(env_file_path, 'w', encoding='utf-8') as f:
                 f.writelines(lines)
             
             print(f"Updated {env_file_path}:")
-            print(f"  POWERMEM_SERVER_AUTH_ENABLED = {auth_enabled}")
+            print(f"  SEEKMEM_SERVER_AUTH_ENABLED = {auth_enabled}")
             if api_keys is not None:
-                print(f"  POWERMEM_SERVER_API_KEYS = {api_keys}")
+                print(f"  SEEKMEM_SERVER_API_KEYS = {api_keys}")
             
             return True
         except Exception as e:
@@ -2214,7 +2214,7 @@ class APITester:
         """Run all tests"""
         
         print("=" * 60)
-        print("powermem 0.3.0 API Server Basic Functionality Test")
+        print("seekmem 0.3.0 API Server Basic Functionality Test")
         print("=" * 60)
         print(f"Base URL: {self.base_url}")
         print(f"API Base: {self.api_base}")
@@ -2229,8 +2229,8 @@ class APITester:
         print("Starting Module 1: Tests without API Key")
         print(">" * 60)
         
-        # First update .env file, set POWERMEM_SERVER_AUTH_ENABLED to false
-        print("\nUpdating .env file: POWERMEM_SERVER_AUTH_ENABLED=false")
+        # First update .env file, set SEEKMEM_SERVER_AUTH_ENABLED to false
+        print("\nUpdating .env file: SEEKMEM_SERVER_AUTH_ENABLED=false")
         self.update_env_file(auth_enabled=False)
         
         # Restart server to apply new configuration
@@ -2249,9 +2249,9 @@ class APITester:
         print("Starting Module 2: Tests with API Key")
         print(">" * 60)
         
-        # Update .env file, set POWERMEM_SERVER_AUTH_ENABLED to true
-        # Always set POWERMEM_SERVER_API_KEYS to key1,key2,key3 for testing
-        print("\nUpdating .env file: POWERMEM_SERVER_AUTH_ENABLED=true, POWERMEM_SERVER_API_KEYS=key1,key2,key3")
+        # Update .env file, set SEEKMEM_SERVER_AUTH_ENABLED to true
+        # Always set SEEKMEM_SERVER_API_KEYS to key1,key2,key3 for testing
+        print("\nUpdating .env file: SEEKMEM_SERVER_AUTH_ENABLED=true, SEEKMEM_SERVER_API_KEYS=key1,key2,key3")
         test_api_keys = "key1,key2,key3"
         self.update_env_file(auth_enabled=True, api_keys=test_api_keys)
         
@@ -2294,7 +2294,7 @@ def main():
     """Main function"""
     import argparse
     
-    parser = argparse.ArgumentParser(description='powermem API Server Basic Functionality Test')
+    parser = argparse.ArgumentParser(description='seekmem API Server Basic Functionality Test')
     parser.add_argument('--url', type=str, default='http://localhost:8000',
                        help='API server base URL (default: http://localhost:8000)')
     parser.add_argument('--api-key', type=str, default='key1',
@@ -2407,8 +2407,8 @@ def setup_api_server():
     print("Pytest Setup: Initializing API server (auth disabled)")
     print("=" * 60)
     
-    # Update .env file, set POWERMEM_SERVER_AUTH_ENABLED to false
-    print("\nUpdating .env file: POWERMEM_SERVER_AUTH_ENABLED=false")
+    # Update .env file, set SEEKMEM_SERVER_AUTH_ENABLED to false
+    print("\nUpdating .env file: SEEKMEM_SERVER_AUTH_ENABLED=false")
     _global_tester.update_env_file(auth_enabled=False)
     
     # Restart server to apply new configuration

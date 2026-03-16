@@ -1,5 +1,5 @@
 """
-CLI command for starting the PowerMem API server
+CLI command for starting the SeekMem API server
 """
 
 import click
@@ -16,10 +16,10 @@ from ..middleware.logging import setup_logging
 @click.option("--log-level", default=None, help="Log level")
 def server(host, port, workers, reload, log_level):
     """
-    Start the PowerMem API server.
+    Start the SeekMem API server.
     
     Example:
-        powermem-server --host 0.0.0.0 --port 8000 --reload
+        seekmem-server --host 0.0.0.0 --port 8000 --reload
     """
     # Override config with CLI options
     if host:

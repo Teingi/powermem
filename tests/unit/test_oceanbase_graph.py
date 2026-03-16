@@ -2,8 +2,8 @@ import unittest
 from unittest.mock import MagicMock, patch, Mock
 import pytest
 import uuid
-from powermem.storage.oceanbase.oceanbase_graph import MemoryGraph
-from powermem.storage.oceanbase import constants
+from seekmem.storage.oceanbase.oceanbase_graph import MemoryGraph
+from seekmem.storage.oceanbase import constants
 
 
 class TestOceanBaseGraph(unittest.TestCase):
@@ -51,24 +51,24 @@ class TestOceanBaseGraph(unittest.TestCase):
         self.mock_graph_tools_prompts = MagicMock()
 
         # Patch the necessary components
-        self.embedding_factory_patcher = patch("powermem.storage.oceanbase.oceanbase_graph.EmbedderFactory")
+        self.embedding_factory_patcher = patch("seekmem.storage.oceanbase.oceanbase_graph.EmbedderFactory")
         self.mock_embedding_factory = self.embedding_factory_patcher.start()
         self.mock_embedding_factory.create.return_value = self.mock_embedding_model
 
-        self.llm_factory_patcher = patch("powermem.storage.oceanbase.oceanbase_graph.LLMFactory")
+        self.llm_factory_patcher = patch("seekmem.storage.oceanbase.oceanbase_graph.LLMFactory")
         self.mock_llm_factory = self.llm_factory_patcher.start()
         self.mock_llm_factory.create.return_value = self.mock_llm
 
-        self.obvec_client_patcher = patch("powermem.storage.oceanbase.oceanbase_graph.ObVecClient")
+        self.obvec_client_patcher = patch("seekmem.storage.oceanbase.oceanbase_graph.ObVecClient")
         self.mock_obvec_client = self.obvec_client_patcher.start()
         self.mock_obvec_client.return_value = self.mock_client
         self.mock_client.engine = self.mock_engine
 
-        self.graph_prompts_patcher = patch("powermem.storage.oceanbase.oceanbase_graph.GraphPrompts")
+        self.graph_prompts_patcher = patch("seekmem.storage.oceanbase.oceanbase_graph.GraphPrompts")
         self.mock_graph_prompts_class = self.graph_prompts_patcher.start()
         self.mock_graph_prompts_class.return_value = self.mock_graph_prompts
 
-        self.graph_tools_prompts_patcher = patch("powermem.storage.oceanbase.oceanbase_graph.GraphToolsPrompts")
+        self.graph_tools_prompts_patcher = patch("seekmem.storage.oceanbase.oceanbase_graph.GraphToolsPrompts")
         self.mock_graph_tools_prompts_class = self.graph_tools_prompts_patcher.start()
         self.mock_graph_tools_prompts_class.return_value = self.mock_graph_tools_prompts
 
@@ -228,7 +228,7 @@ class TestOceanBaseGraph(unittest.TestCase):
         self.memory_graph._search_graph_db = MagicMock(return_value=mock_search_results)
 
         # Mock BM25Okapi
-        with patch("powermem.storage.oceanbase.oceanbase_graph.BM25Okapi") as mock_bm25:
+        with patch("seekmem.storage.oceanbase.oceanbase_graph.BM25Okapi") as mock_bm25:
             mock_bm25_instance = MagicMock()
             mock_bm25.return_value = mock_bm25_instance
 
@@ -349,8 +349,8 @@ class TestOceanBaseGraph(unittest.TestCase):
         self.mock_client.ann_search.return_value = mock_search_results
 
         # Mock Table creation and l2_distance
-        with patch("powermem.storage.oceanbase.oceanbase_graph.Table") as mock_table_class, \
-             patch("powermem.storage.oceanbase.oceanbase_graph.l2_distance") as mock_l2_distance:
+        with patch("seekmem.storage.oceanbase.oceanbase_graph.Table") as mock_table_class, \
+             patch("seekmem.storage.oceanbase.oceanbase_graph.l2_distance") as mock_l2_distance:
             mock_table_class.return_value = mock_table
             # Create a mock that supports comparison
             mock_distance_expr = MagicMock()
@@ -385,8 +385,8 @@ class TestOceanBaseGraph(unittest.TestCase):
         self.mock_client.ann_search.return_value = mock_search_results
 
         # Mock Table creation and l2_distance
-        with patch("powermem.storage.oceanbase.oceanbase_graph.Table") as mock_table_class, \
-             patch("powermem.storage.oceanbase.oceanbase_graph.l2_distance") as mock_l2_distance:
+        with patch("seekmem.storage.oceanbase.oceanbase_graph.Table") as mock_table_class, \
+             patch("seekmem.storage.oceanbase.oceanbase_graph.l2_distance") as mock_l2_distance:
             mock_table_class.return_value = mock_table
             # Create a mock that supports comparison
             mock_distance_expr = MagicMock()
@@ -418,8 +418,8 @@ class TestOceanBaseGraph(unittest.TestCase):
         self.mock_client.ann_search.return_value = mock_search_results
 
         # Mock Table creation and l2_distance
-        with patch("powermem.storage.oceanbase.oceanbase_graph.Table") as mock_table_class, \
-             patch("powermem.storage.oceanbase.oceanbase_graph.l2_distance") as mock_l2_distance:
+        with patch("seekmem.storage.oceanbase.oceanbase_graph.Table") as mock_table_class, \
+             patch("seekmem.storage.oceanbase.oceanbase_graph.l2_distance") as mock_l2_distance:
             mock_table_class.return_value = mock_table
             # Create a mock that supports comparison
             mock_distance_expr = MagicMock()

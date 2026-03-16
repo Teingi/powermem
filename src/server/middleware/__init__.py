@@ -1,5 +1,5 @@
 """
-Middleware for PowerMem API Server
+Middleware for SeekMem API Server
 """
 
 from .auth import get_api_key, verify_api_key

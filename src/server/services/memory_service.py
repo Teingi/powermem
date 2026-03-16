@@ -1,11 +1,11 @@
 """
-Memory service for PowerMem API
+Memory service for SeekMem API
 """
 
 import logging
 from typing import Any, Dict, List, Optional
 from datetime import datetime
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 from ..models.errors import ErrorCode, APIError
 from ..utils.converters import memory_dict_to_response
 from ..utils.metrics import get_metrics_collector
@@ -21,7 +21,7 @@ class MemoryService:
         Initialize memory service.
         
         Args:
-            config: PowerMem configuration (uses auto_config if None)
+            config: SeekMem configuration (uses auto_config if None)
         """
         if config is None:
             config = auto_config()
@@ -386,7 +386,7 @@ class MemoryService:
         cutoff_date: Optional[datetime] = None,
     ) -> Dict[str, Any]:
         """Get memory statistics with optional time filtering (same logic as CLI via shared stats)."""
-        from powermem.utils.stats import _parse_datetime_for_stats, calculate_stats_from_memories
+        from seekmem.utils.stats import _parse_datetime_for_stats, calculate_stats_from_memories
 
         all_memories = self.memory.get_all(
             user_id=user_id,
@@ -689,7 +689,7 @@ class MemoryService:
                 - quality_criteria: Distribution of quality issues
         """
         try:
-            from powermem.utils.stats import _extract_importance, _parse_datetime_for_stats
+            from seekmem.utils.stats import _extract_importance, _parse_datetime_for_stats
 
             # Get all memories (without pagination limit for analysis)
             result = self.memory.get_all(

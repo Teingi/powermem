@@ -7,7 +7,7 @@ This module tests complete workflows including add, search, update, delete opera
 import pytest
 import uuid
 from unittest.mock import MagicMock, patch
-from powermem import Memory
+from seekmem import Memory
 
 
 class TestFullWorkflowIntegration:
@@ -38,7 +38,7 @@ class TestFullWorkflowIntegration:
         }
         
         # Mock LLM to return structured responses
-        patcher = patch('powermem.integrations.llm.factory.LLMFactory.create')
+        patcher = patch('seekmem.integrations.llm.factory.LLMFactory.create')
         mock_llm_factory = patcher.start()
         mock_llm = MagicMock()
         # Return different responses based on context

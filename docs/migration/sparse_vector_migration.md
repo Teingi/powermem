@@ -5,7 +5,7 @@ This guide provides detailed instructions on how to add sparse vector support to
 ## Prerequisites
 
 - Python 3.10+
-- powermem installed (`pip install powermem`)
+- seekmem installed (`pip install seekmem`)
 - Database requirements: **seekdb** or **OceanBase >= 4.5.0**
 - Existing table without sparse vector support
 
@@ -76,7 +76,7 @@ ScriptManager.list_scripts()
 Example output:
 ```
 ======================================================================
-PowerMem Available Scripts
+SeekMem Available Scripts
 ======================================================================
 
 【Upgrade Scripts - Add new features or upgrade existing features】
@@ -113,7 +113,7 @@ Parameters:
 ### Execute Upgrade Script
 
 ```python
-from powermem import auto_config
+from seekmem import auto_config
 from script import ScriptManager
 
 # Load configuration
@@ -179,7 +179,7 @@ ScriptManager.info('migrate-sparse-vector')
 Before formal migration, it is recommended to test with dry-run mode first:
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 from script import ScriptManager
 
 # Load configuration
@@ -210,7 +210,7 @@ Total: [██████████████]  100.0% | 100/100
 ### Execute Formal Migration
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 from script import ScriptManager
 
 # Load configuration
@@ -270,7 +270,7 @@ Progress information includes:
 After migration is complete, verify if sparse vector is working:
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 import logging
 
 # Load configuration
@@ -291,8 +291,8 @@ print("  Sparse vector search is active (check DEBUG logs to confirm)")
 **Expected output:**
 ```
 Executing verification search...
-DEBUG:powermem.storage.oceanbase.oceanbase:Executing sparse vector search query with sparse_vector: ...
-DEBUG:powermem.storage.oceanbase.oceanbase:_sparse_search results, len : 10
+DEBUG:seekmem.storage.oceanbase.oceanbase:Executing sparse vector search query with sparse_vector: ...
+DEBUG:seekmem.storage.oceanbase.oceanbase:_sparse_search results, len : 10
 
 ✓ Search returned 10 results
   Sparse vector search is active (check DEBUG logs to confirm)
@@ -309,7 +309,7 @@ You can see sparse vector search related information in the DEBUG logs.
 Complete Sparse Vector Migration Example
 Demonstrates how to upgrade existing tables and migrate historical data
 """
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 from script import ScriptManager
 import logging
 
@@ -371,7 +371,7 @@ if __name__ == "__main__":
 If you need to remove sparse vector support, you can run the downgrade script:
 
 ```python
-from powermem import auto_config
+from seekmem import auto_config
 from script import ScriptManager
 
 config = auto_config()

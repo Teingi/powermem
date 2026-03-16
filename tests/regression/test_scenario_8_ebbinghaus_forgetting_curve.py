@@ -20,8 +20,8 @@ except Exception:  # pragma: no cover
 
 import pytest
 from dotenv import load_dotenv
-from powermem import create_memory
-from powermem.config_loader import auto_config
+from seekmem import create_memory
+from seekmem.config_loader import auto_config
 
 # -----------------------------------------------------------------------------
 # Environment setup

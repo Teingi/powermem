@@ -1,4 +1,4 @@
-// Package main demonstrates how to use the PowerMem HTTP API with Go.
+// Package main demonstrates how to use the SeekMem HTTP API with Go.
 //
 // This example shows all core memory operations:
 // - Health check
@@ -14,8 +14,8 @@
 //
 // Environment variables:
 //
-//	POWERMEM_BASE_URL - Base URL of the PowerMem API server (default: http://localhost:8000)
-//	POWERMEM_API_KEY  - API key for authentication (optional if auth is disabled)
+//	SEEKMEM_BASE_URL - Base URL of the SeekMem API server (default: http://localhost:8000)
+//	SEEKMEM_API_KEY  - API key for authentication (optional if auth is disabled)
 package main
 
 import (
@@ -26,7 +26,7 @@ import (
 
 func main() {
 	fmt.Println(strings.Repeat("=", 60))
-	fmt.Println("PowerMem Go Client Example")
+	fmt.Println("SeekMem Go Client Example")
 	fmt.Println(strings.Repeat("=", 60))
 
 	// Initialize client from environment or defaults
@@ -43,14 +43,14 @@ func main() {
 	fmt.Println(strings.Repeat("=", 60))
 }
 
-// initClient creates a PowerMem client from environment variables.
+// initClient creates a SeekMem client from environment variables.
 func initClient() *Client {
-	baseURL := os.Getenv("POWERMEM_BASE_URL")
+	baseURL := os.Getenv("SEEKMEM_BASE_URL")
 	if baseURL == "" {
 		baseURL = "http://localhost:8000"
 	}
 
-	apiKey := os.Getenv("POWERMEM_API_KEY")
+	apiKey := os.Getenv("SEEKMEM_API_KEY")
 
 	fmt.Printf("\nConfiguration:\n")
 	fmt.Printf("  Base URL: %s\n", baseURL)
@@ -144,7 +144,7 @@ func exampleCreateMemory(client *Client) ([]CreatedMemory, error) {
 	fmt.Println(strings.Repeat("-", 40))
 
 	// Create a memory with intelligent extraction enabled
-	// PowerMem will automatically extract multiple facts from the content
+	// SeekMem will automatically extract multiple facts from the content
 	infer := true
 	req := &CreateMemoryRequest{
 		Content: "User likes coffee and goes to Starbucks every morning. They prefer latte.",

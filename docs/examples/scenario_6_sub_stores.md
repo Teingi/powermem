@@ -1,11 +1,11 @@
 # Scenario 6: Sub Stores - Memory Partitioning
 
-This scenario demonstrates powermem's sub stores feature - partitioning different types of memories into separate storage for more efficient querying and management.
+This scenario demonstrates seekmem's sub stores feature - partitioning different types of memories into separate storage for more efficient querying and management.
 
 ## Prerequisites
 
 - Completed Scenario 1
-- Installed powermem
+- Installed seekmem
 - Configured OceanBase database (or other storage backend that supports sub stores)
 - Configured LLM and Embedding services
 
@@ -45,7 +45,7 @@ First, let's create a Memory instance with sub stores:
 
 ```python
 # sub_store_example.py
-from powermem import Memory
+from seekmem import Memory
 import os
 
 # Configure main storage and sub stores
@@ -59,7 +59,7 @@ config = {
             "port": int(os.getenv("OCEANBASE_PORT", "2881")),
             "user": os.getenv("OCEANBASE_USER", "root@test_tenant"),
             "password": os.getenv("OCEANBASE_PASSWORD", "password"),
-            "db_name": os.getenv("OCEANBASE_DATABASE", "powermem"),
+            "db_name": os.getenv("OCEANBASE_DATABASE", "seekmem"),
         }
     },
     "llm": {
@@ -125,7 +125,7 @@ Let's add different types of memories to the main store:
 
 ```python
 # sub_store_example.py
-from powermem import Memory
+from seekmem import Memory
 
 memory = Memory(config=config)
 user_id = "demo_user"
@@ -229,7 +229,7 @@ Before migration, all memories are in the main store:
 
 ```python
 # sub_store_example.py
-from powermem import Memory
+from seekmem import Memory
 
 memory = Memory(config=config)
 user_id = "demo_user"
@@ -289,7 +289,7 @@ Now let's migrate data to the respective sub stores. **This step is mandatory to
 
 ```python
 # sub_store_example.py
-from powermem import Memory
+from seekmem import Memory
 
 memory = Memory(config=config)
 
@@ -366,7 +366,7 @@ After migration, queries automatically route to the correct sub store:
 
 ```python
 # sub_store_example.py
-from powermem import Memory
+from seekmem import Memory
 
 memory = Memory(config=config)
 user_id = "demo_user"
@@ -446,7 +446,7 @@ New memories are automatically routed to the correct sub store (because we activ
 
 ```python
 # sub_store_example.py
-from powermem import Memory
+from seekmem import Memory
 
 memory = Memory(config=config)
 user_id = "demo_user"
@@ -505,7 +505,7 @@ Let's verify that new memories were routed correctly:
 
 ```python
 # sub_store_example.py
-from powermem import Memory
+from seekmem import Memory
 
 memory = Memory(config=config)
 user_id = "demo_user"
@@ -583,7 +583,7 @@ Here's a complete example combining all the steps:
 
 ```python
 # complete_sub_store_example.py
-from powermem import Memory
+from seekmem import Memory
 import os
 
 def print_section(title: str):

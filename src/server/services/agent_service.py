@@ -1,11 +1,11 @@
 """
-Agent service for PowerMem API
+Agent service for SeekMem API
 """
 
 import logging
 from typing import Any, Dict, List, Optional
-from powermem import auto_config
-from powermem.agent import AgentMemory
+from seekmem import auto_config
+from seekmem.agent import AgentMemory
 from ..models.errors import ErrorCode, APIError
 
 logger = logging.getLogger("server")
@@ -19,7 +19,7 @@ class AgentService:
         Initialize agent service.
         
         Args:
-            config: PowerMem configuration (uses auto_config if None)
+            config: SeekMem configuration (uses auto_config if None)
         """
         if config is None:
             config = auto_config()

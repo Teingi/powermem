@@ -1,5 +1,5 @@
 """
-Error codes and exception classes for PowerMem API
+Error codes and exception classes for SeekMem API
 """
 
 from enum import Enum

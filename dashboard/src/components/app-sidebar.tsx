@@ -59,7 +59,7 @@ export function AppSidebar() {
                   <Brain className="size-5" />
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold">PowerMem</span>
+                  <span className="font-semibold">SeekMem</span>
                   <span className="text-xs text-muted-foreground">
                     {t("nav.dashboardSubtitle")}
                   </span>

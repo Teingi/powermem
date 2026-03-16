@@ -9,7 +9,7 @@ Run with: pytest -m e2e_config tests/e2e/test_basic_usage_e2e.py
 import os
 import pytest
 from dotenv import load_dotenv
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 
 @pytest.fixture(scope="module")
@@ -17,7 +17,7 @@ def config():
     """Load configuration from environment variables."""
     # Try to load from .env first
     oceanbase_env_path = os.path.join(
-        os.path.dirname(__file__), "..", "..", "configs", "powermem.env"
+        os.path.dirname(__file__), "..", "..", "configs", "seekmem.env"
     )
     
     if os.path.exists(oceanbase_env_path):

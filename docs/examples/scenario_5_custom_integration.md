@@ -1,6 +1,6 @@
 # Scenario 5: Custom Integration
 
-This scenario demonstrates how to integrate powermem with custom systems, implement custom providers, and extend functionality.
+This scenario demonstrates how to integrate seekmem with custom systems, implement custom providers, and extend functionality.
 
 ## Prerequisites
 
@@ -10,7 +10,7 @@ This scenario demonstrates how to integrate powermem with custom systems, implem
 
 ## Understanding Custom Integration
 
-powermem is designed to be extensible:
+seekmem is designed to be extensible:
 - Custom LLM providers
 - Custom embedding providers
 - Custom storage backends
@@ -22,9 +22,9 @@ Factory configuration with config classes:
 
 ```python
 from pydantic import Field
-from powermem.integrations.llm.config.base import BaseLLMConfig
-from powermem.integrations.embeddings.config.base import BaseEmbedderConfig
-from powermem.storage.config.base import BaseVectorStoreConfig
+from seekmem.integrations.llm.config.base import BaseLLMConfig
+from seekmem.integrations.embeddings.config.base import BaseEmbedderConfig
+from seekmem.storage.config.base import BaseVectorStoreConfig
 
 class CustomLLMConfig(BaseLLMConfig):
     base_url: str | None = Field(default=None)
@@ -42,20 +42,20 @@ class CustomVectorStoreConfig(BaseVectorStoreConfig):
     class Config:
         extra = 'allow'
 
-from powermem.integrations.llm.factory import LLMFactory
-from powermem.integrations.embeddings.factory import EmbedderFactory
-from powermem.storage.factory import VectorStoreFactory
+from seekmem.integrations.llm.factory import LLMFactory
+from seekmem.integrations.embeddings.factory import EmbedderFactory
+from seekmem.storage.factory import VectorStoreFactory
 
 LLMFactory.provider_to_class.update({
-    "custom": ("powermem.integrations.llm.custom.CustomLLM", CustomLLMConfig),
+    "custom": ("seekmem.integrations.llm.custom.CustomLLM", CustomLLMConfig),
 })
 
 EmbedderFactory.provider_to_class.update({
-    "custom": "powermem.integrations.embeddings.custom.CustomEmbedder"
+    "custom": "seekmem.integrations.embeddings.custom.CustomEmbedder"
 })
 
 VectorStoreFactory.provider_to_class.update({
-     "custom": "powermem.storage.custom.custom_integration_example.CustomVectorStore"
+     "custom": "seekmem.storage.custom.custom_integration_example.CustomVectorStore"
 })
 ```
 
@@ -65,7 +65,7 @@ Implement a custom LLM provider:
 
 ```python
 # custom_integration_example.py
-from powermem.integrations.llm.base import LLMBase
+from seekmem.integrations.llm.base import LLMBase
 from typing import List, Dict, Any
 
 class CustomLLM(LLMBase):
@@ -93,7 +93,7 @@ class CustomLLM(LLMBase):
         return facts
 
 # Register custom LLM
-from powermem.integrations.llm.factory import LLMFactory
+from seekmem.integrations.llm.factory import LLMFactory
 
 # Register your custom provider
 LLMFactory.register('custom', CustomLLM)
@@ -118,13 +118,13 @@ config = {
     }
 }
 
-from powermem import Memory
+from seekmem import Memory
 memory = Memory(config=config)
 ```
 
 **Important Notes:**
-- If you provide a `config` parameter, PowerMem will **ignore** any `.env` file settings
-- This allows you to programmatically configure PowerMem without relying on environment variables
+- If you provide a `config` parameter, SeekMem will **ignore** any `.env` file settings
+- This allows you to programmatically configure SeekMem without relying on environment variables
 
 ## Step 2: Custom Embedding Provider
 
@@ -132,7 +132,7 @@ Implement a custom embedding provider:
 
 ```python
 # custom_integration_example.py
-from powermem.integrations.embeddings.base import EmbedderBase
+from seekmem.integrations.embeddings.base import EmbedderBase
 from typing import List
 import numpy as np
 
@@ -154,7 +154,7 @@ class CustomEmbedder(EmbedderBase):
         return [self.embed(text) for text in texts]
 
 # Register custom embedder
-from powermem.integrations.embeddings.factory import EmbedderFactory
+from seekmem.integrations.embeddings.factory import EmbedderFactory
 
 EmbedderFactory.register('custom', CustomEmbedder)
 
@@ -187,7 +187,7 @@ Implement a custom storage backend:
 
 ```python
 # custom_integration_example.py
-from powermem.storage.base import VectorStoreBase
+from seekmem.storage.base import VectorStoreBase
 from typing import List, Dict, Any, Optional
 
 class CustomVectorStore(VectorStoreBase):
@@ -238,7 +238,7 @@ class CustomVectorStore(VectorStoreBase):
         return 0
 
 # Register custom storage
-from powermem.storage.factory import VectorStoreFactory
+from seekmem.storage.factory import VectorStoreFactory
 
 VectorStoreFactory.register('custom', CustomVectorStore)
 
@@ -266,7 +266,7 @@ memory = Memory(config=config)
 
 ## Step 4: LangChain Integration
 
-Integrate powermem with LangChain 1.1.0+ using the new Runnable API:
+Integrate seekmem with LangChain 1.1.0+ using the new Runnable API:
 
 ```python
 # langchain_integration.py
@@ -274,18 +274,18 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables import RunnableLambda
 from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
 from langchain_openai import ChatOpenAI
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 from typing import List, Dict, Any
 
-# Create powermem instance
+# Create seekmem instance
 config = auto_config()
-powermem = Memory(config=config)
+seekmem = Memory(config=config)
 
 class PowermemLangChainMemory:
     """Custom memory class for LangChain 1.1.0+ integration."""
     
-    def __init__(self, powermem_instance, user_id: str):
-        self.powermem = powermem_instance
+    def __init__(self, seekmem_instance, user_id: str):
+        self.seekmem = seekmem_instance
         self.user_id = user_id
         self.messages: List[BaseMessage] = []
     
@@ -297,21 +297,21 @@ class PowermemLangChainMemory:
         """Get all conversation messages."""
         return self.messages
     
-    def save_to_powermem(self, user_input: str, assistant_output: str):
-        """Save conversation to powermem with intelligent processing."""
+    def save_to_seekmem(self, user_input: str, assistant_output: str):
+        """Save conversation to seekmem with intelligent processing."""
         messages = [
             {"role": "user", "content": user_input},
             {"role": "assistant", "content": assistant_output}
         ]
-        self.powermem.add(
+        self.seekmem.add(
             messages=messages,
             user_id=self.user_id,
             infer=True  # Enable intelligent fact extraction
         )
     
     def get_context(self, query: str) -> str:
-        """Load relevant memories from powermem."""
-        results = self.powermem.search(
+        """Load relevant memories from seekmem."""
+        results = self.seekmem.search(
             query=query,
             user_id=self.user_id,
             limit=5
@@ -323,7 +323,7 @@ class PowermemLangChainMemory:
 
 # Usage with LangChain 1.1.0+
 llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0.7)
-memory = PowermemLangChainMemory(powermem, user_id="user123")
+memory = PowermemLangChainMemory(seekmem, user_id="user123")
 
 # Create prompt template
 prompt = ChatPromptTemplate.from_messages([
@@ -365,26 +365,26 @@ response = chain.invoke({"input": user_input})
 response_text = response.content if hasattr(response, 'content') else str(response)
 
 memory.add_message(AIMessage(content=response_text))
-memory.save_to_powermem(user_input, response_text)
+memory.save_to_seekmem(user_input, response_text)
 
 print(response_text)
 ```
 
 ### LangGraph Integration
 
-Integrate powermem with LangGraph 1.0+ for stateful workflows:
+Integrate seekmem with LangGraph 1.0+ for stateful workflows:
 
 ```python
 # langgraph_integration.py
 from langgraph.graph import StateGraph, END, START
 from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
 from langchain_openai import ChatOpenAI
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 from typing import TypedDict, Annotated, List
 
-# Create powermem instance
+# Create seekmem instance
 config = auto_config()
-powermem = Memory(config=config)
+seekmem = Memory(config=config)
 
 # Define state schema
 class ConversationState(TypedDict):
@@ -397,13 +397,13 @@ llm = ChatOpenAI(model="gpt-3.5-turbo")
 
 # Define nodes
 def load_context(state: ConversationState) -> ConversationState:
-    """Load relevant context from powermem."""
+    """Load relevant context from seekmem."""
     user_id = state["user_id"]
     last_message = state["messages"][-1] if state["messages"] else None
     query = last_message.content if last_message else ""
     
-    # Search powermem
-    results = powermem.search(query=query, user_id=user_id, limit=5)
+    # Search seekmem
+    results = seekmem.search(query=query, user_id=user_id, limit=5)
     state["context"] = {
         "memories": [mem.get('memory', '') for mem in results.get('results', [])]
     }
@@ -425,13 +425,13 @@ Assistant:"""
     return state
 
 def save_conversation(state: ConversationState) -> ConversationState:
-    """Save conversation to powermem."""
+    """Save conversation to seekmem."""
     messages = state["messages"]
     if len(messages) >= 2:
         user_msg = messages[-2]
         ai_msg = messages[-1]
         
-        powermem.add(
+        seekmem.add(
             messages=[
                 {"role": "user", "content": user_msg.content},
                 {"role": "assistant", "content": ai_msg.content}
@@ -467,13 +467,13 @@ print(final_state["messages"][-1].content)
 
 ## Step 5: FastAPI Integration
 
-Create a FastAPI application with powermem:
+Create a FastAPI application with seekmem:
 
 ```python
 # fastapi_integration.py
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from powermem import AsyncMemory, auto_config
+from seekmem import AsyncMemory, auto_config
 import asyncio
 
 app = FastAPI()
@@ -549,7 +549,7 @@ Implement a custom intelligence plugin:
 
 ```python
 # custom_intelligence_plugin.py
-from powermem.intelligence.plugin import IntelligentMemoryPlugin
+from seekmem.intelligence.plugin import IntelligentMemoryPlugin
 from typing import Dict, Any
 from datetime import datetime, timedelta
 
@@ -591,8 +591,8 @@ Here's a complete custom integration example:
 
 ```python
 # complete_custom_integration.py
-from powermem import Memory
-from powermem.integrations.llm.base import LLMBase
+from seekmem import Memory
+from seekmem.integrations.llm.base import LLMBase
 from typing import List, Dict, Any
 
 class SimpleLLM(LLMBase):
@@ -612,7 +612,7 @@ class SimpleLLM(LLMBase):
         return facts
 
 # Register
-from powermem.integrations.llm.factory import LLMFactory
+from seekmem.integrations.llm.factory import LLMFactory
 LLMFactory.register('simple', SimpleLLM)
 
 # Use

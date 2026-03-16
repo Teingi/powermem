@@ -10,7 +10,7 @@ import os
 import pytest
 import pytest_asyncio
 from dotenv import load_dotenv
-from powermem import Memory, AsyncMemory, auto_config
+from seekmem import Memory, AsyncMemory, auto_config
 
 
 @pytest.fixture(scope="module")
@@ -18,7 +18,7 @@ def config():
     """Load configuration from environment variables."""
     # Try to load from .env first
     oceanbase_env_path = os.path.join(
-        os.path.dirname(__file__), "..", "..", "configs", "powermem.env"
+        os.path.dirname(__file__), "..", "..", "configs", "seekmem.env"
     )
     
     if os.path.exists(oceanbase_env_path):

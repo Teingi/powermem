@@ -3,13 +3,13 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from powermem.integrations.llm.config.openai import OpenAIConfig
-from powermem.integrations.llm.openai import OpenAILLM
+from seekmem.integrations.llm.config.openai import OpenAIConfig
+from seekmem.integrations.llm.openai import OpenAILLM
 
 
 @pytest.fixture
 def mock_openai_client():
-    with patch("powermem.integrations.llm.openai.OpenAI") as mock_openai:
+    with patch("seekmem.integrations.llm.openai.OpenAI") as mock_openai:
         mock_client = Mock()
         mock_openai.return_value = mock_client
         yield mock_client

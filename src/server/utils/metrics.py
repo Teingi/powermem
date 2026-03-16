@@ -91,27 +91,27 @@ class MetricsCollector:
         with self._lock:
             lines = []
             
-            # powermem_api_requests_total
-            lines.append("# HELP powermem_api_requests_total Total number of API requests")
-            lines.append("# TYPE powermem_api_requests_total counter")
+            # seekmem_api_requests_total
+            lines.append("# HELP seekmem_api_requests_total Total number of API requests")
+            lines.append("# TYPE seekmem_api_requests_total counter")
             for (method, endpoint, status), count in sorted(self._api_request_counters.items()):
                 lines.append(
-                    f'powermem_api_requests_total{{method="{method}",endpoint="{endpoint}",status="{status}"}} {count}'
+                    f'seekmem_api_requests_total{{method="{method}",endpoint="{endpoint}",status="{status}"}} {count}'
                 )
             lines.append("")
             
-            # powermem_memory_operations_total
-            lines.append("# HELP powermem_memory_operations_total Total number of memory operations")
-            lines.append("# TYPE powermem_memory_operations_total counter")
+            # seekmem_memory_operations_total
+            lines.append("# HELP seekmem_memory_operations_total Total number of memory operations")
+            lines.append("# TYPE seekmem_memory_operations_total counter")
             for (operation, status), count in sorted(self._memory_operation_counters.items()):
                 lines.append(
-                    f'powermem_memory_operations_total{{operation="{operation}",status="{status}"}} {count}'
+                    f'seekmem_memory_operations_total{{operation="{operation}",status="{status}"}} {count}'
                 )
             lines.append("")
             
-            # powermem_api_request_duration_seconds (histogram)
-            lines.append("# HELP powermem_api_request_duration_seconds API request duration in seconds")
-            lines.append("# TYPE powermem_api_request_duration_seconds histogram")
+            # seekmem_api_request_duration_seconds (histogram)
+            lines.append("# HELP seekmem_api_request_duration_seconds API request duration in seconds")
+            lines.append("# TYPE seekmem_api_request_duration_seconds histogram")
             for (method, endpoint), durations in sorted(self._api_request_durations.items()):
                 if durations:
                     buckets = self._calculate_histogram_buckets(durations)
@@ -120,7 +120,7 @@ class MetricsCollector:
                         if bucket == float('inf'):
                             # Use +Inf for the last bucket
                             lines.append(
-                                f'powermem_api_request_duration_seconds_bucket{{method="{method}",endpoint="{endpoint}",le="+Inf"}} {buckets[bucket]}'
+                                f'seekmem_api_request_duration_seconds_bucket{{method="{method}",endpoint="{endpoint}",le="+Inf"}} {buckets[bucket]}'
                             )
                         else:
                             # Format bucket value: use .1f for values >= 0.1, .2f for smaller values
@@ -129,25 +129,25 @@ class MetricsCollector:
                             else:
                                 bucket_str = f"{bucket:.2f}"
                             lines.append(
-                                f'powermem_api_request_duration_seconds_bucket{{method="{method}",endpoint="{endpoint}",le="{bucket_str}"}} {buckets[bucket]}'
+                                f'seekmem_api_request_duration_seconds_bucket{{method="{method}",endpoint="{endpoint}",le="{bucket_str}"}} {buckets[bucket]}'
                             )
                     # Output sum and count
                     sum_duration = sum(durations)
                     count = len(durations)
                     lines.append(
-                        f'powermem_api_request_duration_seconds_sum{{method="{method}",endpoint="{endpoint}"}} {sum_duration:.6f}'
+                        f'seekmem_api_request_duration_seconds_sum{{method="{method}",endpoint="{endpoint}"}} {sum_duration:.6f}'
                     )
                     lines.append(
-                        f'powermem_api_request_duration_seconds_count{{method="{method}",endpoint="{endpoint}"}} {count}'
+                        f'seekmem_api_request_duration_seconds_count{{method="{method}",endpoint="{endpoint}"}} {count}'
                     )
             lines.append("")
             
-            # powermem_errors_total
-            lines.append("# HELP powermem_errors_total Total number of errors")
-            lines.append("# TYPE powermem_errors_total counter")
+            # seekmem_errors_total
+            lines.append("# HELP seekmem_errors_total Total number of errors")
+            lines.append("# TYPE seekmem_errors_total counter")
             for (error_type, endpoint), count in sorted(self._error_counters.items()):
                 lines.append(
-                    f'powermem_errors_total{{error_type="{error_type}",endpoint="{endpoint}"}} {count}'
+                    f'seekmem_errors_total{{error_type="{error_type}",endpoint="{endpoint}"}} {count}'
                 )
             
             return '\n'.join(lines) + '\n'

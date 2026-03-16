@@ -16,7 +16,7 @@
     "clearFilters": "清除筛选",
     "about": {
       "title": "关于",
-      "subtitle": "PowerMem 仪表盘信息",
+      "subtitle": "SeekMem 仪表盘信息",
       "version": "版本",
       "website": "官网",
       "copyright": "版权",
@@ -156,11 +156,11 @@
     "title": "设置",
     "subtitle": "管理您的仪表盘配置和认证密钥。",
     "configTitle": "配置",
-    "configDesc": "配置仪表盘如何连接到 PowerMem 服务器。",
+    "configDesc": "配置仪表盘如何连接到 SeekMem 服务器。",
     "privacy": "隐私与安全",
     "privacyDesc": "您的 API 密钥仅存储在浏览器的本地存储中，不会传输到任何第三方分析或外部服务器。",
     "apiKeyLabel": "服务器 API 密钥",
-    "apiKeyPlaceholder": "输入您的 PowerMem API 密钥...",
+    "apiKeyPlaceholder": "输入您的 SeekMem API 密钥...",
     "apiKeyHint": "如果服务器上的 `auth_enabled` 设置为 true，则此项为必填。",
     "save": "保存更改",
     "toast": {

@@ -1,5 +1,5 @@
 """
-Request models for PowerMem API
+Request models for SeekMem API
 """
 
 from typing import Any, Dict, List, Optional

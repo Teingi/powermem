@@ -1,5 +1,5 @@
 """
-Utility functions for PowerMem API Server
+Utility functions for SeekMem API Server
 """
 
 from .converters import (

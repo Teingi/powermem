@@ -1,6 +1,6 @@
-// Package main provides a simple HTTP client for the PowerMem API.
+// Package main provides a simple HTTP client for the SeekMem API.
 //
-// This client demonstrates how to interact with PowerMem's HTTP API Server
+// This client demonstrates how to interact with SeekMem's HTTP API Server
 // using Go's standard library. It supports all core memory operations
 // including create, read, update, delete, and search.
 package main
@@ -16,9 +16,9 @@ import (
 	"time"
 )
 
-// Client is a PowerMem API client.
+// Client is a SeekMem API client.
 type Client struct {
-	// BaseURL is the base URL of the PowerMem API server.
+	// BaseURL is the base URL of the SeekMem API server.
 	// Example: "http://localhost:8000"
 	BaseURL string
 
@@ -31,7 +31,7 @@ type Client struct {
 	HTTPClient *http.Client
 }
 
-// NewClient creates a new PowerMem API client.
+// NewClient creates a new SeekMem API client.
 func NewClient(baseURL, apiKey string) *Client {
 	return &Client{
 		BaseURL: baseURL,
@@ -152,7 +152,7 @@ func (c *Client) Status() (*SystemStatusResponse, error) {
 // =============================================================================
 
 // CreateMemory creates a new memory.
-// When infer is true (default), PowerMem may extract multiple memories from the content.
+// When infer is true (default), SeekMem may extract multiple memories from the content.
 func (c *Client) CreateMemory(req *CreateMemoryRequest) ([]CreatedMemory, error) {
 	respBody, err := c.doRequest(http.MethodPost, "/api/v1/memories", req)
 	if err != nil {

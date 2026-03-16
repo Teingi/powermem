@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import MagicMock, Mock
-from powermem.core.memory import Memory
+from seekmem.core.memory import Memory
 
 
 def test_memory_optimize_delegation():

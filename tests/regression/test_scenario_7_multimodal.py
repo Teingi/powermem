@@ -15,8 +15,8 @@ from typing import Any, Dict
 
 import pytest
 from dotenv import load_dotenv
-from powermem import create_memory
-from powermem.config_loader import auto_config
+from seekmem import create_memory
+from seekmem.config_loader import auto_config
 
 
 # -----------------------------------------------------------------------------
@@ -80,7 +80,7 @@ custom_config = {
                 "port": int(os.getenv("OCEANBASE_PORT", "10001")),
                 "user": os.getenv("OCEANBASE_USER", "root"),
                 "password": os.getenv("OCEANBASE_PASSWORD", ""),
-                "db_name": os.getenv("OCEANBASE_DB", "powermem"),
+                "db_name": os.getenv("OCEANBASE_DB", "seekmem"),
             },
             "vidx_metric_type": "cosine",
             "index_type": "IVF_FLAT",

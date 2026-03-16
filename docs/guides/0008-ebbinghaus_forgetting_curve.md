@@ -1,7 +1,7 @@
 ## Prerequisites
 
 - Python 3.10+
-- powermem installed (`pip install powermem`)
+- seekmem installed (`pip install seekmem`)
 - matplotlib and numpy for visualization (optional)
 
 ## Configuration
@@ -15,7 +15,7 @@
 
 2. Edit the `.env` file and configure your settings
 
-> **Note:** When you call `Memory()`, powermem will automatically load configuration from the `.env` file.
+> **Note:** When you call `Memory()`, seekmem will automatically load configuration from the `.env` file.
 
 ### Using JSON/Dictionary Configuration
 
@@ -27,7 +27,7 @@ Instead of using `.env` files, you can also pass configuration directly as a Pyt
 Here's an example using a dictionary configuration:
 
 ```python
-from powermem import Memory
+from seekmem import Memory
 
 # Define configuration as a dictionary (JSON-like format)
 config = {
@@ -55,7 +55,7 @@ config = {
                 'port': 2881,
                 'user': 'root@sys',
                 'password': 'password',
-                'db_name': 'powermem'
+                'db_name': 'seekmem'
             },
             'embedding_model_dims': 1536,
             'index_type': 'IVF_FLAT',
@@ -98,7 +98,7 @@ In traditional memory systems, all memories are treated equally regardless of wh
 
 ### Use Cases
 
-Implementing forgetting curve principles in powermem enables:
+Implementing forgetting curve principles in seekmem enables:
 
 - **Intelligent search ranking**: Prioritize recent memories that are more likely to be relevant
 - **Memory freshness tracking**: Identify stale memories that may need updating
@@ -212,7 +212,7 @@ To apply the forgetting curve, we need to know when each memory was created or l
 
 ### Implementation Strategy
 
-powermem's `metadata` field is perfect for storing timestamp information. We'll:
+seekmem's `metadata` field is perfect for storing timestamp information. We'll:
 
 1. Store the creation time as an ISO-formatted string in metadata
 2. Include additional context (category, subject) for better organization
@@ -232,7 +232,7 @@ When adding timestamps to memories:
 Let's add memories and track their creation time:
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 from datetime import datetime, timedelta
 
 memory = Memory(config=auto_config())
@@ -326,7 +326,7 @@ When analyzing retention scores:
 Now let's retrieve memories and calculate their retention scores:
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 from datetime import datetime
 import math
 
@@ -432,7 +432,7 @@ You can adjust the weighting strategy:
 Let's enhance search results by applying retention-based weighting:
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 from datetime import datetime
 import math
 
@@ -688,7 +688,7 @@ Spaced repetition is ideal for:
 Based on the forgetting curve, we can implement a spaced repetition system that suggests when to review memories:
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 from datetime import datetime, timedelta
 import math
 

@@ -1,6 +1,6 @@
 # End-to-End Tests
 
-This directory contains end-to-end tests for powermem.
+This directory contains end-to-end tests for seekmem.
 
 ## Test Categories
 

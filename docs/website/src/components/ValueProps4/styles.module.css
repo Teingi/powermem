@@ -229,7 +229,7 @@
   pointer-events: none;
 }
 
-.dashboardPowerMem {
+.dashboardSeekMem {
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.05));
   border-color: rgba(59, 130, 246, 0.4);
   box-shadow: 
@@ -237,7 +237,7 @@
     inset 0 0 20px rgba(59, 130, 246, 0.05);
 }
 
-.dashboardPowerMem::after {
+.dashboardSeekMem::after {
   content: '';
   position: absolute;
   top: -50%;
@@ -287,7 +287,7 @@
     0 0 40px rgba(96, 165, 250, 0.3);
 }
 
-.dashboardPowerMem .dashboardValue {
+.dashboardSeekMem .dashboardValue {
   color: #60a5fa;
   animation: glow 2s ease-in-out infinite;
 }

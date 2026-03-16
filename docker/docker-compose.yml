@@ -1,32 +1,32 @@
 version: '3.8'
 
 networks:
-  powermem-network:
+  seekmem-network:
     driver: bridge
-    name: powermem-network
+    name: seekmem-network
 
 services:
-  powermem-server:
+  seekmem-server:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    image: oceanbase/powermem-server:latest
-    container_name: powermem-server
+    image: oceanbase/seekmem-server:latest
+    container_name: seekmem-server
     ports:
-      - "${POWERMEM_SERVER_PORT:-8000}:8000"
+      - "${SEEKMEM_SERVER_PORT:-8000}:8000"
     environment:
-      - POWERMEM_SERVER_HOST=${POWERMEM_SERVER_HOST:-0.0.0.0}
-      - POWERMEM_SERVER_PORT=${POWERMEM_SERVER_PORT:-8000}
-      - POWERMEM_SERVER_WORKERS=${POWERMEM_SERVER_WORKERS:-4}
-      - POWERMEM_SERVER_API_KEYS=${POWERMEM_SERVER_API_KEYS:-}
-      - POWERMEM_SERVER_AUTH_ENABLED=${POWERMEM_SERVER_AUTH_ENABLED:-false}
-      - POWERMEM_SERVER_RATE_LIMIT_ENABLED=${POWERMEM_SERVER_RATE_LIMIT_ENABLED:-true}
-      - POWERMEM_SERVER_RATE_LIMIT_PER_MINUTE=${POWERMEM_SERVER_RATE_LIMIT_PER_MINUTE:-100}
-      - POWERMEM_SERVER_LOG_LEVEL=${POWERMEM_SERVER_LOG_LEVEL:-INFO}
-      - POWERMEM_SERVER_LOG_FORMAT=${POWERMEM_SERVER_LOG_FORMAT:-json}
-      - POWERMEM_SERVER_CORS_ENABLED=${POWERMEM_SERVER_CORS_ENABLED:-true}
-      - POWERMEM_SERVER_CORS_ORIGINS=${POWERMEM_SERVER_CORS_ORIGINS:-*}
-      - POWERMEM_DATABASE_URL=${POWERMEM_DATABASE_URL:-}
+      - SEEKMEM_SERVER_HOST=${SEEKMEM_SERVER_HOST:-0.0.0.0}
+      - SEEKMEM_SERVER_PORT=${SEEKMEM_SERVER_PORT:-8000}
+      - SEEKMEM_SERVER_WORKERS=${SEEKMEM_SERVER_WORKERS:-4}
+      - SEEKMEM_SERVER_API_KEYS=${SEEKMEM_SERVER_API_KEYS:-}
+      - SEEKMEM_SERVER_AUTH_ENABLED=${SEEKMEM_SERVER_AUTH_ENABLED:-false}
+      - SEEKMEM_SERVER_RATE_LIMIT_ENABLED=${SEEKMEM_SERVER_RATE_LIMIT_ENABLED:-true}
+      - SEEKMEM_SERVER_RATE_LIMIT_PER_MINUTE=${SEEKMEM_SERVER_RATE_LIMIT_PER_MINUTE:-100}
+      - SEEKMEM_SERVER_LOG_LEVEL=${SEEKMEM_SERVER_LOG_LEVEL:-INFO}
+      - SEEKMEM_SERVER_LOG_FORMAT=${SEEKMEM_SERVER_LOG_FORMAT:-json}
+      - SEEKMEM_SERVER_CORS_ENABLED=${SEEKMEM_SERVER_CORS_ENABLED:-true}
+      - SEEKMEM_SERVER_CORS_ORIGINS=${SEEKMEM_SERVER_CORS_ORIGINS:-*}
+      - SEEKMEM_DATABASE_URL=${SEEKMEM_DATABASE_URL:-}
       # Database configuration for connecting to seekdb
       # Use SEEKDB_ROOT_PASSWORD variable for unified password management
       - DATABASE_PROVIDER=oceanbase
@@ -34,7 +34,7 @@ services:
       - OCEANBASE_PORT=2881
       - OCEANBASE_USER=root@sys
       - OCEANBASE_PASSWORD=${SEEKDB_ROOT_PASSWORD:-}
-      - OCEANBASE_DATABASE=powermem
+      - OCEANBASE_DATABASE=seekmem
       - OCEANBASE_COLLECTION=memories
     env_file:
       - .env
@@ -55,16 +55,16 @@ services:
     depends_on:
       - seekdb
     networks:
-      - powermem-network
+      - seekmem-network
 
   seekdb:
     image: oceanbase/seekdb:latest
-    container_name: powermem-seekdb
+    container_name: seekmem-seekdb
     ports:
       - "2881:2881"
       - "2886:2886"
     environment:
-      # Unified password variable for both seekdb and PowerMem Server
+      # Unified password variable for both seekdb and SeekMem Server
       - ROOT_PASSWORD=${SEEKDB_ROOT_PASSWORD:-}
       - CPU_COUNT=4
       - MEMORY_LIMIT=4G
@@ -72,7 +72,7 @@ services:
       - DATAFILE_SIZE=2G
       - DATAFILE_NEXT=2G
       - DATAFILE_MAXSIZE=50G
-      - SEEKDB_DATABASE=powermem
+      - SEEKDB_DATABASE=seekmem
     volumes:
       - seekdb_data:/var/lib/oceanbase
       # Mount init.sql for database initialization (optional)
@@ -90,7 +90,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - powermem-network
+      - seekmem-network
 
 volumes:
   seekdb_data:

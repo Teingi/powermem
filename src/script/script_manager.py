@@ -1,10 +1,10 @@
 """
-PowerMem Script Manager
+SeekMem Script Manager
 
 Provides Python API to manage and execute various maintenance and upgrade scripts.
 
 Usage example:
-    from powermem import auto_config, Memory
+    from seekmem import auto_config, Memory
     from script import ScriptManager
     
     # List available scripts
@@ -117,7 +117,7 @@ class ScriptManager:
     def _print_scripts(cls, scripts: Dict[str, Dict], categories: Dict[str, str]) -> None:
         """Print script list"""
         logger.info("\n" + "=" * 70)
-        logger.info("PowerMem Available Scripts")
+        logger.info("SeekMem Available Scripts")
         logger.info("=" * 70)
         
         # Organize scripts by category
@@ -252,14 +252,14 @@ class ScriptManager:
                     param_type_hint = annotation if isinstance(annotation, str) else getattr(annotation, '__name__', None)
                 
                 if param_type_hint and 'Memory' in param_type_hint:
-                    logger.info(f"  from powermem import Memory, auto_config")
+                    logger.info(f"  from seekmem import Memory, auto_config")
                     logger.info(f"  from script import ScriptManager")
                     logger.info(f"  ")
                     logger.info(f"  config = auto_config()")
                     logger.info(f"  memory = Memory(config=config)")
                     logger.info(f"  ScriptManager.run('{script_name}', memory)")
                 else:
-                    logger.info(f"  from powermem import auto_config")
+                    logger.info(f"  from seekmem import auto_config")
                     logger.info(f"  from script import ScriptManager")
                     logger.info(f"  ")
                     logger.info(f"  config = auto_config()")
@@ -300,7 +300,7 @@ class ScriptManager:
             raise ValueError(
                 "param parameter is required\n"
                 "Example:\n"
-                "  from powermem import auto_config, Memory\n"
+                "  from seekmem import auto_config, Memory\n"
                 "  from script import ScriptManager\n"
                 "  config = auto_config()\n"
                 "  # For upgrade/downgrade:\n"

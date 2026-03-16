@@ -1,5 +1,5 @@
 """
-Configuration management for PowerMem API Server.
+Configuration management for SeekMem API Server.
 """
 
 from __future__ import annotations
@@ -8,7 +8,7 @@ from typing import List, Optional
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings
 
-from powermem.settings import settings_config
+from seekmem.settings import settings_config
 
 
 def _parse_boolish(value: object) -> object:
@@ -35,7 +35,7 @@ def _parse_boolish(value: object) -> object:
 
 class ServerSettings(BaseSettings):
     model_config = settings_config(
-        env_prefix="POWERMEM_SERVER_",
+        env_prefix="SEEKMEM_SERVER_",
         extra="ignore",
     )
 
@@ -59,10 +59,10 @@ class ServerSettings(BaseSettings):
     log_file: Optional[str] = Field(default="server.log")
 
     # API settings
-    api_title: str = Field(default="PowerMem API")
+    api_title: str = Field(default="SeekMem API")
     api_version: str = Field(default="v1")
     api_description: str = Field(
-        default="PowerMem HTTP API Server - Intelligent Memory System"
+        default="SeekMem HTTP API Server - Intelligent Memory System"
     )
 
     # CORS settings

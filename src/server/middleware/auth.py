@@ -1,5 +1,5 @@
 """
-Authentication middleware for PowerMem API
+Authentication middleware for SeekMem API
 """
 
 from typing import Optional

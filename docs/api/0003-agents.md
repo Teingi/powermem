@@ -1,13 +1,13 @@
 # Agent APIs Reference
 
-powermem provides comprehensive multi-agent memory management capabilities.
+seekmem provides comprehensive multi-agent memory management capabilities.
 
 ## Agent Memory Management
 
 ### Creating Agent-Specific Memories
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 
@@ -66,9 +66,9 @@ results = support_agent.search(
 ### Using MultiAgentMemoryManager
 
 ```python
-from powermem.agent.implementations.multi_agent import MultiAgentMemoryManager
-from powermem.agent.components.collaboration_coordinator import CollaborationCoordinator
-from powermem.agent.components.permission_controller import PermissionController
+from seekmem.agent.implementations.multi_agent import MultiAgentMemoryManager
+from seekmem.agent.components.collaboration_coordinator import CollaborationCoordinator
+from seekmem.agent.components.permission_controller import PermissionController
 
 config = auto_config()
 
@@ -88,7 +88,7 @@ manager.register_agent("charlie", "qa")
 Manages agent collaboration and shared memories.
 
 ```python
-from powermem.agent.components.collaboration_coordinator import CollaborationCoordinator
+from seekmem.agent.components.collaboration_coordinator import CollaborationCoordinator
 
 coordinator = CollaborationCoordinator(config=config)
 
@@ -105,7 +105,7 @@ coordinator.track_collaboration(
 Controls access permissions for agent memories.
 
 ```python
-from powermem.agent.components.permission_controller import PermissionController
+from seekmem.agent.components.permission_controller import PermissionController
 
 permission = PermissionController(config=config)
 
@@ -128,7 +128,7 @@ can_access = permission.check_access(
 Manages privacy levels and data protection.
 
 ```python
-from powermem.agent.components.privacy_protector import PrivacyProtector
+from seekmem.agent.components.privacy_protector import PrivacyProtector
 
 privacy = PrivacyProtector(config=config)
 
@@ -150,7 +150,7 @@ can_share = privacy.can_share(
 Manages memory scopes (AGENT, USER, GROUP, etc.).
 
 ```python
-from powermem.agent.components.scope_controller import ScopeController
+from seekmem.agent.components.scope_controller import ScopeController
 
 scope = ScopeController(config=config)
 
@@ -169,7 +169,7 @@ agent_memories = scope.get_by_scope(
 
 ## Memory Scopes
 
-powermem supports different memory scopes:
+seekmem supports different memory scopes:
 
 - **AGENT**: Agent-specific memories
 - **USER**: User-specific memories
@@ -203,7 +203,7 @@ results = memory.search(
 For multi-user scenarios:
 
 ```python
-from powermem.agent.implementations.multi_user import MultiUserMemoryManager
+from seekmem.agent.implementations.multi_user import MultiUserMemoryManager
 
 config = auto_config()
 
@@ -229,7 +229,7 @@ results = manager.search_user_memories(
 For hybrid scenarios combining multi-agent and multi-user:
 
 ```python
-from powermem.agent.implementations.hybrid import HybridMemoryManager
+from seekmem.agent.implementations.hybrid import HybridMemoryManager
 
 config = auto_config()
 

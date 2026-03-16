@@ -1,11 +1,11 @@
 """
-PowerMem Script Package
+SeekMem Script Package
 
 Provides script management tools for database upgrades, migrations, and maintenance.
 
 Usage:
     from script import ScriptManager
-    from powermem import auto_config, Memory
+    from seekmem import auto_config, Memory
     
     # List available scripts
     ScriptManager.list_scripts()

@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import MagicMock, call
-from powermem.intelligence.memory_optimizer import MemoryOptimizer
+from seekmem.intelligence.memory_optimizer import MemoryOptimizer
 
 @pytest.fixture
 def mock_storage():

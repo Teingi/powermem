@@ -22,7 +22,7 @@ except Exception:  # pragma: no cover - optional dependencies
     BaseModel = object  # type: ignore
     asynccontextmanager = None  # type: ignore
 
-from powermem import AsyncMemory, auto_config
+from seekmem import AsyncMemory, auto_config
 
 
 def _ensure_env_loaded() -> None:

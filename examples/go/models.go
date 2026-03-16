@@ -1,4 +1,4 @@
-// Package main provides data models for PowerMem API requests and responses.
+// Package main provides data models for SeekMem API requests and responses.
 //
 // Note: Memory IDs are 64-bit integers that may exceed JavaScript's safe integer range.
 // To avoid precision loss, memory_id is handled as a string in JSON serialization.
@@ -57,7 +57,7 @@ func (m MemoryID) Int64() int64 {
 // API Response Wrapper
 // =============================================================================
 
-// APIResponse is the standard response wrapper for all PowerMem API responses.
+// APIResponse is the standard response wrapper for all SeekMem API responses.
 type APIResponse[T any] struct {
 	Success   bool      `json:"success"`
 	Data      T         `json:"data,omitempty"`
@@ -76,7 +76,7 @@ type APIError struct {
 // Memory Models
 // =============================================================================
 
-// Memory represents a memory record in PowerMem.
+// Memory represents a memory record in SeekMem.
 type Memory struct {
 	MemoryID  MemoryID               `json:"memory_id"`
 	Content   string                 `json:"content"`

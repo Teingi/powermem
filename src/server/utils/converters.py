@@ -1,5 +1,5 @@
 """
-Data conversion utilities for PowerMem API
+Data conversion utilities for SeekMem API
 """
 
 from typing import Any, Dict, List, Optional

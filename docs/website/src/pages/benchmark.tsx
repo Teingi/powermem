@@ -144,7 +144,7 @@ export default function BenchmarkPage() {
   const t = (key: string) => translations[isZh ? 'zh' : 'en'][key] || key;
 
   return (
-    <Layout title="Benchmark" description="PowerMem Performance Benchmarks">
+    <Layout title="Benchmark" description="SeekMem Performance Benchmarks">
       <div className={styles.benchmarkPage}>
         <div className="container margin-vert--lg">
           <div className={styles.header}>

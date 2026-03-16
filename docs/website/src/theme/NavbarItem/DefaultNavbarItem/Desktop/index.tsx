@@ -9,7 +9,7 @@ function useGitHubStars() {
   const [stars, setStars] = useState<number | null>(null);
 
   useEffect(() => {
-    fetch('https://api.github.com/repos/oceanbase/powermem')
+    fetch('https://api.github.com/repos/oceanbase/seekmem')
       .then((res) => res.json())
       .then((data) => {
         if (data.stargazers_count && data.stargazers_count > 1000) {

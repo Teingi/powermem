@@ -1,7 +1,7 @@
 ## Prerequisites
 
 - Python 3.10+
-- powermem installed (`pip install powermem`)
+- seekmem installed (`pip install seekmem`)
 - Multimodal LLM API support
 
 ## Configuration
@@ -19,14 +19,14 @@
 
 ## What is Multimodal Capability?
 
-Multimodal capability allows PowerMem to process more than just text:
+Multimodal capability allows SeekMem to process more than just text:
 - **Images**: Extract information from images and generate text descriptions
 - **Image URLs**: Process online image links
 - **Audio**: Process audio files and convert speech to text
 - **Audio URLs**: Process online audio links
 - **Mixed Content**: Handle composite messages with both text, images, and audio
 
-PowerMem automatically converts image and audio content to text descriptions, stores them as memories, making the multimedia content searchable and retrievable.
+SeekMem automatically converts image and audio content to text descriptions, stores them as memories, making the multimedia content searchable and retrievable.
 
 ## Add Image Memory Using OpenAI Multimodal Format
 
@@ -34,7 +34,7 @@ Add image-containing memories using the standard OpenAI multimodal message forma
 
 ```python
 import os
-from powermem import Memory
+from seekmem import Memory
 
 config = {
     "llm": {
@@ -109,7 +109,7 @@ print(f"   Processed content: {result}")
 Search for previously added image memories:
 
 ```python
-from powermem import Memory
+from seekmem import Memory
 
 memory = Memory(config=config)
 
@@ -136,7 +136,7 @@ Add audio-containing memories using the standard OpenAI multimodal message forma
 
 ```python
 import os
-from powermem import Memory
+from seekmem import Memory
 
 config = {
     "llm": {
@@ -226,7 +226,7 @@ print(f"   Processed content: {result}")
 Search for previously added audio memories:
 
 ```python
-from powermem import Memory
+from seekmem import Memory
 
 memory = Memory(config=config)
 

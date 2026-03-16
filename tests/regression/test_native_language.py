@@ -26,8 +26,8 @@ from typing import Dict, Any, Optional, List
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
 
-from powermem import auto_config
-from powermem.user_memory import UserMemory
+from seekmem import auto_config
+from seekmem.user_memory import UserMemory
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -78,8 +78,8 @@ def user_memory(config):
 @pytest.fixture(scope="module")
 def api_client():
     """Provide API client for HTTP tests."""
-    base_url = os.getenv("POWERMEM_API_URL", "http://localhost:8000")
-    api_key = os.getenv("POWERMEM_API_KEY", "key1")
+    base_url = os.getenv("SEEKMEM_API_URL", "http://localhost:8000")
+    api_key = os.getenv("SEEKMEM_API_KEY", "key1")
     return APIClient(base_url=base_url, api_key=api_key)
 
 

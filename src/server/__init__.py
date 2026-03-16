@@ -1,7 +1,7 @@
 """
-PowerMem HTTP API Server
+SeekMem HTTP API Server
 
-A production-ready HTTP API server for PowerMem that provides RESTful endpoints
+A production-ready HTTP API server for SeekMem that provides RESTful endpoints
 for memory management, search, user profiles, and multi-agent support.
 """
 

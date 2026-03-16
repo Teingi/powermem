@@ -1,10 +1,10 @@
 # Docker Directory
 
-This directory contains all Docker-related files for PowerMem Server.
+This directory contains all Docker-related files for SeekMem Server.
 
 ## Files
 
-- `Dockerfile` - Multi-stage Docker build file for PowerMem Server
+- `Dockerfile` - Multi-stage Docker build file for SeekMem Server
 - `docker-compose.yml` - Docker Compose configuration file with seekdb support
 - `docker-entrypoint.sh` - Container entrypoint script
 - `.dockerignore` - Files to exclude from Docker build context
@@ -17,7 +17,7 @@ This directory contains all Docker-related files for PowerMem Server.
 From the project root directory:
 
 ```bash
-docker build -t oceanbase/powermem-server:latest -f docker/Dockerfile .
+docker build -t oceanbase/seekmem-server:latest -f docker/Dockerfile .
 ```
 
 ### Run with Docker Compose (with seekdb)
@@ -42,16 +42,16 @@ From the project root directory:
 
 ```bash
 docker run -d \
-  --name powermem-server \
+  --name seekmem-server \
   -p 8000:8000 \
   -v $(pwd)/.env:/app/.env:ro \
   --env-file .env \
-  oceanbase/powermem-server:latest
+  oceanbase/seekmem-server:latest
 ```
 
 ## Services
 
-### PowerMem Server
+### SeekMem Server
 - Port: 8000
 - Health check: `http://localhost:8000/api/v1/system/health`
 - Database: Connected to seekdb without password
@@ -60,7 +60,7 @@ docker run -d \
 - MySQL Port: 2881
 - seekdb Web Dashboard: 2886
 - Data persistence: Docker volume `seekdb_data`
-- Default database: `powermem`
+- Default database: `seekmem`
 - Password: Controlled by `SEEKDB_ROOT_PASSWORD` environment variable
   - Not set (default): No password
   - Set via command line: Use specified password
@@ -87,7 +87,7 @@ Open browser to: `http://localhost:2886`
 
 The `docker-compose.yml` file includes default configuration values:
 
-**PowerMem Server:**
+**SeekMem Server:**
 - Host: `0.0.0.0`
 - Port: `8000`
 - Workers: `4`
@@ -98,7 +98,7 @@ The `docker-compose.yml` file includes default configuration values:
 - Password: Controlled by `SEEKDB_ROOT_PASSWORD` environment variable (not set by default)
 - CPU: 4 cores
 - Memory: 4GB
-- Database: `powermem`
+- Database: `seekmem`
 - Data persistence: Docker volume
 
 ## Documentation

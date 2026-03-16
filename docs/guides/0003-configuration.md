@@ -1,10 +1,10 @@
 # Configuration Reference
 
-Complete reference guide for all PowerMem configuration options. This document provides detailed explanations for every configuration parameter in `env.example`.
+Complete reference guide for all SeekMem configuration options. This document provides detailed explanations for every configuration parameter in `env.example`.
 
 ## Configuration Methods
 
-PowerMem supports two configuration methods:
+SeekMem supports two configuration methods:
 
 1. **Environment Variables (`.env` file)** - Recommended for most use cases
 2. **JSON/Dictionary Configuration** - Useful for programmatic configuration
@@ -14,7 +14,7 @@ PowerMem supports two configuration methods:
 Create a `.env` file in your project root and configure using environment variables. See the examples in each section below.
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 # Load configuration (auto-loads from .env or uses defaults)
 config = auto_config()
@@ -31,13 +31,13 @@ Pass configuration as a Python dictionary (JSON-like format). This is useful whe
 - Embedding configuration in application code
 
 ```python
-from powermem import Memory
+from seekmem import Memory
 
 config = {
     'vector_store': {
         'provider': 'sqlite',
         'config': {
-            'database_path': './data/powermem_dev.db'
+            'database_path': './data/seekmem_dev.db'
         }
     },
     'llm': {
@@ -65,7 +65,7 @@ You can also load configuration from a JSON file:
 
 ```python
 import json
-from powermem import Memory
+from seekmem import Memory
 
 # Load from JSON file
 with open('config.json', 'r') as f:
@@ -91,7 +91,7 @@ memory = Memory(config=config)
 
 ## 1. Database Configuration (Required)
 
-PowerMem requires a database provider to store memories and vectors. Choose one of the supported providers: SQLite (development), OceanBase (production), or PostgreSQL.
+SeekMem requires a database provider to store memories and vectors. Choose one of the supported providers: SQLite (development), OceanBase (production), or PostgreSQL.
 
 ### Common Database Settings
 
@@ -105,14 +105,14 @@ SQLite is the default database provider, recommended for development and single-
 
 | Configuration | Type | Required | Default | Description |
 |--------------|------|----------|---------|-------------|
-| `SQLITE_PATH` | string | Yes* | `./data/powermem_dev.db` | Path to the SQLite database file. Required when `DATABASE_PROVIDER=sqlite` |
+| `SQLITE_PATH` | string | Yes* | `./data/seekmem_dev.db` | Path to the SQLite database file. Required when `DATABASE_PROVIDER=sqlite` |
 | `SQLITE_ENABLE_WAL` | boolean | No | `true` | Enable Write-Ahead Logging (WAL) mode for better concurrency |
 | `SQLITE_TIMEOUT` | integer | No | `30` | Connection timeout in seconds |
 
 **Environment Variables Example:**
 ```env
 DATABASE_PROVIDER=sqlite
-SQLITE_PATH=./data/powermem_dev.db
+SQLITE_PATH=./data/seekmem_dev.db
 SQLITE_ENABLE_WAL=true
 SQLITE_TIMEOUT=30
 ```
@@ -123,7 +123,7 @@ SQLITE_TIMEOUT=30
   "vector_store": {
     "provider": "sqlite",
     "config": {
-      "database_path": "./data/powermem_dev.db",
+      "database_path": "./data/seekmem_dev.db",
       "enable_wal": true,
       "timeout": 30
     }
@@ -137,7 +137,7 @@ config = {
     'vector_store': {
         'provider': 'sqlite',
         'config': {
-            'database_path': './data/powermem_dev.db',
+            'database_path': './data/seekmem_dev.db',
             'enable_wal': True,
             'timeout': 30
         }
@@ -155,7 +155,7 @@ OceanBase is recommended for production deployments and enterprise applications 
 | `OCEANBASE_PORT` | integer | Yes* | `2881` | OceanBase server port. Required when `DATABASE_PROVIDER=oceanbase` |
 | `OCEANBASE_USER` | string | Yes* | `root` | Database username. Required when `DATABASE_PROVIDER=oceanbase` |
 | `OCEANBASE_PASSWORD` | string | Yes* | - | Database password. Required when `DATABASE_PROVIDER=oceanbase` |
-| `OCEANBASE_DATABASE` | string | Yes* | `powermem` | Database name. Required when `DATABASE_PROVIDER=oceanbase` |
+| `OCEANBASE_DATABASE` | string | Yes* | `seekmem` | Database name. Required when `DATABASE_PROVIDER=oceanbase` |
 | `OCEANBASE_COLLECTION` | string | No | `memories` | Collection/table name for storing memories |
 | `OCEANBASE_INDEX_TYPE` | string | No | `IVF_FLAT` | Vector index type. Options: `IVF_FLAT`, `HNSW`, etc. |
 | `OCEANBASE_VECTOR_METRIC_TYPE` | string | No | `cosine` | Vector similarity metric. Options: `cosine`, `euclidean`, `dot_product` |
@@ -173,7 +173,7 @@ OCEANBASE_HOST=127.0.0.1
 OCEANBASE_PORT=2881
 OCEANBASE_USER=root
 OCEANBASE_PASSWORD=your_password
-OCEANBASE_DATABASE=powermem
+OCEANBASE_DATABASE=seekmem
 OCEANBASE_COLLECTION=memories
 OCEANBASE_INDEX_TYPE=IVF_FLAT
 OCEANBASE_VECTOR_METRIC_TYPE=cosine
@@ -192,7 +192,7 @@ OCEANBASE_EMBEDDING_MODEL_DIMS=1536
         "port": 2881,
         "user": "root",
         "password": "your_password",
-        "db_name": "powermem"
+        "db_name": "seekmem"
       },
       "vidx_metric_type": "cosine",
       "index_type": "IVF_FLAT",
@@ -219,7 +219,7 @@ config = {
                 'port': 2881,
                 'user': 'root',
                 'password': 'your_password',
-                'db_name': 'powermem'
+                'db_name': 'seekmem'
             },
             'vidx_metric_type': 'cosine',
             'index_type': 'IVF_FLAT',
@@ -239,7 +239,7 @@ PostgreSQL with pgvector extension is supported for vector storage.
 | `POSTGRES_PORT` | integer | Yes* | `5432` | PostgreSQL server port. Required when `DATABASE_PROVIDER=postgres` |
 | `POSTGRES_USER` | string | Yes* | `postgres` | Database username. Required when `DATABASE_PROVIDER=postgres` |
 | `POSTGRES_PASSWORD` | string | Yes* | - | Database password. Required when `DATABASE_PROVIDER=postgres` |
-| `POSTGRES_DATABASE` | string | Yes* | `powermem` | Database name. Required when `DATABASE_PROVIDER=postgres` |
+| `POSTGRES_DATABASE` | string | Yes* | `seekmem` | Database name. Required when `DATABASE_PROVIDER=postgres` |
 | `DATABASE_SSLMODE` | string | No | `prefer` | SSL connection mode. Options: `disable`, `allow`, `prefer`, `require`, `verify-ca`, `verify-full` |
 | `DATABASE_POOL_SIZE` | integer | No | `10` | Connection pool size |
 | `DATABASE_MAX_OVERFLOW` | integer | No | `20` | Maximum overflow connections in the pool |
@@ -251,7 +251,7 @@ POSTGRES_HOST=127.0.0.1
 POSTGRES_PORT=5432
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=your_password
-POSTGRES_DATABASE=powermem
+POSTGRES_DATABASE=seekmem
 POSTGRES_COLLECTION=memories
 DATABASE_SSLMODE=prefer
 DATABASE_POOL_SIZE=10
@@ -265,7 +265,7 @@ DATABASE_MAX_OVERFLOW=20
     "provider": "postgres",
     "config": {
       "collection_name": "memories",
-      "dbname": "powermem",
+      "dbname": "seekmem",
       "host": "127.0.0.1",
       "port": 5432,
       "user": "postgres",
@@ -285,7 +285,7 @@ config = {
         'provider': 'postgres',
         'config': {
             'collection_name': 'memories',
-            'dbname': 'powermem',
+            'dbname': 'seekmem',
             'host': '127.0.0.1',
             'port': 5432,
             'user': 'postgres',
@@ -300,7 +300,7 @@ config = {
 
 ## 2. LLM Configuration (Required)
 
-PowerMem requires an LLM provider for memory generation and retrieval. Choose from Qwen, OpenAI, or Mock (for testing).
+SeekMem requires an LLM provider for memory generation and retrieval. Choose from Qwen, OpenAI, or Mock (for testing).
 
 ### Common LLM Settings
 
@@ -436,7 +436,7 @@ config = {
 
 ## 3. Embedding Configuration (Required)
 
-PowerMem requires an embedding provider to convert text into vector embeddings for similarity search.
+SeekMem requires an embedding provider to convert text into vector embeddings for similarity search.
 
 ### Common Embedding Settings
 
@@ -544,7 +544,7 @@ config = {
 
 ## 4. Agent Configuration (Optional)
 
-Agent configuration controls how PowerMem manages memory for AI agents.
+Agent configuration controls how SeekMem manages memory for AI agents.
 
 | Configuration | Type | Required | Default | Description |
 |--------------|------|----------|---------|-------------|
@@ -748,7 +748,7 @@ Telemetry settings control usage analytics and monitoring.
 | Configuration | Type | Required | Default | Description |
 |--------------|------|----------|---------|-------------|
 | `TELEMETRY_ENABLED` | boolean | No | `false` | Enable telemetry data collection |
-| `TELEMETRY_ENDPOINT` | string | No | `https://telemetry.powermem.ai` | Telemetry endpoint URL |
+| `TELEMETRY_ENDPOINT` | string | No | `https://telemetry.seekmem.ai` | Telemetry endpoint URL |
 | `TELEMETRY_API_KEY` | string | Yes* | - | API key for telemetry endpoint. Required when `TELEMETRY_ENABLED=true` |
 | `TELEMETRY_BATCH_SIZE` | integer | No | `100` | Number of telemetry events to batch before sending |
 | `TELEMETRY_FLUSH_INTERVAL` | integer | No | `30` | Telemetry flush interval in seconds |
@@ -757,7 +757,7 @@ Telemetry settings control usage analytics and monitoring.
 **Environment Variables Example:**
 ```env
 TELEMETRY_ENABLED=false
-TELEMETRY_ENDPOINT=https://telemetry.powermem.ai
+TELEMETRY_ENDPOINT=https://telemetry.seekmem.ai
 TELEMETRY_API_KEY=
 TELEMETRY_BATCH_SIZE=100
 TELEMETRY_FLUSH_INTERVAL=30
@@ -769,7 +769,7 @@ TELEMETRY_RETENTION_DAYS=30
 {
   "telemetry": {
     "enable_telemetry": false,
-    "telemetry_endpoint": "https://telemetry.powermem.ai",
+    "telemetry_endpoint": "https://telemetry.seekmem.ai",
     "telemetry_api_key": "",
     "telemetry_batch_size": 100,
     "telemetry_flush_interval": 30
@@ -782,7 +782,7 @@ TELEMETRY_RETENTION_DAYS=30
 config = {
     'telemetry': {
         'enable_telemetry': False,
-        'telemetry_endpoint': 'https://telemetry.powermem.ai',
+        'telemetry_endpoint': 'https://telemetry.seekmem.ai',
         'telemetry_api_key': '',
         'telemetry_batch_size': 100,
         'telemetry_flush_interval': 30
@@ -851,7 +851,7 @@ Logging settings control general application logging.
 |--------------|------|----------|---------|-------------|
 | `LOGGING_LEVEL` | string | No | `DEBUG` | Logging level. Options: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL` |
 | `LOGGING_FORMAT` | string | No | `%(asctime)s - %(name)s - %(levelname)s - %(message)s` | Log message format (Python logging format) |
-| `LOGGING_FILE` | string | No | `./logs/powermem.log` | Path to log file |
+| `LOGGING_FILE` | string | No | `./logs/seekmem.log` | Path to log file |
 | `LOGGING_MAX_SIZE` | string | No | `100MB` | Maximum size of log file before rotation |
 | `LOGGING_BACKUP_COUNT` | integer | No | `5` | Number of backup log files to keep |
 | `LOGGING_COMPRESS_BACKUPS` | boolean | No | `true` | Compress old log files |
@@ -868,7 +868,7 @@ Logging settings control general application logging.
 ```env
 LOGGING_LEVEL=DEBUG
 LOGGING_FORMAT=%(asctime)s - %(name)s - %(levelname)s - %(message)s
-LOGGING_FILE=./logs/powermem.log
+LOGGING_FILE=./logs/seekmem.log
 LOGGING_MAX_SIZE=100MB
 LOGGING_BACKUP_COUNT=5
 LOGGING_COMPRESS_BACKUPS=true
@@ -883,7 +883,7 @@ LOGGING_CONSOLE_FORMAT=%(levelname)s - %(message)s
   "logging": {
     "level": "DEBUG",
     "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    "file": "./logs/powermem.log"
+    "file": "./logs/seekmem.log"
   }
 }
 ```
@@ -894,7 +894,7 @@ config = {
     'logging': {
         'level': 'DEBUG',
         'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        'file': './logs/powermem.log'
+        'file': './logs/seekmem.log'
     }
 }
 ```
@@ -909,7 +909,7 @@ config = {
 ```env
 # Required: Database
 DATABASE_PROVIDER=sqlite
-SQLITE_PATH=./data/powermem_dev.db
+SQLITE_PATH=./data/seekmem_dev.db
 
 # Required: LLM
 LLM_PROVIDER=qwen
@@ -929,7 +929,7 @@ EMBEDDING_DIMS=1536
   "vector_store": {
     "provider": "sqlite",
     "config": {
-      "database_path": "./data/powermem_dev.db"
+      "database_path": "./data/seekmem_dev.db"
     }
   },
   "llm": {
@@ -956,7 +956,7 @@ config = {
     'vector_store': {
         'provider': 'sqlite',
         'config': {
-            'database_path': './data/powermem_dev.db'
+            'database_path': './data/seekmem_dev.db'
         }
     },
     'llm': {
@@ -976,7 +976,7 @@ config = {
     }
 }
 
-from powermem import Memory
+from seekmem import Memory
 memory = Memory(config=config)
 ```
 
@@ -990,7 +990,7 @@ OCEANBASE_HOST=prod-db.example.com
 OCEANBASE_PORT=2881
 OCEANBASE_USER=prod_user
 OCEANBASE_PASSWORD=secure_password
-OCEANBASE_DATABASE=powermem_prod
+OCEANBASE_DATABASE=seekmem_prod
 OCEANBASE_EMBEDDING_MODEL_DIMS=1536
 
 # LLM
@@ -1021,7 +1021,7 @@ AUDIT_ENABLED=true
         "port": 2881,
         "user": "prod_user",
         "password": "secure_password",
-        "db_name": "powermem_prod"
+        "db_name": "seekmem_prod"
       },
       "embedding_model_dims": 1536,
       "vidx_metric_type": "cosine",
@@ -1069,7 +1069,7 @@ config = {
                 'port': 2881,
                 'user': 'prod_user',
                 'password': 'secure_password',
-                'db_name': 'powermem_prod'
+                'db_name': 'seekmem_prod'
             },
             'embedding_model_dims': 1536,
             'vidx_metric_type': 'cosine',
@@ -1104,7 +1104,7 @@ config = {
     }
 }
 
-from powermem import Memory
+from seekmem import Memory
 memory = Memory(config=config)
 ```
 
@@ -1117,7 +1117,7 @@ Here's a complete JSON configuration file example (`config.json`) with all optio
   "vector_store": {
     "provider": "sqlite",
     "config": {
-      "database_path": "./data/powermem_dev.db",
+      "database_path": "./data/seekmem_dev.db",
       "enable_wal": true,
       "timeout": 30
     }
@@ -1162,7 +1162,7 @@ Here's a complete JSON configuration file example (`config.json`) with all optio
   },
   "telemetry": {
     "enable_telemetry": false,
-    "telemetry_endpoint": "https://telemetry.powermem.ai",
+    "telemetry_endpoint": "https://telemetry.seekmem.ai",
     "telemetry_api_key": "",
     "telemetry_batch_size": 100,
     "telemetry_flush_interval": 30
@@ -1176,7 +1176,7 @@ Here's a complete JSON configuration file example (`config.json`) with all optio
   "logging": {
     "level": "DEBUG",
     "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    "file": "./logs/powermem.log"
+    "file": "./logs/seekmem.log"
   }
 }
 ```
@@ -1184,7 +1184,7 @@ Here's a complete JSON configuration file example (`config.json`) with all optio
 **Loading from JSON file:**
 ```python
 import json
-from powermem import Memory
+from seekmem import Memory
 
 # Load configuration from JSON file
 with open('config.json', 'r') as f:

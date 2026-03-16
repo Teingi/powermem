@@ -16,7 +16,7 @@
     "clearFilters": "Clear Filters",
     "about": {
       "title": "About",
-      "subtitle": "PowerMem Dashboard Information",
+      "subtitle": "SeekMem Dashboard Information",
       "version": "Version",
       "website": "Website",
       "copyright": "Copyright",
@@ -156,11 +156,11 @@
     "title": "Settings",
     "subtitle": "Manage your dashboard configuration and authentication keys.",
     "configTitle": "Configuration",
-    "configDesc": "Configure how the dashboard connects to the PowerMem server.",
+    "configDesc": "Configure how the dashboard connects to the SeekMem server.",
     "privacy": "Privacy & Security",
     "privacyDesc": "Your API key is stored only in your browser's Local Storage. It is never transmitted to any third-party analytics or external servers.",
     "apiKeyLabel": "Server API Key",
-    "apiKeyPlaceholder": "Enter your PowerMem API Key...",
+    "apiKeyPlaceholder": "Enter your SeekMem API Key...",
     "apiKeyHint": "Required if `auth_enabled` is set to true on the server.",
     "save": "Save Changes",
     "toast": {

@@ -68,7 +68,7 @@ import os
 import importlib.util
 
 # Get the constants file path
-constants_file = os.path.join(os.path.dirname(__file__), '..', '..', 'src', 'powermem', 'storage', 'oceanbase', 'constants.py')
+constants_file = os.path.join(os.path.dirname(__file__), '..', '..', 'src', 'seekmem', 'storage', 'oceanbase', 'constants.py')
 
 # Load the constants module directly
 spec = importlib.util.spec_from_file_location("constants", constants_file)

@@ -28,7 +28,7 @@ project_root = os.path.join(os.path.dirname(__file__), "..", "..")
 project_root = os.path.abspath(project_root)
 sys.path.insert(0, project_root)
 
-from powermem import auto_config, Memory
+from seekmem import auto_config, Memory
 
 # Configure logging
 logging.basicConfig(
@@ -567,7 +567,7 @@ class TestNativeHybridSearch:
         # Database connection info
         db_host = "127.0.0.1"
         db_port = 10001
-        db_name = "powermem"
+        db_name = "seekmem"
         table_name = "memories_old_table_test"
         
         # Step 0: Drop existing table to ensure clean state

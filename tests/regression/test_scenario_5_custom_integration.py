@@ -1,6 +1,6 @@
 """Executable walkthrough for `scenario_5_custom_integration.md`.
 
-This script demonstrates how to integrate powermem with custom systems,
+This script demonstrates how to integrate seekmem with custom systems,
 implement custom providers, and extend functionality.
 
 Run `python docs/examples/scenario_5_custom_integration.py` to see all examples.
@@ -13,9 +13,9 @@ import io
 from typing import Optional, List, Dict, Any
 from contextlib import redirect_stderr
 from pydantic import Field, ConfigDict
-from powermem.integrations.llm.config.base import BaseLLMConfig
-from powermem.integrations.embeddings.config.base import BaseEmbedderConfig
-from powermem.storage.config.base import BaseVectorStoreConfig
+from seekmem.integrations.llm.config.base import BaseLLMConfig
+from seekmem.integrations.embeddings.config.base import BaseEmbedderConfig
+from seekmem.storage.config.base import BaseVectorStoreConfig
 
 
 
@@ -116,7 +116,7 @@ class CustomVectorStoreConfig(BaseVectorStoreConfig):
 # ============================================================================
 
 # Define CustomLLM at module level for proper registration
-from powermem.integrations.llm.base import LLMBase
+from seekmem.integrations.llm.base import LLMBase
 
 class CustomLLM(LLMBase):
     """Custom LLM provider implementation"""
@@ -189,8 +189,8 @@ def test_step1_custom_llm_provider() -> None:
     """Step 1: Custom LLM Provider"""
     _print_step("Step 1: Custom LLM Provider")
     
-    from powermem.integrations.llm.factory import LLMFactory
-    from powermem.storage.factory import VectorStoreFactory
+    from seekmem.integrations.llm.factory import LLMFactory
+    from seekmem.storage.factory import VectorStoreFactory
     
     # Register custom LLM (using module path)
     LLMFactory.register_provider("custom", f"{__name__}.CustomLLM", CustomLLMConfig)
@@ -226,7 +226,7 @@ def test_step1_custom_llm_provider() -> None:
     # Test the configuration
     _print_step("Step 1 Test: Using custom LLM provider")
     try:
-        from powermem import Memory, auto_config
+        from seekmem import Memory, auto_config
         env_config = auto_config()  # Load from .env
         # Merge configurations (custom config takes precedence)
         merged_config = {**env_config, **config_llm}
@@ -261,7 +261,7 @@ def test_step1_custom_llm_provider() -> None:
 
 
 # Define CustomEmbedder at module level for proper registration
-from powermem.integrations.embeddings.base import EmbeddingBase
+from seekmem.integrations.embeddings.base import EmbeddingBase
 import numpy as np
 
 class CustomEmbedder(EmbeddingBase):
@@ -315,7 +315,7 @@ def test_step2_custom_embedder_provider() -> None:
     # Test the configuration
     _print_step("Step 2 Test: Using custom Embedder provider")
     try:
-        from powermem import Memory, auto_config
+        from seekmem import Memory, auto_config
         env_config = auto_config()  # Load from .env
         # Merge configurations (custom config takes precedence)
         merged_config = {**env_config, **config_embedder}
@@ -345,7 +345,7 @@ def test_step2_custom_embedder_provider() -> None:
 
 
 # Define CustomVectorStore at module level for proper registration
-from powermem.storage.base import VectorStoreBase
+from seekmem.storage.base import VectorStoreBase
 
 class CustomVectorStore(VectorStoreBase):
     """Custom vector store implementation"""
@@ -516,7 +516,7 @@ def test_step3_custom_vector_store() -> None:
     """Step 3: Custom Storage Backend"""
     _print_step("Step 3: Custom Storage Backend")
     
-    from powermem.storage.factory import VectorStoreFactory
+    from seekmem.storage.factory import VectorStoreFactory
     
     VectorStoreFactory.register_provider("custom", f"{__name__}.CustomVectorStore")
     
@@ -554,7 +554,7 @@ def test_step3_custom_vector_store() -> None:
     # Test the configuration
     _print_step("Step 3 Test: Using custom Vector Store provider")
     try:
-        from powermem import Memory
+        from seekmem import Memory
         # Suppress Pydantic validation warnings for custom providers
         # stderr_capture = io.StringIO()
         # with redirect_stderr(stderr_capture):
@@ -606,15 +606,15 @@ def test_step4_langchain_integration() -> None:
     if not LANGCHAIN_AVAILABLE:
         return
     
-    from powermem import Memory
+    from seekmem import Memory
     from typing import List, Dict, Any
     
     # Custom memory class for LangChain 1.1.0+ integration
     class PowermemLangChainMemory:
-        """Custom memory class that integrates PowerMem with LangChain 1.1.0+."""
+        """Custom memory class that integrates SeekMem with LangChain 1.1.0+."""
         
-        def __init__(self, powermem_instance: Memory, user_id: str):
-            self.powermem = powermem_instance
+        def __init__(self, seekmem_instance: Memory, user_id: str):
+            self.seekmem = seekmem_instance
             self.user_id = user_id
             self.messages: List[BaseMessage] = []
         
@@ -626,25 +626,25 @@ def test_step4_langchain_integration() -> None:
             """Get all conversation messages."""
             return self.messages
         
-        def save_to_powermem(self, user_input: str, assistant_output: str):
-            """Save conversation to PowerMem with intelligent fact extraction."""
+        def save_to_seekmem(self, user_input: str, assistant_output: str):
+            """Save conversation to SeekMem with intelligent fact extraction."""
             messages = [
                 {"role": "user", "content": user_input},
                 {"role": "assistant", "content": assistant_output}
             ]
             try:
-                self.powermem.add(
+                self.seekmem.add(
                     messages=messages,
                     user_id=self.user_id,
                     infer=True  # Enable intelligent fact extraction
                 )
             except Exception as e:
-                print(f"  ⚠ Warning: Could not save to powermem: {e}")
+                print(f"  ⚠ Warning: Could not save to seekmem: {e}")
         
         def get_context(self, query: str) -> str:
-            """Retrieve relevant context from PowerMem."""
+            """Retrieve relevant context from SeekMem."""
             try:
-                results = self.powermem.search(
+                results = self.seekmem.search(
                     query=query,
                     user_id=self.user_id,
                     limit=5
@@ -654,7 +654,7 @@ def test_step4_langchain_integration() -> None:
                     return "\n".join([mem.get('memory', '') for mem in memories])
                 return "No previous context found."
             except Exception as e:
-                print(f"  ⚠ Warning: Could not load from powermem: {e}")
+                print(f"  ⚠ Warning: Could not load from seekmem: {e}")
                 return "No previous context found."
     
     print("✓ PowermemLangChainMemory class created successfully (LangChain 1.1.0+ API)")
@@ -690,26 +690,26 @@ def test_step4_langchain_integration() -> None:
             }
         }
         
-        powermem_instance = Memory(config=test_config)
+        seekmem_instance = Memory(config=test_config)
         print("✓ Memory instance created for LangChain integration")
         
         # Create PowermemLangChainMemory instance
         langchain_memory = PowermemLangChainMemory(
-            powermem_instance=powermem_instance,
+            seekmem_instance=seekmem_instance,
             user_id="langchain_test_user"
         )
         print("✓ PowermemLangChainMemory instance created")
         
-        # Test save_to_powermem
-        print("\n  Testing save_to_powermem...")
+        # Test save_to_seekmem
+        print("\n  Testing save_to_seekmem...")
         try:
             user_input = "Hello, my name is Alice"
             assistant_output = "Nice to meet you, Alice!"
-            langchain_memory.save_to_powermem(user_input, assistant_output)
-            print("  ✓ save_to_powermem executed successfully")
-            print("  ✓ Conversation saved to powermem")
+            langchain_memory.save_to_seekmem(user_input, assistant_output)
+            print("  ✓ save_to_seekmem executed successfully")
+            print("  ✓ Conversation saved to seekmem")
         except Exception as e:
-            print(f"  ⚠ save_to_powermem test: {str(e)[:100]}")
+            print(f"  ⚠ save_to_seekmem test: {str(e)[:100]}")
         
         # Test get_context
         print("\n  Testing get_context...")
@@ -738,7 +738,7 @@ def test_step4_langchain_integration() -> None:
         
         # Cleanup
         try:
-            powermem_instance.delete_all(user_id="langchain_test_user")
+            seekmem_instance.delete_all(user_id="langchain_test_user")
         except Exception:
             pass
             
@@ -822,13 +822,13 @@ def test_step4_langchain_integration() -> None:
                 }
             }
             
-            # Create powermem instance
-            powermem_full = Memory(config=test_config_full)
+            # Create seekmem instance
+            seekmem_full = Memory(config=test_config_full)
             print("  ✓ Powermem instance created")
             
             # Create LangChain memory wrapper
             langchain_memory_full = PowermemLangChainMemory(
-                powermem_instance=powermem_full,
+                seekmem_instance=seekmem_full,
                 user_id='langchain_full_test_user'
             )
             print("  ✓ PowermemLangChainMemory instance created")
@@ -881,7 +881,7 @@ def test_step4_langchain_integration() -> None:
                 print(f"  ✓ First response: {response_text[:50]}...")
                 
                 langchain_memory_full.add_message(AIMessage(content=response_text))
-                langchain_memory_full.save_to_powermem(user_input, response_text)
+                langchain_memory_full.save_to_seekmem(user_input, response_text)
                 
                 # Test that memory was saved
                 context = langchain_memory_full.get_context("What is my name?")
@@ -898,7 +898,7 @@ def test_step4_langchain_integration() -> None:
                 print(f"  ✓ Second response: {response_text2[:50]}...")
                 
                 langchain_memory_full.add_message(AIMessage(content=response_text2))
-                langchain_memory_full.save_to_powermem(user_input2, response_text2)
+                langchain_memory_full.save_to_seekmem(user_input2, response_text2)
                 
                 print("\n  ✓ Full LangChain 1.1.0+ integration test completed successfully!")
                 print("    - Mock ChatModel: Working ✓")
@@ -907,7 +907,7 @@ def test_step4_langchain_integration() -> None:
                 
                 # Cleanup
                 try:
-                    powermem_full.delete_all(user_id='langchain_full_test_user')
+                    seekmem_full.delete_all(user_id='langchain_full_test_user')
                 except Exception:
                     pass
                 
@@ -940,10 +940,10 @@ def test_step5_fastapi_integration() -> None:
             return
         
         if FASTAPI_AVAILABLE:
-            from powermem import AsyncMemory
-            from powermem.integrations.llm.factory import LLMFactory
-            from powermem.integrations.embeddings.config.base import BaseEmbedderConfig
-            from powermem.storage.factory import VectorStoreFactory
+            from seekmem import AsyncMemory
+            from seekmem.integrations.llm.factory import LLMFactory
+            from seekmem.integrations.embeddings.config.base import BaseEmbedderConfig
+            from seekmem.storage.factory import VectorStoreFactory
             
             # Ensure custom providers are registered
             if 'custom' not in LLMFactory.get_supported_providers():
@@ -1310,7 +1310,7 @@ def test_step6_custom_intelligence_plugin() -> None:
     _print_step("Step 6: Custom Intelligence Plugin")
     
     try:
-        from powermem.intelligence.plugin import IntelligentMemoryPlugin
+        from seekmem.intelligence.plugin import IntelligentMemoryPlugin
         from datetime import datetime, timedelta
         
         class CustomIntelligencePlugin(IntelligentMemoryPlugin):
@@ -1394,7 +1394,7 @@ def test_complete_example() -> None:
     _print_step("Complete Example: All Custom Providers")
     
     try:
-        from powermem import Memory
+        from seekmem import Memory
         
         # Create a simple test config using custom providers
         complete_config = {
@@ -1495,9 +1495,9 @@ def main() -> None:
     _print_banner("Summary: All Steps Completed")
     
     # Check registrations
-    from powermem.integrations.llm.factory import LLMFactory
-    from powermem.integrations.embeddings.config.base import BaseEmbedderConfig
-    from powermem.storage.factory import VectorStoreFactory
+    from seekmem.integrations.llm.factory import LLMFactory
+    from seekmem.integrations.embeddings.config.base import BaseEmbedderConfig
+    from seekmem.storage.factory import VectorStoreFactory
     
     print("\n✓ Registration Status:")
     print(f"  - Custom LLM Provider: {'✓' if 'custom' in LLMFactory.provider_to_class else '✗'}")

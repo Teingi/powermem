@@ -1,10 +1,10 @@
 """
-User service for PowerMem API
+User service for SeekMem API
 """
 
 import logging
 from typing import Any, Dict, List, Optional
-from powermem import UserMemory, auto_config
+from seekmem import UserMemory, auto_config
 from ..models.errors import ErrorCode, APIError
 
 logger = logging.getLogger("server")
@@ -18,7 +18,7 @@ class UserService:
         Initialize user service.
         
         Args:
-            config: PowerMem configuration (uses auto_config if None)
+            config: SeekMem configuration (uses auto_config if None)
         """
         if config is None:
             config = auto_config()

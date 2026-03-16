@@ -1,8 +1,8 @@
 """
-AI Customer Service Bot with PowerMem + LangGraph + OceanBase
+AI Customer Service Bot with SeekMem + LangGraph + OceanBase
 
 This example demonstrates how to build an AI Customer Service Bot using
-PowerMem for intelligent memory management, LangGraph for stateful conversation
+SeekMem for intelligent memory management, LangGraph for stateful conversation
 workflows, and OceanBase as the database backend.
 
 Features:
@@ -27,7 +27,7 @@ from dotenv import load_dotenv
 # Add src to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
 
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 # LangGraph and LangChain imports
 try:
@@ -73,7 +73,7 @@ def load_oceanbase_config():
     
     Uses the auto_config() utility function to automatically load from .env.
     """
-    # Try to load from powermem.env from multiple possible locations
+    # Try to load from seekmem.env from multiple possible locations
     possible_paths = [
         os.path.join(os.path.dirname(__file__), '..', '..', '.env'),  # project root
     ]
@@ -104,13 +104,13 @@ class CustomerServiceState(TypedDict):
     intent: str  # "order_inquiry", "issue_resolution", "general", etc.
     order_number: str
     issue_type: str
-    context: Dict[str, Any]  # Additional context from PowerMem
+    context: Dict[str, Any]  # Additional context from SeekMem
     resolved: bool
 
 
 class CustomerServiceBot:
     """
-    AI Customer Service Bot using PowerMem, LangGraph, and OceanBase.
+    AI Customer Service Bot using SeekMem, LangGraph, and OceanBase.
     
     This bot provides:
     - Order status inquiries
@@ -138,10 +138,10 @@ class CustomerServiceBot:
             print("⚠️  Warning: Database provider is not OceanBase.")
             print("   Please configure DATABASE_PROVIDER=oceanbase in .env")
         
-        # Initialize PowerMem with OceanBase
-        print("Initializing PowerMem with OceanBase...")
+        # Initialize SeekMem with OceanBase
+        print("Initializing SeekMem with OceanBase...")
         self.memory = create_memory(config=config)
-        print("✓ PowerMem initialized with OceanBase!")
+        print("✓ SeekMem initialized with OceanBase!")
         
         # Initialize LLM
         llm_config_dict = config.get('llm', {})
@@ -181,7 +181,7 @@ class CustomerServiceBot:
         
         if not self.llm:
             print("Warning: No LLM available. Using mock responses.")
-            print("  Note: Conversations will still be saved to PowerMem database.")
+            print("  Note: Conversations will still be saved to SeekMem database.")
         
         # Build the LangGraph workflow
         self.graph = self._build_graph()
@@ -226,14 +226,14 @@ class CustomerServiceBot:
         return workflow.compile()
     
     def _load_customer_context(self, state: CustomerServiceState) -> CustomerServiceState:
-        """Load relevant customer context from PowerMem."""
+        """Load relevant customer context from SeekMem."""
         print(f"[Node: load_context] Loading context for customer {state['customer_id']}")
         
         # Get the latest user message
         last_message = state["messages"][-1] if state["messages"] else None
         query = last_message.content if last_message and hasattr(last_message, 'content') else ""
         
-        # Search PowerMem for relevant customer memories
+        # Search SeekMem for relevant customer memories
         try:
             results = self.memory.search(
                 query=query,
@@ -255,7 +255,7 @@ class CustomerServiceBot:
             context_info["preference_mentions"] = [mem.get('memory', '') for mem in preferences.get('results', [])]
             
         except Exception as e:
-            print(f"Warning: Failed to search PowerMem: {e}")
+            print(f"Warning: Failed to search SeekMem: {e}")
             context_info = {"error": str(e)}
         
         state["context"] = context_info
@@ -406,8 +406,8 @@ Please provide a helpful, personalized response based on the customer's history 
         return state
     
     def _save_conversation(self, state: CustomerServiceState) -> CustomerServiceState:
-        """Save the conversation to PowerMem."""
-        print("[Node: save_conversation] Saving conversation to PowerMem...")
+        """Save the conversation to SeekMem."""
+        print("[Node: save_conversation] Saving conversation to SeekMem...")
         
         # Get the last user message and AI response
         messages = state["messages"]
@@ -417,7 +417,7 @@ Please provide a helpful, personalized response based on the customer's history 
             
             if user_msg and ai_msg:
                 try:
-                    # Save to PowerMem with intelligent fact extraction
+                    # Save to SeekMem with intelligent fact extraction
                     self.memory.add(
                         messages=[
                             {"role": "user", "content": user_msg.content if hasattr(user_msg, 'content') else str(user_msg)},
@@ -432,9 +432,9 @@ Please provide a helpful, personalized response based on the customer's history 
                             "category": "customer_service"
                         }
                     )
-                    print("  ✓ Conversation saved to PowerMem")
+                    print("  ✓ Conversation saved to SeekMem")
                 except Exception as e:
-                    print(f"Warning: Failed to save to PowerMem: {e}")
+                    print(f"Warning: Failed to save to SeekMem: {e}")
         
         state["resolved"] = True
         return state
@@ -636,7 +636,7 @@ def main():
     """Main function to run the customer service bot."""
     import argparse
     
-    parser = argparse.ArgumentParser(description="AI Customer Service Bot with PowerMem + LangGraph (OceanBase)")
+    parser = argparse.ArgumentParser(description="AI Customer Service Bot with SeekMem + LangGraph (OceanBase)")
     parser.add_argument(
         '--mode',
         choices=['demo', 'interactive'],

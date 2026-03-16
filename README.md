@@ -6,29 +6,29 @@
 
 <p align="center">
 
-*PowerMem integrated with [OpenClaw](https://github.com/openclaw-ai/openclaw): intelligent memory for AI agents. **OpenClaw PowerMem Plugin**: [View Plugin](https://github.com/ob-labs/openclaw-extension-powermem)*
+*SeekMem integrated with [OpenClaw](https://github.com/openclaw-ai/openclaw): intelligent memory for AI agents. **OpenClaw SeekMem Plugin**: [View Plugin](https://github.com/ob-labs/openclaw-extension-seekmem)*
 
-<img src="docs/images/openclaw_powermem.jpeg" alt="PowerMem with OpenClaw" width="900"/>
+<img src="docs/images/openclaw_seekmem.jpeg" alt="SeekMem with OpenClaw" width="900"/>
 
 </p>
 
 <p align="center">
-    <a href="https://pepy.tech/project/powermem">
-        <img src="https://img.shields.io/pypi/dm/powermem" alt="PowerMem PyPI - Downloads">
+    <a href="https://pepy.tech/project/seekmem">
+        <img src="https://img.shields.io/pypi/dm/seekmem" alt="SeekMem PyPI - Downloads">
     </a>
-    <a href="https://github.com/oceanbase/powermem">
-        <img src="https://img.shields.io/github/commit-activity/m/oceanbase/powermem?style=flat-square" alt="GitHub commit activity">
+    <a href="https://github.com/oceanbase/seekmem">
+        <img src="https://img.shields.io/github/commit-activity/m/oceanbase/seekmem?style=flat-square" alt="GitHub commit activity">
     </a>
-    <a href="https://pypi.org/project/powermem" target="blank">
-        <img src="https://img.shields.io/pypi/v/powermem?color=%2334D058&label=pypi%20package" alt="Package version">
+    <a href="https://pypi.org/project/seekmem" target="blank">
+        <img src="https://img.shields.io/pypi/v/seekmem?color=%2334D058&label=pypi%20package" alt="Package version">
     </a>
-    <a href="https://github.com/oceanbase/powermem/blob/master/LICENSE">
+    <a href="https://github.com/oceanbase/seekmem/blob/master/LICENSE">
         <img alt="license" src="https://img.shields.io/badge/license-Apache%202.0-green.svg" />
     </a>
     <a href="https://img.shields.io/badge/python%20-3.10.0%2B-blue.svg">
         <img alt="pyversions" src="https://img.shields.io/badge/python%20-3.10.0%2B-blue.svg" />
     </a>
-    <a href="https://deepwiki.com/oceanbase/powermem">
+    <a href="https://deepwiki.com/oceanbase/seekmem">
         <img alt="Ask DeepWiki" src="https://deepwiki.com/badge.svg" />
     </a>
     <a href="https://discord.com/invite/74cF8vbNEs">
@@ -42,7 +42,7 @@
 
 <div align="center">
 
-<img src="docs/images/benchmark_metrics_en.svg" alt="PowerMem LOCOMO Benchmark Metrics" width="900"/>
+<img src="docs/images/benchmark_metrics_en.svg" alt="SeekMem LOCOMO Benchmark Metrics" width="900"/>
 
 </div>
 
@@ -50,14 +50,14 @@
 - ⚡ **Agile**: **[91.83% Faster Response]** Significantly reduced p95 latency for retrieval compared to full-context (1.44s VS 17.12s)
 - 💰 **Affordable**: **[96.53% Token Reduction]** Significantly reduced costs compared to full-context without sacrificing performance (0.9k VS 26k)
 
-# 🧠 PowerMem - Intelligent Memory System
+# 🧠 SeekMem - Intelligent Memory System
 
-In AI application development, enabling large language models to persistently "remember" historical conversations, user preferences, and contextual information is a core challenge. PowerMem combines a hybrid storage architecture of vector retrieval, full-text search, and graph databases, and introduces the Ebbinghaus forgetting curve theory from cognitive science to build a powerful memory infrastructure for AI applications. The system also provides comprehensive multi-agent support capabilities, including agent memory isolation, cross-agent collaboration and sharing, fine-grained permission control, and privacy protection mechanisms, enabling multiple AI agents to achieve efficient collaboration while maintaining independent memory spaces.
+In AI application development, enabling large language models to persistently "remember" historical conversations, user preferences, and contextual information is a core challenge. SeekMem combines a hybrid storage architecture of vector retrieval, full-text search, and graph databases, and introduces the Ebbinghaus forgetting curve theory from cognitive science to build a powerful memory infrastructure for AI applications. The system also provides comprehensive multi-agent support capabilities, including agent memory isolation, cross-agent collaboration and sharing, fine-grained permission control, and privacy protection mechanisms, enabling multiple AI agents to achieve efficient collaboration while maintaining independent memory spaces.
 
 ## 🚀 Core Features
 
 ### 👨‍💻 Developer Friendly
-- 🔌 **[Lightweight Integration](docs/examples/scenario_1_basic_usage.md)**: Provides a simple Python SDK, automatically loads configuration from `.env` files, enabling developers to quickly integrate into existing projects. Also supports [CLI](docs/guides/0012-cli_usage.md) (`pmem`), [MCP Server](docs/api/0004-mcp.md), and [HTTP API Server](docs/api/0005-api_server.md) integration methods
+- 🔌 **[Lightweight Integration](docs/examples/scenario_1_basic_usage.md)**: Provides a simple Python SDK, automatically loads configuration from `.env` files, enabling developers to quickly integrate into existing projects. Also supports [CLI](docs/guides/0012-cli_usage.md) (`smem`), [MCP Server](docs/api/0004-mcp.md), and [HTTP API Server](docs/api/0005-api_server.md) integration methods
 
 ### 🧠 Intelligent Memory Management
 - 🔍 **[Intelligent Memory Extraction](docs/examples/scenario_2_intelligent_memory.md)**: Automatically extracts key facts from conversations through LLM, intelligently detects duplicates, updates conflicting information, and merges related memories to ensure accuracy and consistency of the memory database
@@ -81,7 +81,7 @@ In AI application development, enabling large language models to persistently "r
 ### 📥 Installation
 
 ```bash
-pip install powermem
+pip install seekmem
 ```
 
 ### 💡 Basic Usage(SDK)
@@ -89,7 +89,7 @@ pip install powermem
 **✨ Simplest Way**: Create memory from `.env` file automatically! [Configuration Reference](.env.example)
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 # Load configuration (auto-loads from .env)
 config = auto_config()
@@ -107,45 +107,45 @@ for result in results.get('results', []):
 
 For more detailed examples and usage patterns, see the [Getting Started Guide](docs/guides/0001-getting_started.md).
 
-### ⌨️ PowerMem CLI (1.0.0+)
+### ⌨️ SeekMem CLI (1.0.0+)
 
-PowerMem provides a command-line interface (`pmem`) for memory operations, configuration, backup/restore, and an interactive shell—without writing Python code.
+SeekMem provides a command-line interface (`smem`) for memory operations, configuration, backup/restore, and an interactive shell—without writing Python code.
 
 ```bash
 # Add and search memories
-pmem memory add "User prefers dark mode" --user-id user123
-pmem memory search "preferences" --user-id user123
+smem memory add "User prefers dark mode" --user-id user123
+smem memory search "preferences" --user-id user123
 
 # Configuration and statistics
-pmem config show
-pmem config init          # Interactive .env wizard
-pmem stats --json
+smem config show
+smem config init          # Interactive .env wizard
+smem stats --json
 
 # Interactive shell
-pmem shell
+smem shell
 ```
 
 For full CLI reference and examples, see the [CLI Usage Guide](docs/guides/0012-cli_usage.md).
 
 ### 🌐 HTTP API Server & Dashboard
 
-PowerMem provides a production-ready HTTP API server that exposes all core memory management capabilities through RESTful APIs. It also serves a **Dashboard** (at `/dashboard/`) as the web admin UI.
+SeekMem provides a production-ready HTTP API server that exposes all core memory management capabilities through RESTful APIs. It also serves a **Dashboard** (at `/dashboard/`) as the web admin UI.
 
-**Relationship with SDK**: The API server uses the same PowerMem SDK under the hood and shares the same configuration (`.env` file). It provides an HTTP interface to the same memory management features available in the Python SDK, making PowerMem accessible to non-Python applications.
+**Relationship with SDK**: The API server uses the same SeekMem SDK under the hood and shares the same configuration (`.env` file). It provides an HTTP interface to the same memory management features available in the Python SDK, making SeekMem accessible to non-Python applications.
 
 **Starting the API Server (with Dashboard)**:
 
 ```bash
 # Method 1: Using CLI command (after pip install)
-powermem-server --host 0.0.0.0 --port 8000
+seekmem-server --host 0.0.0.0 --port 8000
 
 # Method 2: Using Docker (API server + dashboard in one container)
 docker run -d \
-  --name powermem-server \
+  --name seekmem-server \
   -p 8000:8000 \
   -v $(pwd)/.env:/app/.env:ro \
   --env-file .env \
-  oceanbase/powermem-server:latest
+  oceanbase/seekmem-server:latest
 
 # Or use Docker Compose (recommended)
 docker-compose -f docker/docker-compose.yml up -d
@@ -162,15 +162,15 @@ For complete API documentation and usage examples, see the [API Server Documenta
 
 ### 🔌 MCP Server
 
-PowerMem also provides a Model Context Protocol (MCP) server that enables integration with MCP-compatible clients such as Claude Desktop. The MCP server exposes PowerMem's memory management capabilities through the MCP protocol, allowing AI assistants to access and manage memories seamlessly.
+SeekMem also provides a Model Context Protocol (MCP) server that enables integration with MCP-compatible clients such as Claude Desktop. The MCP server exposes SeekMem's memory management capabilities through the MCP protocol, allowing AI assistants to access and manage memories seamlessly.
 
-**Relationship with SDK**: The MCP server uses the same PowerMem SDK and shares the same configuration (`.env` file). It provides an MCP interface to the same memory management features, making PowerMem accessible to MCP-compatible AI assistants.
+**Relationship with SDK**: The MCP server uses the same SeekMem SDK and shares the same configuration (`.env` file). It provides an MCP interface to the same memory management features, making SeekMem accessible to MCP-compatible AI assistants.
 
 **Installation**:
 
 ```bash
-# Install PowerMem (required)
-pip install powermem
+# Install SeekMem (required)
+pip install seekmem
 
 # Install uvx (if not already installed)
 # On macOS/Linux:
@@ -184,19 +184,19 @@ powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
 
 ```bash
 # SSE mode (recommended, default port 8000)
-uvx powermem-mcp sse
+uvx seekmem-mcp sse
 
 # SSE mode with custom port
-uvx powermem-mcp sse 8001
+uvx seekmem-mcp sse 8001
 
 # Stdio mode
-uvx powermem-mcp stdio
+uvx seekmem-mcp stdio
 
 # Streamable HTTP mode (default port 8000)
-uvx powermem-mcp streamable-http
+uvx seekmem-mcp streamable-http
 
 # Streamable HTTP mode with custom port
-uvx powermem-mcp streamable-http 8001
+uvx seekmem-mcp streamable-http 8001
 ```
 
 **Integration with Claude Desktop**:
@@ -206,7 +206,7 @@ Add the following configuration to your Claude Desktop config file:
 ```json
 {
   "mcpServers": {
-    "powermem": {
+    "seekmem": {
       "url": "http://localhost:8000/mcp"
     }
   }
@@ -216,14 +216,14 @@ Add the following configuration to your Claude Desktop config file:
 The MCP server provides tools for memory management including adding, searching, updating, and deleting memories. For complete MCP documentation and usage examples, see the [MCP Server Documentation](docs/api/0004-mcp.md).
 
 ## 🔗 Integrations & Demos
-- 🔗 **openclaw Memory Plugin**: Use PowerMem as long-term memory in [openclaw](https://github.com/openclaw/openclaw) via extraction, Ebbinghaus forgetting curve, multi-agent isolation. [View Plugin](https://github.com/ob-labs/openclaw-extension-powermem)
-- 🔗 **LangChain Integration**: Build medical support chatbot using LangChain + PowerMem + OceanBase, [View Example](examples/langchain/README.md)
-- 🔗 **LangGraph Integration**: Build customer service chatbot using LangGraph + PowerMem + OceanBase, [View Example](examples/langgraph/README.md)
+- 🔗 **openclaw Memory Plugin**: Use SeekMem as long-term memory in [openclaw](https://github.com/openclaw/openclaw) via extraction, Ebbinghaus forgetting curve, multi-agent isolation. [View Plugin](https://github.com/ob-labs/openclaw-extension-seekmem)
+- 🔗 **LangChain Integration**: Build medical support chatbot using LangChain + SeekMem + OceanBase, [View Example](examples/langchain/README.md)
+- 🔗 **LangGraph Integration**: Build customer service chatbot using LangGraph + SeekMem + OceanBase, [View Example](examples/langgraph/README.md)
 
 ## 📚 Documentation
 
 - 📖 **[Getting Started](docs/guides/0001-getting_started.md)**: Installation and quick start guide
-- ⌨️ **[CLI Usage Guide](docs/guides/0012-cli_usage.md)**: PowerMem CLI (pmem) reference (1.0.0+)
+- ⌨️ **[CLI Usage Guide](docs/guides/0012-cli_usage.md)**: SeekMem CLI (smem) reference (1.0.0+)
 - ⚙️ **[Configuration Guide](docs/guides/0003-configuration.md)**: Complete configuration options
 - 🤖 **[Multi-Agent Guide](docs/guides/0005-multi_agent.md)**: Multi-agent scenarios and examples
 - 🔌 **[Integrations Guide](docs/guides/0009-integrations.md)**: Integrations Guide
@@ -237,7 +237,7 @@ The MCP server provides tools for memory management including adding, searching,
 
 | Version | Release Date | Function |
 |---------|--------------|---------|
-| 1.0.0 | 2026.03.16   | <ul><li>PowerMem CLI (pmem): memory operations, config management, backup/restore/migrate, interactive shell, and shell completion</li><li>Web Dashboard for memory management and visualization</li></ul> |
+| 1.0.0 | 2026.03.16   | <ul><li>SeekMem CLI (smem): memory operations, config management, backup/restore/migrate, interactive shell, and shell completion</li><li>Web Dashboard for memory management and visualization</li></ul> |
 | 0.5.0 | 2026.02.06   | <ul><li>Unified configuration governance across SDK/API Server (pydantic-settings based)</li><li>Added OceanBase native hybrid search support</li><li>Enhanced Memory query handling and added sorting support for memory list operations</li><li>Added user profile support for custom native-language output</li></ul> |
 | 0.4.0 | 2026.01.20   | <ul><li>Sparse vector support for enhanced hybrid retrieval, combining dense vector, full-text, and sparse vector search</li><li>User memory query rewriting - automatically enhances search queries based on user profiles for improved recall</li><li>Schema upgrade and data migration tools for existing tables</li></ul> |
 | 0.3.0 | 2026.01.09   | <ul><li>Production-ready HTTP API Server with RESTful endpoints for all memory operations</li><li>Docker support for easy deployment and containerization</li></ul> |
@@ -246,8 +246,8 @@ The MCP server provides tools for memory management including adding, searching,
 
 ## 💬 Support
 
-- 🐛 **Issue Reporting**: [GitHub Issues](https://github.com/oceanbase/powermem/issues)
-- 💭 **Discussions**: [GitHub Discussions](https://github.com/oceanbase/powermem/discussions)
+- 🐛 **Issue Reporting**: [GitHub Issues](https://github.com/oceanbase/seekmem/issues)
+- 💭 **Discussions**: [GitHub Discussions](https://github.com/oceanbase/seekmem/discussions)
 
 ---
 

@@ -1,6 +1,6 @@
 # Powermem Examples
 
-This directory contains various examples demonstrating how to use powermem with different configurations and use cases.
+This directory contains various examples demonstrating how to use seekmem with different configurations and use cases.
 
 ## Examples Overview
 
@@ -37,7 +37,7 @@ This directory contains various examples demonstrating how to use powermem with 
 
 ### 4. Healthcare Support Bot (`langchain/`)
 - **Database**: OceanBase
-- **Purpose**: AI Healthcare Support Bot using PowerMem + LangChain
+- **Purpose**: AI Healthcare Support Bot using SeekMem + LangChain
 - **Features**: Patient memory management, symptom tracking, medical history, intelligent context retrieval
 - **Run**: 
   - Demo mode: `python examples/langchain/healthcare_support_bot.py --mode demo`
@@ -54,7 +54,7 @@ This directory contains various examples demonstrating how to use powermem with 
 ### 5. Go Client Example (`go/`)
 - **Language**: Go 1.24+
 - **Database**: SQLite (default, no OceanBase required)
-- **Purpose**: Lightweight HTTP client for PowerMem API integration
+- **Purpose**: Lightweight HTTP client for SeekMem API integration
 - **Run**: `cd examples/go && go run .`
 - **Demonstrates**:
   - HTTP client setup with proper timeout settings
@@ -100,16 +100,16 @@ This directory contains various examples demonstrating how to use powermem with 
    python examples/intelligent_memory_demo.py 1  # Run scenario 1
    python examples/intelligent_memory_demo.py compare  # Compare modes
    
-   # Healthcare Support Bot (PowerMem + LangChain integration with OceanBase)
+   # Healthcare Support Bot (SeekMem + LangChain integration with OceanBase)
    cd examples/langchain
    python healthcare_support_bot.py --mode demo  # Predefined demo conversation
    python healthcare_support_bot.py --mode interactive  # Interactive chat mode
    
-   # Go Client Example (requires Go 1.21+ and running PowerMem server)
+   # Go Client Example (requires Go 1.21+ and running SeekMem server)
    cd examples/go
    go run .  # Uses default http://localhost:8000
    # Or with custom config:
-   POWERMEM_BASE_URL=http://localhost:8000 POWERMEM_API_KEY=your-key go run .
+   SEEKMEM_BASE_URL=http://localhost:8000 SEEKMEM_API_KEY=your-key go run .
    ```
 
 ## Database Backends
@@ -130,8 +130,8 @@ The new unified interface provides a single, consistent API for all agent memory
 
 ### Auto Mode (Recommended)
 ```python
-from powermem.agent import AgentMemory
-from powermem import auto_config
+from seekmem.agent import AgentMemory
+from seekmem import auto_config
 from dotenv import load_dotenv
 
 # Load configuration from environment
@@ -148,8 +148,8 @@ results = agent_memory.search("query", user_id="user123")
 
 ### Multi-Agent Mode
 ```python
-from powermem.agent import AgentMemory
-from powermem import auto_config
+from seekmem.agent import AgentMemory
+from seekmem import auto_config
 from dotenv import load_dotenv
 
 load_dotenv('.env')
@@ -172,8 +172,8 @@ agent_memory.create_group("customer_team", ["support_agent", "sales_agent"])
 
 ### Multi-User Mode
 ```python
-from powermem.agent import AgentMemory
-from powermem import auto_config
+from seekmem.agent import AgentMemory
+from seekmem import auto_config
 from dotenv import load_dotenv
 
 load_dotenv('.env')
@@ -192,8 +192,8 @@ alice_memories = agent_memory.search("Python", user_id="alice")
 
 ### Hybrid Mode
 ```python
-from powermem.agent import AgentMemory
-from powermem import auto_config
+from seekmem.agent import AgentMemory
+from seekmem import auto_config
 from dotenv import load_dotenv
 
 load_dotenv('.env')
@@ -221,7 +221,7 @@ agent_memory.switch_mode('multi_agent')
 ### SQLite Configuration
 ```env
 DATABASE_PROVIDER=sqlite
-SQLITE_PATH=./data/powermem_dev.db
+SQLITE_PATH=./data/seekmem_dev.db
 SQLITE_ENABLE_WAL=true
 SQLITE_TIMEOUT=30
 ```

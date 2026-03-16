@@ -13,7 +13,7 @@ function useGitHubStars() {
   const [stars, setStars] = useState<number | null>(null);
 
   useEffect(() => {
-    fetch('https://api.github.com/repos/oceanbase/powermem')
+    fetch('https://api.github.com/repos/oceanbase/seekmem')
       .then((res) => res.json())
       .then((data) => {
         if (data.stargazers_count) {
@@ -34,7 +34,7 @@ const communityLinks = [
     name: 'GitHub',
     descKey: 'community.github.desc',
     actionKey: 'communityPage.github.action',
-    href: 'https://github.com/oceanbase/powermem',
+    href: 'https://github.com/oceanbase/seekmem',
     color: 'from-gray-800 to-gray-900',
   },
   {
@@ -67,14 +67,14 @@ const translations: Record<string, Record<string, string>> = {
     'community.discord.desc': 'Join our Discord server to chat, get help and share experiences',
     'community.x.desc': 'Follow latest updates and product news',
     'communityPage.contributing.title': 'Contributing',
-    'communityPage.contributing.desc': "We welcome all forms of contributions! Whether it's code, documentation, issue reports, or feature suggestions, your participation makes PowerMem better.",
+    'communityPage.contributing.desc': "We welcome all forms of contributions! Whether it's code, documentation, issue reports, or feature suggestions, your participation makes SeekMem better.",
     'communityPage.contributing.item1': 'Submit Issues to report problems or suggest new features',
     'communityPage.contributing.item2': 'Submit Pull Requests to contribute code',
     'communityPage.contributing.item3': 'Improve documentation and examples',
     'communityPage.contributing.item4': 'Share usage experiences and best practices',
     'communityPage.contributing.viewGuide': 'View Contribution Guide',
     'communityPage.codeOfConduct.title': 'Code of Conduct',
-    'communityPage.codeOfConduct.desc': 'The PowerMem community is committed to providing a friendly, inclusive, and respectful environment for all participants. We expect all community members to follow these principles:',
+    'communityPage.codeOfConduct.desc': 'The SeekMem community is committed to providing a friendly, inclusive, and respectful environment for all participants. We expect all community members to follow these principles:',
     'communityPage.codeOfConduct.item1': 'Respect all community members regardless of background',
     'communityPage.codeOfConduct.item2': 'Maintain professional and courteous communication',
     'communityPage.codeOfConduct.item3': 'Welcome different perspectives and experiences',
@@ -91,14 +91,14 @@ const translations: Record<string, Record<string, string>> = {
     'community.discord.desc': '加入我们的 Discord 服务器，聊天、获取帮助和分享经验',
     'community.x.desc': '关注最新动态和产品更新',
     'communityPage.contributing.title': '贡献',
-    'communityPage.contributing.desc': '我们欢迎所有形式的贡献！无论是代码、文档、问题报告还是功能建议，您的参与都会让 PowerMem 变得更好。',
+    'communityPage.contributing.desc': '我们欢迎所有形式的贡献！无论是代码、文档、问题报告还是功能建议，您的参与都会让 SeekMem 变得更好。',
     'communityPage.contributing.item1': '提交 Issue 来报告问题或建议新功能',
     'communityPage.contributing.item2': '提交 Pull Request 来贡献代码',
     'communityPage.contributing.item3': '改进文档和示例',
     'communityPage.contributing.item4': '分享使用经验和最佳实践',
     'communityPage.contributing.viewGuide': '查看贡献指南',
     'communityPage.codeOfConduct.title': '行为准则',
-    'communityPage.codeOfConduct.desc': 'PowerMem 社区致力于为所有参与者提供友好、包容和尊重的环境。我们期望所有社区成员遵循以下原则：',
+    'communityPage.codeOfConduct.desc': 'SeekMem 社区致力于为所有参与者提供友好、包容和尊重的环境。我们期望所有社区成员遵循以下原则：',
     'communityPage.codeOfConduct.item1': '尊重所有社区成员，无论背景如何',
     'communityPage.codeOfConduct.item2': '保持专业和礼貌的沟通',
     'communityPage.codeOfConduct.item3': '欢迎不同的观点和经验',
@@ -113,7 +113,7 @@ export default function CommunityPage() {
   const stars = useGitHubStars();
 
   return (
-    <Layout title="Community" description="Join the PowerMem Community">
+    <Layout title="Community" description="Join the SeekMem Community">
       <div className={styles.communityPage}>
         <div className="container margin-vert--lg">
           {/* Header */}
@@ -163,7 +163,7 @@ export default function CommunityPage() {
                 <li>{t('communityPage.contributing.item4')}</li>
               </ul>
               <Link
-                href="https://github.com/oceanbase/powermem"
+                href="https://github.com/oceanbase/seekmem"
                 className={styles.ctaButton}
               >
                 <GitHubIcon className={styles.buttonIcon} />

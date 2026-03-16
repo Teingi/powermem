@@ -1,5 +1,5 @@
 """
-Response models for PowerMem API
+Response models for SeekMem API
 """
 
 from typing import Any, Dict, List, Optional
@@ -7,9 +7,9 @@ from datetime import datetime, timezone
 from pydantic import BaseModel, Field, field_serializer, computed_field
 
 try:
-    from powermem.utils.utils import get_current_datetime
+    from seekmem.utils.utils import get_current_datetime
 except ImportError:
-    # Fallback if powermem utils not available
+    # Fallback if seekmem utils not available
     def get_current_datetime():
         return datetime.now(timezone.utc)
 

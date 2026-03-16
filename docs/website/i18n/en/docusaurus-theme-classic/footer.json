@@ -25,7 +25,7 @@
   },
   "link.item.label.GitHub": {
     "message": "GitHub",
-    "description": "The label of footer link with label=GitHub linking to https://github.com/oceanbase/powermem"
+    "description": "The label of footer link with label=GitHub linking to https://github.com/oceanbase/seekmem"
   },
   "link.item.label.Discord": {
     "message": "Discord",
@@ -33,7 +33,7 @@
   },
   "link.item.label.X": {
     "message": "X",
-    "description": "The label of footer link with label=X linking to https://x.com/powermem"
+    "description": "The label of footer link with label=X linking to https://x.com/seekmem"
   },
   "link.item.label.Features": {
     "message": "Features",

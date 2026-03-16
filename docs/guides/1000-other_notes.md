@@ -1,6 +1,6 @@
 # Other Notes
 
-This document contains important notes and considerations when using PowerMem. Please review these points to avoid common issues and ensure proper integration.
+This document contains important notes and considerations when using SeekMem. Please review these points to avoid common issues and ensure proper integration.
 
 ---
 
@@ -8,7 +8,7 @@ This document contains important notes and considerations when using PowerMem. P
 
 ### Overview
 
-The `memory_id` field in PowerMem is a 64-bit Snowflake integer. When JSON responses containing this ID are parsed by JavaScript/TypeScript clients, the value may exceed JavaScript's 53-bit safe integer limit (`Number.MAX_SAFE_INTEGER = 2^53 - 1`) and lose precision.
+The `memory_id` field in SeekMem is a 64-bit Snowflake integer. When JSON responses containing this ID are parsed by JavaScript/TypeScript clients, the value may exceed JavaScript's 53-bit safe integer limit (`Number.MAX_SAFE_INTEGER = 2^53 - 1`) and lose precision.
 
 ### The Problem
 
@@ -19,7 +19,7 @@ JavaScript's `Number` type uses IEEE 754 double-precision floating-point format,
 When a memory is created and retrieved:
 
 ```python
-from powermem import create_memory
+from seekmem import create_memory
 
 memory = create_memory()
 res = memory.get_all(user_id="hsy")
@@ -44,7 +44,7 @@ When working with JavaScript/TypeScript clients or any environment that may pars
 When sending data to JavaScript/TypeScript clients, convert the `memory_id` to a string:
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 memory = Memory(config=config)
@@ -111,7 +111,7 @@ If you're building a FastAPI endpoint that returns memory data:
 
 ```python
 from fastapi import FastAPI
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 import json
 
 app = FastAPI()
@@ -139,13 +139,13 @@ async def get_memories(user_id: str):
 
 ### Internal Storage
 
-Note that internally, PowerMem continues to use 64-bit integers for `memory_id` storage and operations. The conversion to string is only necessary when:
+Note that internally, SeekMem continues to use 64-bit integers for `memory_id` storage and operations. The conversion to string is only necessary when:
 - Serializing to JSON for external clients
 - Passing `memory_id` through API endpoints
 - Logging or displaying `memory_id` values in contexts where precision matters
 
 ### Related Issues
 
-For more details and discussion, see [GitHub Issue #91](https://github.com/oceanbase/powermem/issues/91).
+For more details and discussion, see [GitHub Issue #91](https://github.com/oceanbase/seekmem/issues/91).
 
 ---

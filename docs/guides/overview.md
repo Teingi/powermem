@@ -1,6 +1,6 @@
 # Guides
 
-Comprehensive guides for using powermem effectively.
+Comprehensive guides for using seekmem effectively.
 
 ## Getting Started
 
@@ -13,7 +13,7 @@ Comprehensive guides for using powermem effectively.
 - **[Multimodal Capability](../examples/scenario_7_multimodal.md)** - Image and multimedia processing
 - **[UserMemory Guide](./0010-user_memory.md)** - User profile management and extraction
 - **[Sparse Vector Guide](./0011-sparse_vector.md)** - Sparse vector configuration, upgrade and migration
-- **[CLI Usage Guide](./0012-cli_usage.md)** - PowerMem CLI (pmem) usage and reference (1.0.0+)
+- **[CLI Usage Guide](./0012-cli_usage.md)** - SeekMem CLI (smem) usage and reference (1.0.0+)
 
 ## Other Notes
 
@@ -21,7 +21,7 @@ Comprehensive guides for using powermem effectively.
 
 ## Quick Navigation
 
-- **New to powermem?** Start with [Getting Started](./0001-getting_started.md)
+- **New to seekmem?** Start with [Getting Started](./0001-getting_started.md)
 - **Setting up?** Read [Configuration Guide](./0003-configuration.md)
 - **Multi-agent?** See [Multi-Agent Guide](./0005-multi_agent.md)
 - **Advanced features?** Check [Sub Stores Guide](./0006-sub_stores.md)
@@ -29,4 +29,4 @@ Comprehensive guides for using powermem effectively.
 - **Multimodal?** See [Multimodal Capability](../examples/scenario_7_multimodal.md)
 - **User profiles?** See [UserMemory Guide](./0010-user_memory.md)
 - **Sparse vector?** See [Sparse Vector Guide](./0011-sparse_vector.md)
-- **CLI (pmem)?** See [CLI Usage Guide](./0012-cli_usage.md)
+- **CLI (smem)?** See [CLI Usage Guide](./0012-cli_usage.md)

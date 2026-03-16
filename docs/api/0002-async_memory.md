@@ -5,7 +5,7 @@
 ## Class: `AsyncMemory`
 
 ```python
-from powermem import AsyncMemory
+from seekmem import AsyncMemory
 
 async_memory = AsyncMemory(config=config)
 await async_memory.initialize()
@@ -186,7 +186,7 @@ all_memories = await async_memory.get_all(user_id="user123", limit=50, offset=0)
 
 ```python
 import asyncio
-from powermem import AsyncMemory, auto_config
+from seekmem import AsyncMemory, auto_config
 
 async def main():
     config = auto_config()
@@ -214,7 +214,7 @@ asyncio.run(main())
 
 ```python
 import asyncio
-from powermem import AsyncMemory, auto_config
+from seekmem import AsyncMemory, auto_config
 
 async def add_multiple_memories():
     config = auto_config()
@@ -237,7 +237,7 @@ asyncio.run(add_multiple_memories())
 
 ```python
 import asyncio
-from powermem import AsyncMemory, auto_config
+from seekmem import AsyncMemory, auto_config
 
 async def batch_process():
     config = auto_config()

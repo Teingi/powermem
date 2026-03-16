@@ -3,7 +3,7 @@
 This script simulates the sub store workflow described in the documentation.
 It uses an in-memory mock implementation (`MockSubStoreMemory`) so the example
 can be executed without an OceanBase deployment. The API matches the portions
-used in the scenario, allowing you to swap in the real `powermem.Memory`
+used in the scenario, allowing you to swap in the real `seekmem.Memory`
 instance if you have a fully configured environment.
 """
 
@@ -15,7 +15,7 @@ from typing import Any, Dict, List, Optional
 
 import pytest
 from dotenv import load_dotenv
-from powermem.config_loader import auto_config
+from seekmem.config_loader import auto_config
 
 # Check if .env exists and load it
 env_path = os.path.join(os.path.dirname(__file__), "..", "..", ".env")
@@ -79,7 +79,7 @@ BASE_CONFIG: Dict[str, Any] = {
                 "port": int(os.getenv("OCEANBASE_PORT", "10001")),
                 "user": os.getenv("OCEANBASE_USER", "root"),
                 "password": os.getenv("OCEANBASE_PASSWORD", ""),
-                "db_name": os.getenv("OCEANBASE_DB", "powermem"),
+                "db_name": os.getenv("OCEANBASE_DB", "seekmem"),
             },
         },
     },
@@ -142,7 +142,7 @@ EPISODIC_MEMORIES = [
 
 USER_ID = "demo_user"
 
-from powermem import Memory
+from seekmem import Memory
 def create_memory() -> Memory:
     config = get_config()
     memory = Memory(config)

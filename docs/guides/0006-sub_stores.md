@@ -18,7 +18,7 @@ Sub stores allow you to partition memory data into separate vector tables, each 
 ### Basic Configuration
 
 ```python
-from powermem import Memory
+from seekmem import Memory
 
 config = {
     "vector_store": {

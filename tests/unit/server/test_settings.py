@@ -1,11 +1,11 @@
 def test_server_settings_parsing(monkeypatch):
-    monkeypatch.setenv("POWERMEM_SERVER_AUTH_ENABLED", "false")
-    monkeypatch.setenv("POWERMEM_SERVER_LOG_FILE", "")
-    monkeypatch.setenv("POWERMEM_SERVER_API_KEYS", " a, b ,, c ")
+    monkeypatch.setenv("SEEKMEM_SERVER_AUTH_ENABLED", "false")
+    monkeypatch.setenv("SEEKMEM_SERVER_LOG_FILE", "")
+    monkeypatch.setenv("SEEKMEM_SERVER_API_KEYS", " a, b ,, c ")
     monkeypatch.setenv(
-        "POWERMEM_SERVER_CORS_ORIGINS", "https://a.example, https://b.example"
+        "SEEKMEM_SERVER_CORS_ORIGINS", "https://a.example, https://b.example"
     )
-    monkeypatch.setenv("POWERMEM_SERVER_RELOAD", "enabled")
+    monkeypatch.setenv("SEEKMEM_SERVER_RELOAD", "enabled")
 
     from server.config import ServerSettings
 

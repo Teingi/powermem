@@ -1,6 +1,6 @@
-# PowerMem Benchmark
+# SeekMem Benchmark
 
-This directory contains the benchmarking suite for PowerMem, including a REST API server for memory management and comprehensive load testing tools.
+This directory contains the benchmarking suite for SeekMem, including a REST API server for memory management and comprehensive load testing tools.
 
 ## Documentation
 

@@ -15,7 +15,7 @@ import os
 import sys
 import pytest
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "..", "src"))
-from powermem import UserMemory, auto_config
+from seekmem import UserMemory, auto_config
 
 
 def get_config():

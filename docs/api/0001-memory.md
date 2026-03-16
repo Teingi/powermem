@@ -1,11 +1,11 @@
 # Memory API Reference
 
-`Memory` is the core synchronous memory management class in powermem. It provides a simple interface for storing, retrieving, and managing memories in LLM applications.
+`Memory` is the core synchronous memory management class in seekmem. It provides a simple interface for storing, retrieving, and managing memories in LLM applications.
 
 ## Class: `Memory`
 
 ```python
-from powermem import Memory
+from seekmem import Memory
 
 memory = Memory(config=config)
 ```
@@ -25,7 +25,7 @@ Create a new Memory instance.
 
 **Example:**
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 # Auto-load from .env
 config = auto_config()

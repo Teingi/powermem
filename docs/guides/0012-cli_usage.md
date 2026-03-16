@@ -1,6 +1,6 @@
-# PowerMem CLI Usage Guide
+# SeekMem CLI Usage Guide
 
-This guide describes how to use the PowerMem Command Line Interface (CLI) introduced in PowerMem 1.0.0. The CLI provides a full set of memory operations, configuration management, backup/restore, and an interactive shell—all from the terminal.
+This guide describes how to use the SeekMem Command Line Interface (CLI) introduced in SeekMem 1.0.0. The CLI provides a full set of memory operations, configuration management, backup/restore, and an interactive shell—all from the terminal.
 
 ## Table of Contents
 
@@ -18,18 +18,18 @@ This guide describes how to use the PowerMem Command Line Interface (CLI) introd
 
 ## Installation and Invocation
 
-After installing PowerMem, the CLI is available as:
+After installing SeekMem, the CLI is available as:
 
-- **`pmem`** – primary entry point (when installed as a console script)
-- **`powermem-cli`** – alternative entry point
+- **`smem`** – primary entry point (when installed as a console script)
+- **`seekmem-cli`** – alternative entry point
 
 ```bash
-# Ensure PowerMem is installed
-pip install powermem
+# Ensure SeekMem is installed
+pip install seekmem
 
 # Check version and help
-pmem --version
-pmem --help
+smem --version
+smem --help
 ```
 
 If no subcommand is given, the CLI prints "Missing command." and shows the main help.
@@ -52,10 +52,10 @@ These options can be used before any subcommand (and some are also available per
 **Examples:**
 
 ```bash
-pmem -e .env.production memory list
-pmem --json stats
-pmem -v memory add "User prefers dark mode" --user-id user123
-pmem --install-completion bash
+smem -e .env.production memory list
+smem --json stats
+smem -v memory add "User prefers dark mode" --user-id user123
+smem --install-completion bash
 ```
 
 ---
@@ -76,7 +76,7 @@ pmem --install-completion bash
 
 All memory commands run under the `memory` group and use the same backend as the Python SDK (same config and storage).
 
-### `pmem memory add CONTENT`
+### `smem memory add CONTENT`
 
 Add a new memory. Content can be a single fact or short description; with inference enabled (default), the system may deduplicate or merge with existing memories.
 
@@ -100,14 +100,14 @@ Add a new memory. Content can be a single fact or short description; with infere
 **Examples:**
 
 ```bash
-pmem memory add "User prefers dark mode" --user-id user123
-pmem memory add "API key is stored in vault" -m '{"category": "security"}'
-pmem memory add "Meeting at 3pm Friday" -u user1 -a agent1 --no-infer
+smem memory add "User prefers dark mode" --user-id user123
+smem memory add "API key is stored in vault" -m '{"category": "security"}'
+smem memory add "Meeting at 3pm Friday" -u user1 -a agent1 --no-infer
 ```
 
 ---
 
-### `pmem memory search QUERY`
+### `smem memory search QUERY`
 
 Search memories by semantic similarity to the given query.
 
@@ -130,14 +130,14 @@ Search memories by semantic similarity to the given query.
 **Examples:**
 
 ```bash
-pmem memory search "user preferences" --user-id user123
-pmem memory search "dark mode" -l 5 -j
-pmem memory search "123" -t 0.3
+smem memory search "user preferences" --user-id user123
+smem memory search "dark mode" -l 5 -j
+smem memory search "123" -t 0.3
 ```
 
 ---
 
-### `pmem memory get MEMORY_ID`
+### `smem memory get MEMORY_ID`
 
 Retrieve a single memory by its global ID. Optional `--user-id` / `--agent-id` enforce access control (memory is returned only if it belongs to that user/agent).
 
@@ -156,13 +156,13 @@ Retrieve a single memory by its global ID. Optional `--user-id` / `--agent-id` e
 **Examples:**
 
 ```bash
-pmem memory get 123456789
-pmem memory get 123456789 --user-id user123
+smem memory get 123456789
+smem memory get 123456789 --user-id user123
 ```
 
 ---
 
-### `pmem memory update MEMORY_ID CONTENT`
+### `smem memory update MEMORY_ID CONTENT`
 
 Update an existing memory’s content (and optionally metadata).
 
@@ -183,13 +183,13 @@ Update an existing memory’s content (and optionally metadata).
 **Examples:**
 
 ```bash
-pmem memory update 123456789 "Updated content"
-pmem memory update 123456789 "New content" -m '{"updated": true}'
+smem memory update 123456789 "Updated content"
+smem memory update 123456789 "New content" -m '{"updated": true}'
 ```
 
 ---
 
-### `pmem memory delete MEMORY_ID`
+### `smem memory delete MEMORY_ID`
 
 Delete a memory by ID. Prompts for confirmation unless `--yes` is used.
 
@@ -208,13 +208,13 @@ Delete a memory by ID. Prompts for confirmation unless `--yes` is used.
 **Examples:**
 
 ```bash
-pmem memory delete 123456789
-pmem memory delete 123456789 --yes
+smem memory delete 123456789
+smem memory delete 123456789 --yes
 ```
 
 ---
 
-### `pmem memory list`
+### `smem memory list`
 
 List memories with optional filters, pagination, and sorting.
 
@@ -235,14 +235,14 @@ List memories with optional filters, pagination, and sorting.
 **Examples:**
 
 ```bash
-pmem memory list --user-id user123
-pmem memory list -l 20 -o 0
-pmem memory list --sort-by created_at --order desc
+smem memory list --user-id user123
+smem memory list -l 20 -o 0
+smem memory list --sort-by created_at --order desc
 ```
 
 ---
 
-### `pmem memory delete-all`
+### `smem memory delete-all`
 
 Delete all memories matching the given filters. **Irreversible.** Requires `--confirm` and an interactive confirmation.
 
@@ -258,8 +258,8 @@ Delete all memories matching the given filters. **Irreversible.** Requires `--co
 **Examples:**
 
 ```bash
-pmem memory delete-all --user-id user123 --confirm
-pmem memory delete-all --run-id session1 --confirm
+smem memory delete-all --user-id user123 --confirm
+smem memory delete-all --run-id session1 --confirm
 ```
 
 ---
@@ -268,7 +268,7 @@ pmem memory delete-all --run-id session1 --confirm
 
 Configuration commands use the same `.env`-based setup as the SDK. Use `--env-file` to point to a specific file.
 
-### `pmem config show`
+### `smem config show`
 
 Display current configuration (from the chosen `.env` file). Sensitive values (e.g. API keys, passwords) are masked unless `--show-secrets` is used.
 
@@ -283,14 +283,14 @@ Display current configuration (from the chosen `.env` file). Sensitive values (e
 **Examples:**
 
 ```bash
-pmem config show
-pmem config show --section llm
-pmem config show -j
+smem config show
+smem config show --section llm
+smem config show -j
 ```
 
 ---
 
-### `pmem config validate`
+### `smem config validate`
 
 Validate the configuration file. Reports errors and optional warnings; with `--strict`, more checks are enforced.
 
@@ -305,14 +305,14 @@ Validate the configuration file. Reports errors and optional warnings; with `--s
 **Examples:**
 
 ```bash
-pmem config validate
-pmem config validate -f .env.production
-pmem config validate --strict
+smem config validate
+smem config validate -f .env.production
+smem config validate --strict
 ```
 
 ---
 
-### `pmem config test`
+### `smem config test`
 
 Test connectivity for database, LLM, and embedder (using the current config).
 
@@ -326,14 +326,14 @@ Test connectivity for database, LLM, and embedder (using the current config).
 **Examples:**
 
 ```bash
-pmem config test
-pmem config test -c database
-pmem config test -c llm
+smem config test
+smem config test -c database
+smem config test -c llm
 ```
 
 ---
 
-### `pmem config init`
+### `smem config init`
 
 Run an interactive configuration wizard that creates or updates a `.env` file. Supports quickstart (minimal prompts) or custom (full) mode.
 
@@ -349,16 +349,16 @@ Run an interactive configuration wizard that creates or updates a `.env` file. S
 **Examples:**
 
 ```bash
-pmem config init
-pmem config init -f .env
-pmem config init --test --component database
+smem config init
+smem config init -f .env
+smem config init --test --component database
 ```
 
 ---
 
 ## Statistics
 
-### `pmem stats`
+### `smem stats`
 
 Display memory statistics (total counts, distribution by type, age, etc.). Optional filters apply to the same backend as other memory commands.
 
@@ -374,17 +374,17 @@ Display memory statistics (total counts, distribution by type, age, etc.). Optio
 **Examples:**
 
 ```bash
-pmem stats
-pmem stats -u user123
-pmem stats --agent-id agent1 -j
-pmem stats --detailed
+smem stats
+smem stats -u user123
+smem stats --agent-id agent1 -j
+smem stats --detailed
 ```
 
 ---
 
 ## Management Commands
 
-### `pmem manage backup`
+### `smem manage backup`
 
 Export memories to a JSON file. Filters and limit control which memories are included.
 
@@ -392,7 +392,7 @@ Export memories to a JSON file. Filters and limit control which memories are inc
 
 | Option | Short | Description |
 |--------|-------|-------------|
-| `--output PATH` | `-o` | Output file (default: `powermem_backup_<timestamp>.json`). |
+| `--output PATH` | `-o` | Output file (default: `seekmem_backup_<timestamp>.json`). |
 | `--user-id USER_ID` | `-u` | Filter by user ID. |
 | `--agent-id AGENT_ID` | `-a` | Filter by agent ID. |
 | `--run-id RUN_ID` | `-r` | Filter by run ID. |
@@ -403,16 +403,16 @@ Export memories to a JSON file. Filters and limit control which memories are inc
 **Examples:**
 
 ```bash
-pmem manage backup -o backup.json
-pmem manage backup --user-id user123 -o user_backup.json
-pmem manage backup -l 1000
+smem manage backup -o backup.json
+smem manage backup --user-id user123 -o user_backup.json
+smem manage backup -l 1000
 ```
 
 ---
 
-### `pmem manage restore`
+### `smem manage restore`
 
-Import memories from a JSON backup file produced by `pmem manage backup`. Can override user/agent IDs and skip duplicates.
+Import memories from a JSON backup file produced by `smem manage backup`. Can override user/agent IDs and skip duplicates.
 
 **Options:**
 
@@ -428,14 +428,14 @@ Import memories from a JSON backup file produced by `pmem manage backup`. Can ov
 **Examples:**
 
 ```bash
-pmem manage restore -i backup.json
-pmem manage restore -i backup.json --dry-run
-pmem manage restore -i backup.json -u new_user
+smem manage restore -i backup.json
+smem manage restore -i backup.json --dry-run
+smem manage restore -i backup.json -u new_user
 ```
 
 ---
 
-### `pmem manage cleanup`
+### `smem manage cleanup`
 
 Remove or archive memories with low retention scores (Ebbinghaus-based). Use `--dry-run` to preview.
 
@@ -454,14 +454,14 @@ Remove or archive memories with low retention scores (Ebbinghaus-based). Use `--
 **Examples:**
 
 ```bash
-pmem manage cleanup --dry-run
-pmem manage cleanup --threshold 0.2
-pmem manage cleanup -u user123 --force
+smem manage cleanup --dry-run
+smem manage cleanup --threshold 0.2
+smem manage cleanup -u user123 --force
 ```
 
 ---
 
-### `pmem manage migrate`
+### `smem manage migrate`
 
 Migrate data between stores (e.g. main store and sub-stores). Availability depends on the storage backend.
 
@@ -478,17 +478,17 @@ Migrate data between stores (e.g. main store and sub-stores). Availability depen
 **Examples:**
 
 ```bash
-pmem manage migrate -t 0 --dry-run
-pmem manage migrate -t 1 --delete-source
+smem manage migrate -t 0 --dry-run
+smem manage migrate -t 1 --delete-source
 ```
 
 ---
 
 ## Interactive Shell
 
-### `pmem shell`
+### `smem shell`
 
-Start an interactive REPL (Read-Eval-Print Loop) for PowerMem. You can run memory and stats commands without typing `pmem memory` or `pmem stats` each time, and set default `user_id` / `agent_id` for the session.
+Start an interactive REPL (Read-Eval-Print Loop) for SeekMem. You can run memory and stats commands without typing `smem memory` or `smem stats` each time, and set default `user_id` / `agent_id` for the session.
 
 **Commands inside the shell:**
 
@@ -512,56 +512,56 @@ Start an interactive REPL (Read-Eval-Print Loop) for PowerMem. You can run memor
 **Example session:**
 
 ```bash
-$ pmem shell
+$ smem shell
 
 ==================================================
-  PowerMem Interactive Mode
+  SeekMem Interactive Mode
 ==================================================
 Type 'help' for available commands, 'exit' to quit
 
-powermem> set user user123
-powermem> add "User prefers dark mode"
-powermem> search "preferences"
-powermem> list --limit 10
-powermem> exit
+seekmem> set user user123
+seekmem> add "User prefers dark mode"
+seekmem> search "preferences"
+seekmem> list --limit 10
+seekmem> exit
 ```
 
 ---
 
 ## Shell Completion
 
-You can install tab-completion for `pmem` (and `powermem-cli`) so that subcommands and options are suggested on TAB.
+You can install tab-completion for `smem` (and `seekmem-cli`) so that subcommands and options are suggested on TAB.
 
 **Install:**
 
 ```bash
 # Bash
-pmem --install-completion bash
+smem --install-completion bash
 # Then source your ~/.bashrc or open a new terminal.
 
 # Zsh
-pmem --install-completion zsh
+smem --install-completion zsh
 
 # Fish
-pmem --install-completion fish
+smem --install-completion fish
 
 # PowerShell
-pmem --install-completion powershell
+smem --install-completion powershell
 # Add the printed script to your $PROFILE to persist.
 ```
 
-Bash/Zsh scripts are written under `~/.config/powermem/` and, if you confirm, a source line is added to your `~/.bashrc` or `~/.zshrc`. Fish completion is installed under `~/.config/fish/completions/pmem.fish`. PowerShell instructions are printed for you to add to your profile.
+Bash/Zsh scripts are written under `~/.config/seekmem/` and, if you confirm, a source line is added to your `~/.bashrc` or `~/.zshrc`. Fish completion is installed under `~/.config/fish/completions/smem.fish`. PowerShell instructions are printed for you to add to your profile.
 
 ---
 
 ## Summary
 
-- Use **`pmem`** (or **`powermem-cli`**) with **global options** (`-e`, `-j`, `-v`) and **subcommands** for memory, config, stats, manage, and shell.
+- Use **`smem`** (or **`seekmem-cli`**) with **global options** (`-e`, `-j`, `-v`) and **subcommands** for memory, config, stats, manage, and shell.
 - **Memory operations**: `memory add/search/get/update/delete/list/delete-all` with filters and JSON output.
 - **Configuration**: `config show/validate/test/init` for inspecting, validating, testing, and interactively creating `.env`.
 - **Statistics**: `stats` with optional user/agent filters and `--detailed`.
 - **Management**: `manage backup/restore/cleanup/migrate` for backup, restore, retention cleanup, and store migration.
-- **Interactive use**: `pmem shell` for a REPL with session defaults and the same operations.
-- **Completion**: `pmem --install-completion bash|zsh|fish|powershell` for TAB completion.
+- **Interactive use**: `smem shell` for a REPL with session defaults and the same operations.
+- **Completion**: `smem --install-completion bash|zsh|fish|powershell` for TAB completion.
 
 For configuration details (e.g. `.env` variables), see the [Configuration Guide](./0003-configuration.md). For SDK and API usage, see [Getting Started](./0001-getting_started.md) and the [API documentation](../api/overview.md).

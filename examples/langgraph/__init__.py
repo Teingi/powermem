@@ -1,7 +1,7 @@
 """
-LangGraph integration examples with PowerMem and OceanBase.
+LangGraph integration examples with SeekMem and OceanBase.
 
-This package contains examples demonstrating how to use PowerMem with LangGraph
+This package contains examples demonstrating how to use SeekMem with LangGraph
 for building stateful AI applications with intelligent memory management.
 """
 

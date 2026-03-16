@@ -1,3 +1,3 @@
-module github.com/oceanbase/powermem/examples/go
+module github.com/oceanbase/seekmem/examples/go
 
 go 1.24

@@ -1,10 +1,10 @@
 # Custom Prompts Usage Guide
 
-This guide provides detailed instructions on how to use custom prompts in powermem to customize the behavior of various memory operations.
+This guide provides detailed instructions on how to use custom prompts in seekmem to customize the behavior of various memory operations.
 
 ## Overview
 
-powermem supports customizing prompts at multiple levels, including:
+seekmem supports customizing prompts at multiple levels, including:
 
 1. **Fact Extraction** - Extract factual information from conversations
 2. **Memory Update** - Determine how to update existing memories
@@ -16,7 +16,7 @@ powermem supports customizing prompts at multiple levels, including:
 ### Method 1: Using MemoryConfig Object (Recommended)
 
 ```python
-from powermem import Memory, MemoryConfig, GraphStoreConfig, LlmConfig, EmbedderConfig, VectorStoreConfig, IntelligentMemoryConfig
+from seekmem import Memory, MemoryConfig, GraphStoreConfig, LlmConfig, EmbedderConfig, VectorStoreConfig, IntelligentMemoryConfig
 
 # Create configuration object
 config = MemoryConfig(
@@ -130,7 +130,7 @@ memory = Memory(config=config)
 ### Method 2: Using Dictionary Configuration
 
 ```python
-from powermem import Memory
+from seekmem import Memory
 
 # Dictionary configuration (no need to import config classes)
 
@@ -185,7 +185,7 @@ memory = Memory(config=config)
 ### Example 1: Custom Fact Extraction
 
 ```python
-from powermem import Memory, MemoryConfig, LlmConfig, EmbedderConfig, VectorStoreConfig
+from seekmem import Memory, MemoryConfig, LlmConfig, EmbedderConfig, VectorStoreConfig
 
 # Create a prompt focused on extracting preferences and interests
 config = MemoryConfig(
@@ -227,7 +227,7 @@ print(result)
 ### Example 2: Custom Memory Update Strategy
 
 ```python
-from powermem import Memory, MemoryConfig, LlmConfig, EmbedderConfig, VectorStoreConfig
+from seekmem import Memory, MemoryConfig, LlmConfig, EmbedderConfig, VectorStoreConfig
 
 # Create a more conservative update strategy
 config = MemoryConfig(
@@ -268,7 +268,7 @@ memory.add(messages="I love Python and JavaScript programming", user_id="user123
 ### Example 3: Custom Importance Evaluation
 
 ```python
-from powermem import Memory, MemoryConfig, IntelligentMemoryConfig, LlmConfig, EmbedderConfig, VectorStoreConfig
+from seekmem import Memory, MemoryConfig, IntelligentMemoryConfig, LlmConfig, EmbedderConfig, VectorStoreConfig
 
 # Create an evaluation prompt that emphasizes emotional value and practicality
 config = MemoryConfig(
@@ -323,7 +323,7 @@ memory.add(
 ### Example 4: Custom Graph Memory Operations
 
 ```python
-from powermem import Memory, MemoryConfig, GraphStoreConfig, LlmConfig, EmbedderConfig, VectorStoreConfig
+from seekmem import Memory, MemoryConfig, GraphStoreConfig, LlmConfig, EmbedderConfig, VectorStoreConfig
 
 config = MemoryConfig(
     graph_store=GraphStoreConfig(
@@ -464,7 +464,7 @@ Different prompts support different placeholders:
 ## Complete Example: Multi-language Support
 
 ```python
-from powermem import Memory, MemoryConfig, LlmConfig, EmbedderConfig, VectorStoreConfig
+from seekmem import Memory, MemoryConfig, LlmConfig, EmbedderConfig, VectorStoreConfig
 
 # Chinese prompt configuration
 chinese_config = MemoryConfig(
@@ -546,4 +546,4 @@ Through custom prompts, you can:
 - Adjust importance evaluation criteria
 - Customize graph memory operation methods
 
-This makes powermem adaptable to various use cases and requirements.
+This makes seekmem adaptable to various use cases and requirements.

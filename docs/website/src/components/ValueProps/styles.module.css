@@ -355,7 +355,7 @@
   transition: all 0.3s ease;
 }
 
-.comparisonItemPowerMem {
+.comparisonItemSeekMem {
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(147, 51, 234, 0.08));
   border-color: rgba(59, 130, 246, 0.4);
   box-shadow: 
@@ -395,7 +395,7 @@
   line-height: 1.2;
 }
 
-.comparisonItemPowerMem .comparisonValue {
+.comparisonItemSeekMem .comparisonValue {
   color: #60a5fa;
   text-shadow: 0 0 12px rgba(96, 165, 250, 0.4);
   font-size: 2.25rem;
@@ -557,7 +557,7 @@
     font-size: 1.625rem;
   }
 
-  .comparisonItemPowerMem .comparisonValue {
+  .comparisonItemSeekMem .comparisonValue {
     font-size: 1.875rem;
   }
 

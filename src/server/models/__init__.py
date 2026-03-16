@@ -1,5 +1,5 @@
 """
-Request and response models for PowerMem API
+Request and response models for SeekMem API
 """
 
 from .request import (

@@ -4,7 +4,7 @@ Sparse vector data migration script
 Used to migrate historical data to sparse vector format.
 
 Usage:
-    from powermem import Memory, auto_config
+    from seekmem import Memory, auto_config
     from script import ScriptManager
     
     config = auto_config()
@@ -21,7 +21,7 @@ from typing import List, Optional, Any, Dict
 
 from sqlalchemy import text
 
-from powermem.utils import OceanBaseUtil
+from seekmem.utils import OceanBaseUtil
 
 logger = logging.getLogger(__name__)
 
@@ -530,7 +530,7 @@ def migrate_sparse_vector(
     
     Example:
         ```python
-        from powermem import Memory, auto_config
+        from seekmem import Memory, auto_config
         from script import ScriptManager
         
         config = auto_config()

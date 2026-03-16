@@ -20,7 +20,7 @@ project_root = os.path.join(os.path.dirname(__file__), "..", "..")
 project_root = os.path.abspath(project_root)
 sys.path.insert(0, project_root)
 
-from powermem import auto_config, UserMemory
+from seekmem import auto_config, UserMemory
 
 # Configure logging for pytest
 # Note: To see logs when running pytest, use: pytest --log-cli-level=INFO
@@ -324,7 +324,7 @@ class TestQueryRewrite:
         profile_text = """My name is Wang Wu, I am a software engineer.
             I moved from Shanghai to Nanshan District, Shenzhen last month, currently working at Tencent, responsible for AI product development.
             I like to run at Shenzhen Bay Park on weekends, and usually study machine learning and deep learning technologies.
-            I am recently working on an open source project called PowerMem, focusing on vector database performance optimization."""
+            I am recently working on an open source project called SeekMem, focusing on vector database performance optimization."""
         
         assert self.tester.setup_user_profile(user_id, profile_text), "Failed to setup user profile"
         

@@ -7,8 +7,8 @@ This module contains tests for the list memories API with sorting support.
 import pytest
 from unittest.mock import MagicMock, patch
 from datetime import datetime, timedelta
-from powermem import Memory
-from powermem.storage.base import OutputData
+from seekmem import Memory
+from seekmem.storage.base import OutputData
 
 
 class TestListMemoriesSorting:
@@ -17,9 +17,9 @@ class TestListMemoriesSorting:
     @pytest.fixture
     def mock_memory(self):
         """Create a mock Memory instance."""
-        with patch('powermem.core.memory.VectorStoreFactory'), \
-             patch('powermem.core.memory.LLMFactory'), \
-             patch('powermem.core.memory.EmbedderFactory'):
+        with patch('seekmem.core.memory.VectorStoreFactory'), \
+             patch('seekmem.core.memory.LLMFactory'), \
+             patch('seekmem.core.memory.EmbedderFactory'):
             memory = Memory()
             return memory
     

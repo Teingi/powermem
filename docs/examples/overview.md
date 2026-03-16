@@ -36,7 +36,7 @@ Each scenario is available as both:
    ```
 
 3. **Open a scenario notebook**:
-   - Start with `scenario_1_basic_usage.ipynb` if you're new to powermem
+   - Start with `scenario_1_basic_usage.ipynb` if you're new to seekmem
    - Run each cell sequentially using Shift+Enter
    - Modify code and experiment!
 
@@ -68,6 +68,6 @@ Each notebook includes:
 ## Requirements
 
 - Python 3.10+
-- powermem installed (`pip install powermem`)
+- seekmem installed (`pip install seekmem`)
 - Jupyter Notebook (for interactive notebooks)
 - LLM provider configured (for intelligent features in Scenario 2+)

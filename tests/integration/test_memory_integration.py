@@ -8,9 +8,9 @@ including vector stores, LLMs, and embedders.
 import pytest
 import uuid
 from unittest.mock import MagicMock, patch
-from powermem import Memory
-from powermem.storage.sqlite.sqlite_vector_store import SQLiteVectorStore
-from powermem.integrations.embeddings.mock import MockEmbeddings
+from seekmem import Memory
+from seekmem.storage.sqlite.sqlite_vector_store import SQLiteVectorStore
+from seekmem.integrations.embeddings.mock import MockEmbeddings
 
 
 class TestMemoryIntegration:
@@ -42,7 +42,7 @@ class TestMemoryIntegration:
         
         # Mock LLM to return simple responses
         # Use patch context manager that persists throughout fixture lifetime
-        patcher = patch('powermem.integrations.llm.factory.LLMFactory.create')
+        patcher = patch('seekmem.integrations.llm.factory.LLMFactory.create')
         mock_llm_factory = patcher.start()
         mock_llm = MagicMock()
         mock_llm.generate_response.return_value = {"content": "Test memory content"}

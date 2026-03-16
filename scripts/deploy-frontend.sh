@@ -1,11 +1,11 @@
 #!/bin/bash
-# Frontend deployment script for PowerMem documentation
+# Frontend deployment script for SeekMem documentation
 # This script follows the same steps as the GitHub Actions workflow
 
 set -e
 
 echo "=========================================="
-echo "PowerMem Frontend Deployment Script"
+echo "SeekMem Frontend Deployment Script"
 echo "=========================================="
 echo ""
 

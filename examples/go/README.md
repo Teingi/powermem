@@ -1,26 +1,26 @@
-# PowerMem Go Client Example
+# SeekMem Go Client Example
 
-A simple, lightweight Go client example demonstrating how to integrate PowerMem's intelligent memory capabilities into Go applications.
+A simple, lightweight Go client example demonstrating how to integrate SeekMem's intelligent memory capabilities into Go applications.
 
 ## Prerequisites
 
 1. **Go 1.24+** installed
-2. **PowerMem API Server** running (see [API Server Documentation](../../docs/api/0005-api_server.md))
+2. **SeekMem API Server** running (see [API Server Documentation](../../docs/api/0005-api_server.md))
 3. **LLM/Embedding API Key** - Required for creating memories and semantic search. Configure in the server's `.env` file
 
-> **Note**: PowerMem uses **SQLite** by default, no OceanBase installation required. SQLite is perfect for development and testing.
+> **Note**: SeekMem uses **SQLite** by default, no OceanBase installation required. SQLite is perfect for development and testing.
 
 ## Quick Start
 
-### 1. Start the PowerMem Server
+### 1. Start the SeekMem Server
 
 > **Note**: 
 > - Default database is **SQLite** (no OceanBase required)
-> - Authentication is **disabled** by default (`POWERMEM_SERVER_AUTH_ENABLED=false`)
+> - Authentication is **disabled** by default (`SEEKMEM_SERVER_AUTH_ENABLED=false`)
 
 ```bash
-pip install powermem
-powermem-server --host 0.0.0.0 --port 8000
+pip install seekmem
+seekmem-server --host 0.0.0.0 --port 8000
 ```
 
 #### Configure API Keys (Required)
@@ -37,7 +37,7 @@ EMBEDDING_API_KEY=your-embedding-api-key    # Required for creating memories and
 
 # Database (SQLite is default, no changes needed)
 DATABASE_PROVIDER=sqlite
-SQLITE_PATH=./data/powermem_dev.db
+SQLITE_PATH=./data/seekmem_dev.db
 ```
 
 #### Enable Authentication (Optional)
@@ -46,8 +46,8 @@ To enable API key authentication, configure the server's `.env` file:
 
 ```bash
 # In your .env file
-POWERMEM_SERVER_AUTH_ENABLED=true
-POWERMEM_SERVER_API_KEYS=your-api-key-123,another-key-456
+SEEKMEM_SERVER_AUTH_ENABLED=true
+SEEKMEM_SERVER_API_KEYS=your-api-key-123,another-key-456
 ```
 
 ### 2. Run the Go Example
@@ -59,10 +59,10 @@ cd examples/go
 go run .
 
 # Or with custom configuration
-# Base URL of the PowerMem API server
-export POWERMEM_BASE_URL=http://localhost:8000
+# Base URL of the SeekMem API server
+export SEEKMEM_BASE_URL=http://localhost:8000
 # API key for authentication (if server auth enabled)
-export POWERMEM_API_KEY=your-api-key-123 
+export SEEKMEM_API_KEY=your-api-key-123 
 go run .
 ```
 
@@ -70,7 +70,7 @@ go run .
 
 ### 1. Health Check
 
-Check the health status of the PowerMem API server. This is a public endpoint that does not require authentication.
+Check the health status of the SeekMem API server. This is a public endpoint that does not require authentication.
 
 ```go
 client := NewClient("http://localhost:8000", "your-api-key")
@@ -87,7 +87,7 @@ fmt.Printf("Status: %s\n", health.Status)
 
 ### 2. Create Memory
 
-Create a new memory. When `Infer` is enabled, PowerMem uses LLM to automatically extract multiple facts from the content and stores them as separate memories.
+Create a new memory. When `Infer` is enabled, SeekMem uses LLM to automatically extract multiple facts from the content and stores them as separate memories.
 
 ```go
 infer := true // Enable intelligent extraction
@@ -235,7 +235,7 @@ list, err := client.GetUserMemories("user-123", 20, 0)
 
 ## Handling 64-bit Memory IDs
 
-PowerMem uses 64-bit integers for memory IDs, which can exceed JavaScript's safe integer range. This client handles them properly:
+SeekMem uses 64-bit integers for memory IDs, which can exceed JavaScript's safe integer range. This client handles them properly:
 
 ```go
 // MemoryID is a custom type that handles both number and string JSON representations

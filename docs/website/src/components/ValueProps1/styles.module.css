@@ -234,12 +234,12 @@
   overflow: hidden;
 }
 
-.progressFillPowerMem {
+.progressFillSeekMem {
   background: linear-gradient(90deg, #3b82f6, #9333ea);
   box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
 }
 
-.progressFillPowerMem::after {
+.progressFillSeekMem::after {
   content: '';
   position: absolute;
   top: 0;

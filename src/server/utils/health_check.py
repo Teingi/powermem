@@ -19,7 +19,7 @@ async def check_database() -> DependencyStatus:
     start_time = time.time()
     
     try:
-        from powermem import Memory, auto_config
+        from seekmem import Memory, auto_config
         
         # Get config
         config = auto_config()
@@ -62,7 +62,7 @@ async def check_llm() -> DependencyStatus:
     start_time = time.time()
     
     try:
-        from powermem import auto_config
+        from seekmem import auto_config
         
         config = auto_config()
         

@@ -1,5 +1,5 @@
 """
-End-to-end tests for powermem
+End-to-end tests for seekmem
 
 This module tests complete user scenarios from initialization to complex workflows,
 simulating real-world usage patterns.
@@ -9,7 +9,7 @@ import pytest
 import uuid
 import asyncio
 from unittest.mock import MagicMock, patch
-from powermem import Memory, AsyncMemory
+from seekmem import Memory, AsyncMemory
 
 
 @pytest.mark.e2e
@@ -41,7 +41,7 @@ class TestEndToEndScenarios:
         }
 
         # Mock LLM to return structured responses
-        patcher = patch('powermem.integrations.llm.factory.LLMFactory.create')
+        patcher = patch('seekmem.integrations.llm.factory.LLMFactory.create')
         mock_llm_factory = patcher.start()
         mock_llm = MagicMock()
 
@@ -83,8 +83,8 @@ class TestEndToEndScenarios:
         }
 
         # Mock LLM and Embedder
-        patcher_llm = patch('powermem.integrations.llm.factory.LLMFactory.create')
-        patcher_embedder = patch('powermem.core.async_memory.EmbedderFactory.create')
+        patcher_llm = patch('seekmem.integrations.llm.factory.LLMFactory.create')
+        patcher_embedder = patch('seekmem.core.async_memory.EmbedderFactory.create')
 
         mock_llm_factory = patcher_llm.start()
         mock_llm = MagicMock()
@@ -92,7 +92,7 @@ class TestEndToEndScenarios:
         mock_llm_factory.return_value = mock_llm
 
         mock_embedder_factory = patcher_embedder.start()
-        from powermem.integrations.embeddings.mock import MockEmbeddings
+        from seekmem.integrations.embeddings.mock import MockEmbeddings
         mock_embedder_factory.return_value = MockEmbeddings()
 
         try:

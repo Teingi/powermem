@@ -1,5 +1,5 @@
 """
-Main FastAPI application for PowerMem API Server
+Main FastAPI application for SeekMem API Server
 """
 
 from fastapi import FastAPI, Request
@@ -83,7 +83,7 @@ async def robots_txt():
 async def root():
     """Root endpoint"""
     return {
-        "name": "PowerMem API Server",
+        "name": "SeekMem API Server",
         "version": config.api_version,
         "docs": "/docs",
         "dashboard": "/dashboard/",

@@ -16,19 +16,19 @@ const valueProps = [
 const getComparisonData = (isZh: boolean) => ({
   accurate: {
     fullContext: 52.9,
-    powermem: 78.7,
+    seekmem: 78.7,
     unit: '',
     label: isZh ? 'LLM 评分' : 'LLM Score',
   },
   agile: {
     fullContext: 17.12,
-    powermem: 1.44,
+    seekmem: 1.44,
     unit: 's',
     label: isZh ? '响应时间' : 'Response Time',
   },
   affordable: {
     fullContext: 26,
-    powermem: 0.9,
+    seekmem: 0.9,
     unit: 'k',
     label: isZh ? 'Token 使用量' : 'Token Usage',
   },
@@ -36,7 +36,7 @@ const getComparisonData = (isZh: boolean) => ({
 
 const translations: Record<string, Record<string, string>> = {
   en: {
-    'valueProps.title': 'Why Choose PowerMem?-5',
+    'valueProps.title': 'Why Choose SeekMem?-5',
     'valueProps.subtitle': 'Accurate, Agile, Affordable - The best AI memory management experience',
     'valueProps.benchmarkDesc': 'Real-world performance metrics based on LOCOMO dataset',
     'valueProps.viewBenchmark': 'View Full Benchmark Results',
@@ -51,7 +51,7 @@ const translations: Record<string, Record<string, string>> = {
     'valueProps.accurate.desc': 'Precise memory retrieval, AI-driven importance scoring, context-aware matching',
   },
   zh: {
-    'valueProps.title': '为什么选择 PowerMem？-1',
+    'valueProps.title': '为什么选择 SeekMem？-1',
     'valueProps.subtitle': '更快、更省、更准 - 最佳的 AI 内存管理体验',
     'valueProps.benchmarkDesc': '基于 LOCOMO 数据集的真实性能指标',
     'valueProps.viewBenchmark': '查看完整压测数据',
@@ -83,7 +83,7 @@ export default function ValueProps5() {
     return Math.min((value / max) * 100, 100);
   };
 
-  const maxValue = activeComparison ? Math.max(activeComparison.fullContext, activeComparison.powermem) * 1.2 : 100;
+  const maxValue = activeComparison ? Math.max(activeComparison.fullContext, activeComparison.seekmem) * 1.2 : 100;
   
   const circumference = 2 * Math.PI * 45; // radius = 45
 
@@ -146,13 +146,13 @@ export default function ValueProps5() {
                 <div className={styles.comparisonData}>
                   {/* Circular Progress Layout */}
                   <div className={styles.circleRow}>
-                    {/* PowerMem Circle */}
+                    {/* SeekMem Circle */}
                     <div className={styles.circleItem}>
-                      <div className={styles.circleLabel}>PowerMem</div>
+                      <div className={styles.circleLabel}>SeekMem</div>
                       <div className={styles.circleContainer}>
                         <svg className={styles.circleSvg} viewBox="0 0 100 100">
                           <defs>
-                            <linearGradient id="circleGradientPowerMem" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <linearGradient id="circleGradientSeekMem" x1="0%" y1="0%" x2="100%" y2="0%">
                               <stop offset="0%" style={{stopColor: '#3b82f6', stopOpacity: 1}} />
                               <stop offset="100%" style={{stopColor: '#9333ea', stopOpacity: 1}} />
                             </linearGradient>
@@ -166,36 +166,36 @@ export default function ValueProps5() {
                             strokeWidth="8"
                           />
                           <circle
-                            className={styles.circleProgressPowerMem}
+                            className={styles.circleProgressSeekMem}
                             cx="50"
                             cy="50"
                             r="45"
                             fill="none"
                             strokeWidth="8"
                             strokeDasharray={circumference}
-                            strokeDashoffset={circumference - (getCirclePercentage(activeComparison.powermem, maxValue) / 100) * circumference}
+                            strokeDashoffset={circumference - (getCirclePercentage(activeComparison.seekmem, maxValue) / 100) * circumference}
                             strokeLinecap="round"
                           />
                         </svg>
                         <div className={styles.circleValue}>
-                          {activeComparison.powermem}
+                          {activeComparison.seekmem}
                           <span className={styles.circleUnit}>{activeComparison.unit}</span>
                         </div>
                       </div>
                       <div className={styles.circleImprovement}>
                         {hoveredKey === 'accurate' && (
                           <span className={styles.improvementText}>
-                            +{(activeComparison.powermem - activeComparison.fullContext).toFixed(1)}
+                            +{(activeComparison.seekmem - activeComparison.fullContext).toFixed(1)}
                           </span>
                         )}
                         {hoveredKey === 'agile' && (
                           <span className={styles.improvementText}>
-                            {((activeComparison.fullContext / activeComparison.powermem).toFixed(1))}x faster
+                            {((activeComparison.fullContext / activeComparison.seekmem).toFixed(1))}x faster
                           </span>
                         )}
                         {hoveredKey === 'affordable' && (
                           <span className={styles.improvementText}>
-                            {((activeComparison.fullContext / activeComparison.powermem).toFixed(1))}x less
+                            {((activeComparison.fullContext / activeComparison.seekmem).toFixed(1))}x less
                           </span>
                         )}
                       </div>

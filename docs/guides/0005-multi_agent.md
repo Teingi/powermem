@@ -1,8 +1,8 @@
 ## Prerequisites
 
 - Python 3.10+
-- powermem installed (`pip install powermem`)
-- Basic understanding of powermem (see [Getting Started Guide](./0001-getting_started.md))
+- seekmem installed (`pip install seekmem`)
+- Basic understanding of seekmem (see [Getting Started Guide](./0001-getting_started.md))
 
 ## What is Multi-Agent Memory?
 
@@ -25,7 +25,7 @@ Multi-agent memory allows you to create isolated memory spaces for different AI 
 
 ## Configuration
 
-Before using multi-agent memory, you need to configure powermem. Powermem can automatically load configuration from a `.env` file in your project directory. This is the recommended way to configure powermem for your use case.
+Before using multi-agent memory, you need to configure seekmem. Powermem can automatically load configuration from a `.env` file in your project directory. This is the recommended way to configure seekmem for your use case.
 
 ### Creating a `.env` File
 
@@ -39,7 +39,7 @@ Before using multi-agent memory, you need to configure powermem. Powermem can au
    - **Embedding Provider**: Select how text will be converted to vectors
    - **Vector Store**: Choose your database (SQLite for development, OceanBase for production)
 
-> **Note:** When you call `auto_config()`, powermem will automatically:
+> **Note:** When you call `auto_config()`, seekmem will automatically:
 > - Look for a `.env` file in the current directory
 > - Load configuration from environment variables
 > - Use sensible defaults if no configuration is found
@@ -57,7 +57,7 @@ Instead of using `.env` files, you can also pass configuration directly as a Pyt
 Here's an example using a dictionary configuration for multi-agent scenarios:
 
 ```python
-from powermem import Memory
+from seekmem import Memory
 
 # Define configuration as a dictionary (JSON-like format)
 config = {
@@ -85,7 +85,7 @@ config = {
                 'port': 2881,
                 'user': 'root@sys',
                 'password': 'password',
-                'db_name': 'powermem'
+                'db_name': 'seekmem'
             },
             'embedding_model_dims': 1536,
             'index_type': 'IVF_FLAT',
@@ -110,7 +110,7 @@ print("✓ Created agents with JSON config!")
 
 ## Understanding Multi-Agent Memory Architecture
 
-Multi-agent memory in powermem is built on several key principles:
+Multi-agent memory in seekmem is built on several key principles:
 
 ### Memory Isolation
 
@@ -130,7 +130,7 @@ The `agent_id` parameter is crucial for multi-agent scenarios:
 
 ### Cross-Agent Search
 
-While memories are isolated by default, powermem allows you to search across all agents when needed:
+While memories are isolated by default, seekmem allows you to search across all agents when needed:
 
 - **Collaboration**: Agents can access shared information when appropriate
 - **Context building**: Build comprehensive context from multiple agent perspectives
@@ -170,7 +170,7 @@ When you create a `Memory` instance with an `agent_id`:
 Here's how to create memory instances for different agents:
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 
@@ -215,7 +215,7 @@ When you call `add()` on a `Memory` instance with an `agent_id`:
 Let's see how each agent adds memories to their own space:
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 customer_id = "customer_12345"
@@ -289,7 +289,7 @@ The `search()` method supports several parameters for agent-specific searches:
 Here's how each agent searches their own memories:
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 customer_id = "customer_12345"
@@ -375,7 +375,7 @@ To perform a cross-agent search:
 Here's how to search across all agents:
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 customer_id = "customer_12345"
@@ -443,7 +443,7 @@ The `run_id` parameter allows you to:
 Here's an example of multiple agents working on the same project:
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 project_id = "project_ai_platform"
@@ -537,7 +537,7 @@ Powermem supports several scope types, but you can also define custom scopes:
 Here's how to use memory scopes to control visibility:
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 
@@ -635,7 +635,7 @@ If you notice isolation issues:
 Here's how to verify that memories are properly isolated by agent:
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 user_id = "user123"
@@ -665,7 +665,7 @@ for result in results2.get('results', []):
 
 ## Summary and Best Practices
 
-Multi-agent memory in powermem provides a powerful way to manage memories for multiple AI agents while maintaining isolation and enabling collaboration. Here's a summary of key concepts and best practices:
+Multi-agent memory in seekmem provides a powerful way to manage memories for multiple AI agents while maintaining isolation and enabling collaboration. Here's a summary of key concepts and best practices:
 
 ### Key Takeaways
 

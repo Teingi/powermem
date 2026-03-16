@@ -1,15 +1,15 @@
 # Scenario 1: Basic Usage
 
-This scenario guides you through the basics of powermem - storing, retrieving, and managing memories.
+This scenario guides you through the basics of seekmem - storing, retrieving, and managing memories.
 
 ## Prerequisites
 
 - Python 3.10+
-- powermem installed (`pip install powermem`)
+- seekmem installed (`pip install seekmem`)
 
 ## Configuration
 
-Powermem can automatically load configuration from a `.env` file in your project directory. This is the recommended way to configure powermem for your use case.
+Powermem can automatically load configuration from a `.env` file in your project directory. This is the recommended way to configure seekmem for your use case.
 
 ### Creating a `.env` File
 
@@ -21,7 +21,7 @@ Powermem can automatically load configuration from a `.env` file in your project
 2. Edit the `.env` file and configure
    ```
 
-> **Note:** When you call `auto_config()`, powermem will automatically:
+> **Note:** When you call `auto_config()`, seekmem will automatically:
 > - Look for a `.env` file in the current directory
 > - Load configuration from environment variables
 
@@ -29,11 +29,11 @@ For more configuration options, see the full example in `.env.example` or refer 
 
 ## Step 1: Setup
 
-First, let's create a simple Python script and import powermem:
+First, let's create a simple Python script and import seekmem:
 
 ```python
 # basic_usage_example.py
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 # Load configuration (auto-loads from .env or uses defaults)
 config = auto_config()
@@ -60,7 +60,7 @@ Now let's add a simple memory:
 
 ```python
 # basic_usage_example.py
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 memory = Memory(config=config)
@@ -93,7 +93,7 @@ Let's add several memories for a user:
 
 ```python
 # basic_usage_example.py
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 memory = Memory(config=config)
@@ -135,7 +135,7 @@ Now let's search for memories:
 
 ```python
 # basic_usage_example.py
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 memory = Memory(config=config)
@@ -180,7 +180,7 @@ Let's add memories with metadata for better organization:
 
 ```python
 # basic_usage_example.py
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 memory = Memory(config=config)
@@ -215,7 +215,7 @@ Search memories using metadata filters:
 
 ```python
 # basic_usage_example.py
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 memory = Memory(config=config)
@@ -269,7 +269,7 @@ Retrieve all memories for a user:
 
 ```python
 # basic_usage_example.py
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 memory = Memory(config=config)
@@ -310,7 +310,7 @@ Update an existing memory:
 
 ```python
 # basic_usage_example.py
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 memory = Memory(config=config)
@@ -360,7 +360,7 @@ Delete a memory:
 
 ```python
 # basic_usage_example.py
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 memory = Memory(config=config)
@@ -406,7 +406,7 @@ Delete all memories for a user:
 
 ```python
 # basic_usage_example.py
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 memory = Memory(config=config)
@@ -446,7 +446,7 @@ Here's a complete example combining all the steps:
 
 ```python
 # complete_basic_example.py
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 def main():
     # Load configuration
@@ -524,7 +524,7 @@ python complete_basic_example.py
 Try managing memories for multiple users:
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 memory = Memory(config=config)

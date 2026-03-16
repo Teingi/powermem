@@ -10,7 +10,7 @@ import os
 from typing import Any, Dict, Optional
 
 from dotenv import load_dotenv
-from powermem import auto_config, create_memory
+from seekmem import auto_config, create_memory
 
 
 def _ensure_env_loaded() -> None:

@@ -1,6 +1,6 @@
 # AI Healthcare Support Bot
 
-This example demonstrates how to build an AI Healthcare Support Bot using **PowerMem** for intelligent memory management and **LangChain** for conversation handling, with **OceanBase** as the database backend.
+This example demonstrates how to build an AI Healthcare Support Bot using **SeekMem** for intelligent memory management and **LangChain** for conversation handling, with **OceanBase** as the database backend.
 
 ## Features
 
@@ -23,7 +23,7 @@ This example demonstrates how to build an AI Healthcare Support Bot using **Powe
          │
          ▼
 ┌─────────────────┐
-│  PowerMem       │  Intelligent memory management
+│  SeekMem       │  Intelligent memory management
 │  (Memory Layer) │  - Fact extraction
 │                 │  - Semantic search
 │                 │  - Context retrieval
@@ -61,7 +61,7 @@ pip install -r requirements.txt
 
 ```bash
 # Core dependencies
-pip install powermem python-dotenv
+pip install seekmem python-dotenv
 
 # LangChain dependencies
 pip install langchain>=1.1.0 langchain-core>=1.1.0 langchain-openai>=1.1.0 langchain-community>=0.4.1
@@ -73,7 +73,7 @@ pip install pyobvector sqlalchemy
 **Option 3: Install all at once**
 
 ```bash
-pip install powermem python-dotenv langchain>=1.1.0 langchain-core>=1.1.0 langchain-openai>=1.1.0 langchain-community>=0.4.1 pyobvector sqlalchemy
+pip install seekmem python-dotenv langchain>=1.1.0 langchain-core>=1.1.0 langchain-openai>=1.1.0 langchain-community>=0.4.1 pyobvector sqlalchemy
 ```
 
 ### 2. Configure OceanBase
@@ -94,7 +94,7 @@ OCEANBASE_HOST=127.0.0.1
 OCEANBASE_PORT=2881
 OCEANBASE_USER=root@sys
 OCEANBASE_PASSWORD=password
-OCEANBASE_DATABASE=powermem
+OCEANBASE_DATABASE=seekmem
 OCEANBASE_COLLECTION=healthcare_memories
 
 # LLM Configuration
@@ -161,10 +161,10 @@ python healthcare_support_bot.py --mode interactive --patient-id patient_john_00
 
 ### 1. Memory Integration
 
-The `HealthcarePowerMemMemory` class integrates PowerMem with LangChain 1.1.0+ using the new API:
+The `HealthcareSeekMemMemory` class integrates SeekMem with LangChain 1.1.0+ using the new API:
 
 - **Message Management**: Manages conversation history as a list of `BaseMessage` objects
-- **Save Context**: Automatically saves conversations to PowerMem with intelligent fact extraction
+- **Save Context**: Automatically saves conversations to SeekMem with intelligent fact extraction
 - **Load Context**: Retrieves relevant patient history based on current query
 - **Privacy**: Isolates patient data by `user_id`
 
@@ -172,7 +172,7 @@ The implementation uses LangChain's new Runnable API instead of the legacy `Conv
 
 ### 2. Intelligent Fact Extraction
 
-PowerMem automatically extracts medical facts from conversations:
+SeekMem automatically extracts medical facts from conversations:
 
 - **Symptoms**: Headaches, pain, discomfort, etc.
 - **Medications**: Current prescriptions, dosages
@@ -307,7 +307,7 @@ pip install langchain>=1.1.0 langchain-core>=1.1.0 langchain-openai>=1.1.0 langc
 
 **Solution**:
 1. Check OceanBase connection
-2. Verify `infer=True` is set in `save_to_powermem` method
+2. Verify `infer=True` is set in `save_to_seekmem` method
 3. Check database permissions
 4. Review error messages in console
 
@@ -338,6 +338,6 @@ pip install langchain>=1.1.0 langchain-core>=1.1.0 langchain-openai>=1.1.0 langc
 
 For issues or questions:
 - Check the [main README](../../README.md)
-- Review [PowerMem documentation](../../docs/)
+- Review [SeekMem documentation](../../docs/)
 - Open an issue on GitHub
 

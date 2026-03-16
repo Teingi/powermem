@@ -1,6 +1,6 @@
-# Docker Deployment Guide for PowerMem Server
+# Docker Deployment Guide for SeekMem Server
 
-This guide provides instructions for building and running PowerMem Server using Docker.
+This guide provides instructions for building and running SeekMem Server using Docker.
 
 ## Table of Contents
 
@@ -25,16 +25,16 @@ This guide provides instructions for building and running PowerMem Server using 
 
 ```bash
 # Build the Docker image (from project root)
-docker build -t oceanbase/powermem-server:latest -f docker/Dockerfile .
+docker build -t oceanbase/seekmem-server:latest -f docker/Dockerfile .
 
 # Run the container with shared .env file (recommended)
 # This allows both SDK and Server to use the same configuration
 docker run -d \
-  --name powermem-server \
+  --name seekmem-server \
   -p 8000:8000 \
   -v $(pwd)/.env:/app/.env:ro \
   --env-file .env \
-  oceanbase/powermem-server:latest
+  oceanbase/seekmem-server:latest
 ```
 
 The server will be available at `http://localhost:8000`.
@@ -67,14 +67,14 @@ docker-compose -f docker/docker-compose.yml down
 
 ```bash
 # Build from project root directory
-docker build -t oceanbase/powermem-server:latest -f docker/Dockerfile .
+docker build -t oceanbase/seekmem-server:latest -f docker/Dockerfile .
 ```
 
 ### Build with Custom Tag
 
 ```bash
 # Build from project root directory
-docker build -t oceanbase/powermem-server:v0.2.1 -f docker/Dockerfile .
+docker build -t oceanbase/seekmem-server:v0.2.1 -f docker/Dockerfile .
 ```
 
 ### Build with Mirror Sources (for slow network)
@@ -83,24 +83,24 @@ If you're experiencing slow download speeds or network timeouts, you can use mir
 
 ```bash
 # Using Tsinghua mirror (China) - speeds up both pip and apt-get
-docker build -t oceanbase/powermem-server:latest -f docker/Dockerfile \
+docker build -t oceanbase/seekmem-server:latest -f docker/Dockerfile \
   --build-arg PIP_INDEX_URL=https://pypi.tuna.tsinghua.edu.cn/simple \
   --build-arg PIP_TRUSTED_HOST=pypi.tuna.tsinghua.edu.cn \
   --build-arg DEBIAN_MIRROR=mirrors.tuna.tsinghua.edu.cn .
 
 # Using Aliyun mirror (China) - speeds up both pip and apt-get
-docker build -t oceanbase/powermem-server:latest -f docker/Dockerfile \
+docker build -t oceanbase/seekmem-server:latest -f docker/Dockerfile \
   --build-arg PIP_INDEX_URL=https://mirrors.aliyun.com/pypi/simple \
   --build-arg PIP_TRUSTED_HOST=mirrors.aliyun.com \
   --build-arg DEBIAN_MIRROR=mirrors.aliyun.com .
 
 # Using only pip mirror (if apt-get is fast enough)
-docker build -t oceanbase/powermem-server:latest -f docker/Dockerfile \
+docker build -t oceanbase/seekmem-server:latest -f docker/Dockerfile \
   --build-arg PIP_INDEX_URL=https://pypi.tuna.tsinghua.edu.cn/simple \
   --build-arg PIP_TRUSTED_HOST=pypi.tuna.tsinghua.edu.cn .
 
 # Using only Debian mirror (if pip is fast enough)
-docker build -t oceanbase/powermem-server:latest -f docker/Dockerfile \
+docker build -t oceanbase/seekmem-server:latest -f docker/Dockerfile \
   --build-arg DEBIAN_MIRROR=mirrors.aliyun.com .
 ```
 
@@ -122,24 +122,24 @@ Currently, the Dockerfile uses a multi-stage build to optimize image size. The b
 
 ```bash
 docker run -d \
-  --name powermem-server \
+  --name seekmem-server \
   -p 8000:8000 \
-  oceanbase/powermem-server:latest
+  oceanbase/seekmem-server:latest
 ```
 
 ### Run with Environment Variables
 
 ```bash
 docker run -d \
-  --name powermem-server \
+  --name seekmem-server \
   -p 8000:8000 \
-  -e POWERMEM_SERVER_HOST=0.0.0.0 \
-  -e POWERMEM_SERVER_PORT=8000 \
-  -e POWERMEM_SERVER_WORKERS=4 \
-  -e POWERMEM_SERVER_API_KEYS=key1,key2,key3 \
-  -e POWERMEM_SERVER_AUTH_ENABLED=true \
-  -e POWERMEM_SERVER_LOG_LEVEL=INFO \
-  oceanbase/powermem-server:latest
+  -e SEEKMEM_SERVER_HOST=0.0.0.0 \
+  -e SEEKMEM_SERVER_PORT=8000 \
+  -e SEEKMEM_SERVER_WORKERS=4 \
+  -e SEEKMEM_SERVER_API_KEYS=key1,key2,key3 \
+  -e SEEKMEM_SERVER_AUTH_ENABLED=true \
+  -e SEEKMEM_SERVER_LOG_LEVEL=INFO \
+  oceanbase/seekmem-server:latest
 ```
 
 ### Run with Environment File
@@ -147,24 +147,24 @@ docker run -d \
 Create a `.env` file:
 
 ```env
-POWERMEM_SERVER_HOST=0.0.0.0
-POWERMEM_SERVER_PORT=8000
-POWERMEM_SERVER_WORKERS=4
-POWERMEM_SERVER_API_KEYS=your-api-key-1,your-api-key-2
-POWERMEM_SERVER_AUTH_ENABLED=true
-POWERMEM_SERVER_LOG_LEVEL=INFO
-POWERMEM_SERVER_CORS_ENABLED=true
-POWERMEM_SERVER_CORS_ORIGINS=*
+SEEKMEM_SERVER_HOST=0.0.0.0
+SEEKMEM_SERVER_PORT=8000
+SEEKMEM_SERVER_WORKERS=4
+SEEKMEM_SERVER_API_KEYS=your-api-key-1,your-api-key-2
+SEEKMEM_SERVER_AUTH_ENABLED=true
+SEEKMEM_SERVER_LOG_LEVEL=INFO
+SEEKMEM_SERVER_CORS_ENABLED=true
+SEEKMEM_SERVER_CORS_ORIGINS=*
 ```
 
 Run with the environment file:
 
 ```bash
 docker run -d \
-  --name powermem-server \
+  --name seekmem-server \
   -p 8000:8000 \
   --env-file .env \
-  oceanbase/powermem-server:latest
+  oceanbase/seekmem-server:latest
 ```
 
 ### Run with Shared .env File (SDK and Server)
@@ -173,11 +173,11 @@ When both the SDK and Server need to use the same `.env` file, you can mount it 
 
 ```bash
 docker run -d \
-  --name powermem-server \
+  --name seekmem-server \
   -p 8000:8000 \
   -v $(pwd)/.env:/app/.env:ro \
   --env-file .env \
-  oceanbase/powermem-server:latest
+  oceanbase/seekmem-server:latest
 ```
 
 **Note**: The `--env-file` flag loads environment variables from `.env` into the container's environment, while the volume mount (`-v`) makes the `.env` file accessible inside the container at `/app/.env` so the Server's configuration loader can read it directly. This ensures both SDK and Server use the exact same configuration values.
@@ -193,21 +193,21 @@ If you need to mount volumes for logs or configuration:
 
 ```bash
 docker run -d \
-  --name powermem-server \
+  --name seekmem-server \
   -p 8000:8000 \
   -v ./logs:/app/logs \
   -v ./config:/app/config \
   --env-file .env \
-  oceanbase/powermem-server:latest
+  oceanbase/seekmem-server:latest
 ```
 
 ## Configuration
 
 ### Shared .env File for SDK and Server
 
-PowerMem Server and SDK are designed to share the same `.env` file. The `.env` file contains configuration for both:
+SeekMem Server and SDK are designed to share the same `.env` file. The `.env` file contains configuration for both:
 
-- **Server configuration**: `POWERMEM_SERVER_*`, `POWERMEM_AUTH_*`, `POWERMEM_RATE_LIMIT_*`, etc.
+- **Server configuration**: `SEEKMEM_SERVER_*`, `SEEKMEM_AUTH_*`, `SEEKMEM_RATE_LIMIT_*`, etc.
 - **SDK configuration**: `DATABASE_PROVIDER`, `OCEANBASE_*`, `POSTGRES_*`, `LLM_*`, `EMBEDDING_*`, etc.
 
 When running the Server in Docker, you have two options:
@@ -218,11 +218,11 @@ Mount the `.env` file as a read-only volume so the Server can read it directly:
 
 ```bash
 docker run -d \
-  --name powermem-server \
+  --name seekmem-server \
   -p 8000:8000 \
   -v $(pwd)/.env:/app/.env:ro \
   --env-file .env \
-  oceanbase/powermem-server:latest
+  oceanbase/seekmem-server:latest
 ```
 
 This approach:
@@ -236,10 +236,10 @@ If you prefer not to mount the file, you can use `--env-file` to load environmen
 
 ```bash
 docker run -d \
-  --name powermem-server \
+  --name seekmem-server \
   -p 8000:8000 \
   --env-file .env \
-  oceanbase/powermem-server:latest
+  oceanbase/seekmem-server:latest
 ```
 
 **Note**: With Docker Compose, the `.env` file is automatically mounted and loaded. See the `docker/docker-compose.yml` file for details.
@@ -247,52 +247,52 @@ docker run -d \
 
 ## Environment Variables
 
-The `.env` file contains configuration for both the PowerMem SDK and Server. The following sections describe the variables used by the Server. For SDK configuration variables (database, LLM, embedding providers), refer to the [Configuration Guide](../docs/guides/0003-configuration.md).
+The `.env` file contains configuration for both the SeekMem SDK and Server. The following sections describe the variables used by the Server. For SDK configuration variables (database, LLM, embedding providers), refer to the [Configuration Guide](../docs/guides/0003-configuration.md).
 
 ### Server Settings
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `POWERMEM_SERVER_HOST` | `0.0.0.0` | Host to bind the server to |
-| `POWERMEM_SERVER_PORT` | `8000` | Port to bind the server to |
-| `POWERMEM_SERVER_WORKERS` | `4` | Number of worker processes |
-| `POWERMEM_SERVER_RELOAD` | `false` | Enable auto-reload (development only) |
+| `SEEKMEM_SERVER_HOST` | `0.0.0.0` | Host to bind the server to |
+| `SEEKMEM_SERVER_PORT` | `8000` | Port to bind the server to |
+| `SEEKMEM_SERVER_WORKERS` | `4` | Number of worker processes |
+| `SEEKMEM_SERVER_RELOAD` | `false` | Enable auto-reload (development only) |
 
 ### Authentication Settings
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `POWERMEM_SERVER_AUTH_ENABLED` | `true` | Enable API key authentication |
-| `POWERMEM_SERVER_API_KEYS` | `` | Comma-separated list of API keys |
+| `SEEKMEM_SERVER_AUTH_ENABLED` | `true` | Enable API key authentication |
+| `SEEKMEM_SERVER_API_KEYS` | `` | Comma-separated list of API keys |
 
 ### Rate Limiting Settings
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `POWERMEM_SERVER_RATE_LIMIT_ENABLED` | `true` | Enable rate limiting |
-| `POWERMEM_SERVER_RATE_LIMIT_PER_MINUTE` | `100` | Requests per minute per IP |
+| `SEEKMEM_SERVER_RATE_LIMIT_ENABLED` | `true` | Enable rate limiting |
+| `SEEKMEM_SERVER_RATE_LIMIT_PER_MINUTE` | `100` | Requests per minute per IP |
 
 ### Logging Settings
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `POWERMEM_SERVER_LOG_LEVEL` | `INFO` | Log level (DEBUG, INFO, WARNING, ERROR, CRITICAL) |
-| `POWERMEM_SERVER_LOG_FORMAT` | `json` | Log format (json or text) |
+| `SEEKMEM_SERVER_LOG_LEVEL` | `INFO` | Log level (DEBUG, INFO, WARNING, ERROR, CRITICAL) |
+| `SEEKMEM_SERVER_LOG_FORMAT` | `json` | Log format (json or text) |
 
 ### CORS Settings
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `POWERMEM_SERVER_CORS_ENABLED` | `true` | Enable CORS |
-| `POWERMEM_SERVER_CORS_ORIGINS` | `*` | Comma-separated list of allowed origins |
+| `SEEKMEM_SERVER_CORS_ENABLED` | `true` | Enable CORS |
+| `SEEKMEM_SERVER_CORS_ORIGINS` | `*` | Comma-separated list of allowed origins |
 
 ### API Settings
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `POWERMEM_SERVER_API_TITLE` | `PowerMem API` | API title |
-| `POWERMEM_SERVER_API_VERSION` | `v1` | API version |
-| `POWERMEM_SERVER_API_DESCRIPTION` | `PowerMem HTTP API Server - Intelligent Memory System` | API description |
+| `SEEKMEM_SERVER_API_TITLE` | `SeekMem API` | API title |
+| `SEEKMEM_SERVER_API_VERSION` | `v1` | API version |
+| `SEEKMEM_SERVER_API_DESCRIPTION` | `SeekMem HTTP API Server - Intelligent Memory System` | API description |
 
 ### SDK Configuration Variables (Shared with Server)
 
@@ -315,22 +315,22 @@ A `docker/docker-compose.yml` file is provided for easier deployment:
 version: '3.8'
 
 services:
-  powermem-server:
+  seekmem-server:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    container_name: powermem-server
+    container_name: seekmem-server
     ports:
       - "8000:8000"
     environment:
-      - POWERMEM_SERVER_HOST=0.0.0.0
-      - POWERMEM_SERVER_PORT=8000
-      - POWERMEM_SERVER_WORKERS=4
-      - POWERMEM_SERVER_API_KEYS=${POWERMEM_SERVER_API_KEYS:-}
-      - POWERMEM_SERVER_AUTH_ENABLED=${POWERMEM_SERVER_AUTH_ENABLED:-true}
-      - POWERMEM_SERVER_LOG_LEVEL=${POWERMEM_SERVER_LOG_LEVEL:-INFO}
-      - POWERMEM_SERVER_CORS_ENABLED=${POWERMEM_SERVER_CORS_ENABLED:-true}
-      - POWERMEM_DATABASE_URL=${POWERMEM_DATABASE_URL:-}
+      - SEEKMEM_SERVER_HOST=0.0.0.0
+      - SEEKMEM_SERVER_PORT=8000
+      - SEEKMEM_SERVER_WORKERS=4
+      - SEEKMEM_SERVER_API_KEYS=${SEEKMEM_SERVER_API_KEYS:-}
+      - SEEKMEM_SERVER_AUTH_ENABLED=${SEEKMEM_SERVER_AUTH_ENABLED:-true}
+      - SEEKMEM_SERVER_LOG_LEVEL=${SEEKMEM_SERVER_LOG_LEVEL:-INFO}
+      - SEEKMEM_SERVER_CORS_ENABLED=${SEEKMEM_SERVER_CORS_ENABLED:-true}
+      - SEEKMEM_DATABASE_URL=${SEEKMEM_DATABASE_URL:-}
     env_file:
       - .env
     volumes:
@@ -351,7 +351,7 @@ services:
 docker-compose -f docker/docker-compose.yml up -d
 
 # View logs
-docker-compose -f docker/docker-compose.yml logs -f powermem-server
+docker-compose -f docker/docker-compose.yml logs -f seekmem-server
 
 # Stop services
 docker-compose -f docker/docker-compose.yml down
@@ -366,7 +366,7 @@ docker-compose -f docker/docker-compose.yml up -d --build
 
 1. **Use Secrets Management**: Never hardcode API keys or passwords. Use Docker secrets or environment variable injection.
 
-2. **Run as Non-Root User**: The Docker image runs as a non-root user (`powermem`) by default.
+2. **Run as Non-Root User**: The Docker image runs as a non-root user (`seekmem`) by default.
 
 3. **Network Security**: Use Docker networks to isolate containers and restrict access.
 
@@ -374,18 +374,18 @@ docker-compose -f docker/docker-compose.yml up -d --build
 
 ```bash
 docker run -d \
-  --name powermem-server \
+  --name seekmem-server \
   --memory="2g" \
   --cpus="2" \
   -p 8000:8000 \
-  oceanbase/powermem-server:latest
+  oceanbase/seekmem-server:latest
 ```
 
 5. **Health Checks**: The image includes a health check. Monitor container health:
 
 ```bash
 docker ps  # Check STATUS column
-docker inspect --format='{{.State.Health.Status}}' powermem-server
+docker inspect --format='{{.State.Health.Status}}' seekmem-server
 ```
 
 ### Production Docker Compose Example
@@ -394,18 +394,18 @@ docker inspect --format='{{.State.Health.Status}}' powermem-server
 version: '3.8'
 
 services:
-  powermem-server:
+  seekmem-server:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    image: oceanbase/powermem-server:latest
-    container_name: powermem-server
+    image: oceanbase/seekmem-server:latest
+    container_name: seekmem-server
     restart: always
     ports:
       - "8000:8000"
     environment:
-      - POWERMEM_SERVER_WORKERS=8
-      - POWERMEM_SERVER_LOG_LEVEL=INFO
+      - SEEKMEM_SERVER_WORKERS=8
+      - SEEKMEM_SERVER_LOG_LEVEL=INFO
     env_file:
       - .env.production
     deploy:
@@ -435,16 +435,16 @@ For production, it's recommended to use a reverse proxy (nginx, traefik, etc.):
 
 ```nginx
 # nginx.conf example
-upstream powermem {
-    server powermem-server:8000;
+upstream seekmem {
+    server seekmem-server:8000;
 }
 
 server {
     listen 80;
-    server_name api.powermem.example.com;
+    server_name api.seekmem.example.com;
 
     location / {
-        proxy_pass http://powermem;
+        proxy_pass http://seekmem;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -459,38 +459,38 @@ server {
 
 1. **Check logs**:
 ```bash
-docker logs powermem-server
+docker logs seekmem-server
 ```
 
 2. **Check environment variables**:
 ```bash
-docker exec powermem-server env | grep POWERMEM
+docker exec seekmem-server env | grep SEEKMEM
 ```
 
 3. **Check if .env file is mounted correctly**:
 ```bash
 # Check if .env file exists in container
-docker exec powermem-server ls -la /app/.env
+docker exec seekmem-server ls -la /app/.env
 
 # View .env file contents (if mounted)
-docker exec powermem-server cat /app/.env
+docker exec seekmem-server cat /app/.env
 ```
 
 4. **Verify database connection**:
 ```bash
-docker exec powermem-server python -c "import psycopg; psycopg.connect('${POWERMEM_DATABASE_URL}')"
+docker exec seekmem-server python -c "import psycopg; psycopg.connect('${SEEKMEM_DATABASE_URL}')"
 ```
 
 ### Health Check Failing
 
 1. **Check if server is running**:
 ```bash
-docker exec powermem-server curl -f http://localhost:8000/api/v1/system/health
+docker exec seekmem-server curl -f http://localhost:8000/api/v1/system/health
 ```
 
 2. **Check server logs**:
 ```bash
-docker logs powermem-server --tail 50
+docker logs seekmem-server --tail 50
 ```
 
 ### Port Already in Use
@@ -499,10 +499,10 @@ If port 8000 is already in use, change the port:
 
 ```bash
 docker run -d \
-  --name powermem-server \
+  --name seekmem-server \
   -p 8001:8000 \
-  -e POWERMEM_SERVER_PORT=8000 \
-  oceanbase/powermem-server:latest
+  -e SEEKMEM_SERVER_PORT=8000 \
+  oceanbase/seekmem-server:latest
 ```
 
 ### Database Connection Issues
@@ -511,7 +511,7 @@ The entrypoint script waits up to 60 seconds for the database. If you need more 
 
 ### Permission Issues
 
-The container runs as user `powermem` (UID 1000). If you mount volumes, ensure proper permissions:
+The container runs as user `seekmem` (UID 1000). If you mount volumes, ensure proper permissions:
 
 ```bash
 sudo chown -R 1000:1000 ./logs
@@ -523,7 +523,7 @@ If the Server can't read the `.env` file:
 
 1. **Verify the file is mounted**:
 ```bash
-docker exec powermem-server ls -la /app/.env
+docker exec seekmem-server ls -la /app/.env
 ```
 
 2. **Check file permissions**:
@@ -540,10 +540,10 @@ chmod 644 .env
    If mounting the file doesn't work, you can use `--env-file` to load variables:
 ```bash
 docker run -d \
-  --name powermem-server \
+  --name seekmem-server \
   -p 8000:8000 \
   --env-file .env \
-  oceanbase/powermem-server:latest
+  oceanbase/seekmem-server:latest
 ```
 
 **Note**: When using `--env-file`, the Server will read from environment variables, but the SDK running locally will still read from the `.env` file. This is fine as long as both have the same values.

@@ -1,4 +1,4 @@
-# Multi-stage build for PowerMem Server
+# Multi-stage build for SeekMem Server
 FROM node:20-slim as frontend-builder
 WORKDIR /dashboard-build
 RUN corepack enable && corepack prepare pnpm@latest --activate
@@ -79,23 +79,23 @@ RUN if [ -n "$DEBIAN_MIRROR" ]; then \
     && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user
-RUN useradd -m -u 1000 powermem && \
-    chown -R powermem:powermem /app
+RUN useradd -m -u 1000 seekmem && \
+    chown -R seekmem:seekmem /app
 
 # Copy installed package from builder
 COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
 COPY --from=builder /usr/local/bin /usr/local/bin
 
 # Copy application source code
-COPY --chown=powermem:powermem src/ ./src/
-COPY --chown=powermem:powermem pyproject.toml ./
+COPY --chown=seekmem:seekmem src/ ./src/
+COPY --chown=seekmem:seekmem pyproject.toml ./
 
 # Copy entrypoint script
-COPY --chown=powermem:powermem docker/docker-entrypoint.sh /usr/local/bin/
+COPY --chown=seekmem:seekmem docker/docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Switch to non-root user
-USER powermem
+USER seekmem
 
 # Expose default port
 EXPOSE 8000
@@ -103,8 +103,8 @@ EXPOSE 8000
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    POWERMEM_SERVER_HOST=0.0.0.0 \
-    POWERMEM_SERVER_PORT=8000
+    SEEKMEM_SERVER_HOST=0.0.0.0 \
+    SEEKMEM_SERVER_PORT=8000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
@@ -113,5 +113,5 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
 # Use entrypoint script
 ENTRYPOINT ["docker-entrypoint.sh"]
 
-# Default command: API server + PMem Dashboard on port 8000
-CMD ["powermem-server", "--host", "0.0.0.0", "--port", "8000"]
+# Default command: API server + SeekMem Dashboard on port 8000
+CMD ["seekmem-server", "--host", "0.0.0.0", "--port", "8000"]

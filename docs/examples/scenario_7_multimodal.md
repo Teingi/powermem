@@ -1,11 +1,11 @@
 # Scenario 7: Multimodal Capability
 
-This scenario demonstrates PowerMem's multimodal capability - storing and retrieving images, audio, and other multimedia content.
+This scenario demonstrates SeekMem's multimodal capability - storing and retrieving images, audio, and other multimedia content.
 
 ## Prerequisites
 
 - Python 3.10+
-- powermem installed (`pip install powermem`)
+- seekmem installed (`pip install seekmem`)
 - Multimodal LLM API support
 
 ## Configuration
@@ -23,14 +23,14 @@ This scenario demonstrates PowerMem's multimodal capability - storing and retrie
 
 ## What is Multimodal Capability?
 
-Multimodal capability allows PowerMem to process more than just text:
+Multimodal capability allows SeekMem to process more than just text:
 - **Images**: Extract information from images and generate text descriptions
 - **Image URLs**: Process online image links
 - **Audio**: Process audio files and convert speech to text
 - **Audio URLs**: Process online audio links
 - **Mixed Content**: Handle composite messages with both text, images, and audio
 
-PowerMem automatically converts image and audio content to text descriptions, stores them as memories, making the multimedia content searchable and retrievable.
+SeekMem automatically converts image and audio content to text descriptions, stores them as memories, making the multimedia content searchable and retrievable.
 
 ## Step 1: Add Image Memory Using OpenAI Multimodal Format
 
@@ -39,7 +39,7 @@ Add image-containing memories using the standard OpenAI multimodal message forma
 ```python
 # multimodal_example.py
 import os
-from powermem import Memory
+from seekmem import Memory
 
 config = {
     "llm": {
@@ -127,7 +127,7 @@ Search for previously added image memories:
 
 ```python
 # multimodal_example.py
-from powermem import Memory
+from seekmem import Memory
 
 memory = Memory(config=config)
 
@@ -168,7 +168,7 @@ Add audio-containing memories using the standard OpenAI multimodal message forma
 ```python
 # multimodal_example.py
 import os
-from powermem import Memory
+from seekmem import Memory
 
 config = {
     "llm": {
@@ -271,7 +271,7 @@ Search for previously added audio memories:
 
 ```python
 # multimodal_example.py
-from powermem import Memory
+from seekmem import Memory
 
 memory = Memory(config=config)
 

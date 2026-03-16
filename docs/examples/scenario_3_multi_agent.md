@@ -1,12 +1,12 @@
 # Scenario 3: Multi-Agent
 
-This scenario demonstrates how to use powermem with multiple agents - creating agent-specific memories, cross-agent collaboration, and memory isolation.
+This scenario demonstrates how to use seekmem with multiple agents - creating agent-specific memories, cross-agent collaboration, and memory isolation.
 
 ## Prerequisites
 
 - Completed Scenario 1
 - Basic understanding of multi-agent systems
-- powermem installed
+- seekmem installed
 
 ## Understanding Multi-Agent Memory
 
@@ -22,7 +22,7 @@ First, let's create memory instances for different agents:
 
 ```python
 # multi_agent_example.py
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 
@@ -56,7 +56,7 @@ Each agent adds memories to their own space:
 
 ```python
 # multi_agent_example.py
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 customer_id = "customer_12345"
@@ -106,7 +106,7 @@ Each agent can search only their own memories:
 
 ```python
 # multi_agent_example.py
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 customer_id = "customer_12345"
@@ -166,7 +166,7 @@ Search across all agents by omitting agent_id:
 
 ```python
 # multi_agent_example.py
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 customer_id = "customer_12345"
@@ -215,7 +215,7 @@ Multiple agents working on the same project:
 
 ```python
 # multi_agent_example.py
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 project_id = "project_ai_platform"
@@ -281,7 +281,7 @@ Using memory scopes to control visibility:
 
 ```python
 # multi_agent_example.py
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 
@@ -346,7 +346,7 @@ Verify that memories are isolated by agent:
 
 ```python
 # multi_agent_example.py
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 user_id = "user123"
@@ -394,7 +394,7 @@ Here's a complete multi-agent example:
 
 ```python
 # complete_multi_agent_example.py
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 def main():
     config = auto_config()

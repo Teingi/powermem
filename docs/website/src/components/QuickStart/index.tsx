@@ -7,8 +7,8 @@ import styles from './styles.module.css';
 
 const codeExamples: Record<string, Record<string, string>> = {
   en: {
-    install: 'pip install powermem',
-    basicUsage: `from powermem import Memory, auto_config
+    install: 'pip install seekmem',
+    basicUsage: `from seekmem import Memory, auto_config
 
 # Load configuration (auto-loads from .env)
 config = auto_config()
@@ -19,7 +19,7 @@ memory.add("User likes coffee", user_id="user123")
 
 # Search memories
 results = memory.search("user preferences", user_id="user123")`,
-    multiAgent: `from powermem import Memory, auto_config
+    multiAgent: `from seekmem import Memory, auto_config
 
 config = auto_config()
 
@@ -32,8 +32,8 @@ tech_agent = Memory(config=config, agent_id="tech_agent")
 support_memory.add("Customer prefers email support", user_id="customer123")`,
   },
   zh: {
-    install: 'pip install powermem',
-    basicUsage: `from powermem import Memory, auto_config
+    install: 'pip install seekmem',
+    basicUsage: `from seekmem import Memory, auto_config
 
 # 自动从 .env 加载配置
 config = auto_config()
@@ -45,7 +45,7 @@ memory.add("用户喜欢咖啡", user_id="user123")
 # 搜索记忆
 memories = memory.search("用户偏好", user_id="user123")`,
     multiAgent: `# 为不同代理创建独立的记忆空间
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 # Create memory instances for different agents

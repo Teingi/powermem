@@ -1,5 +1,5 @@
 /**
- * Type definitions for PowerMem API responses
+ * Type definitions for SeekMem API responses
  */
 
 export interface DependencyStatus {

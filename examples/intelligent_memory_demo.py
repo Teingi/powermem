@@ -1,7 +1,7 @@
 """
 Intelligent Memory Management Demo
 
-This example demonstrates the intelligent memory capabilities of powermem,
+This example demonstrates the intelligent memory capabilities of seekmem,
 including:
 1. Automatic fact extraction from conversations
 2. Duplicate detection and deduplication
@@ -9,7 +9,7 @@ including:
 4. Conflict resolution (contradiction handling)
 5. Smart memory organization
 
-The demo shows how powermem intelligently manages memories.
+The demo shows how seekmem intelligently manages memories.
 """
 
 import os
@@ -22,7 +22,7 @@ from dotenv import load_dotenv
 # Add src to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
-from powermem import Memory, AsyncMemory, auto_config
+from seekmem import Memory, AsyncMemory, auto_config
 
 # Configure logging
 # logging.basicConfig(

@@ -1,5 +1,5 @@
 """
-Rate limiting middleware for PowerMem API
+Rate limiting middleware for SeekMem API
 """
 
 from typing import Callable

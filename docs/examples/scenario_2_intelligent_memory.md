@@ -1,16 +1,16 @@
 # Scenario 2: Intelligent Memory
 
-This scenario demonstrates powermem's intelligent memory features - automatic fact extraction, duplicate detection, conflict resolution, and more.
+This scenario demonstrates seekmem's intelligent memory features - automatic fact extraction, duplicate detection, conflict resolution, and more.
 
 ## Prerequisites
 
 - Completed Scenario 1
-- powermem installed
+- seekmem installed
 - LLM provider configured (for intelligent features)
 
 ## Understanding Intelligent Memory
 
-Intelligent memory enables powermem to:
+Intelligent memory enables seekmem to:
 - Extract facts from conversations automatically
 - Detect and prevent duplicates
 - Update existing memories when information changes
@@ -23,7 +23,7 @@ First, let's see how to enable intelligent processing:
 
 ```python
 # intelligent_memory_example.py
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 memory = Memory(config=config)
@@ -63,7 +63,7 @@ Intelligent memory automatically detects duplicates:
 
 ```python
 # intelligent_memory_example.py
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 memory = Memory(config=config)
@@ -123,7 +123,7 @@ When information changes, memories are automatically updated:
 
 ```python
 # intelligent_memory_example.py
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 memory = Memory(config=config)
@@ -181,7 +181,7 @@ New, non-conflicting information is added normally:
 
 ```python
 # intelligent_memory_example.py
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 memory = Memory(config=config)
@@ -235,7 +235,7 @@ When contradictory information is detected, the system resolves conflicts:
 
 ```python
 # intelligent_memory_example.py
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 memory = Memory(config=config)
@@ -293,7 +293,7 @@ Related memories are consolidated:
 
 ```python
 # intelligent_memory_example.py
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 memory = Memory(config=config)
@@ -351,7 +351,7 @@ Here's a complete example demonstrating all intelligent features:
 
 ```python
 # complete_intelligent_example.py
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 def main():
     config = auto_config()
@@ -462,7 +462,7 @@ python complete_intelligent_example.py
 Compare adding memories with and without intelligent processing:
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 memory = Memory(config=config)
@@ -494,7 +494,7 @@ print("\n✓ Comparison completed. Intelligent mode extracts facts automatically
 Monitor different memory operations:
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 memory = Memory(config=config)
@@ -526,7 +526,7 @@ for mem in result.get('results', []):
 Process longer conversations:
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 memory = Memory(config=config)

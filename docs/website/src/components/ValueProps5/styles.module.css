@@ -237,8 +237,8 @@
   stroke: rgba(59, 130, 246, 0.1);
 }
 
-.circleProgressPowerMem {
-  stroke: url(#circleGradientPowerMem);
+.circleProgressSeekMem {
+  stroke: url(#circleGradientSeekMem);
   stroke-linecap: round;
   transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.6));

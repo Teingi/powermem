@@ -1,11 +1,11 @@
-# PowerMem Benchmark
+# SeekMem Benchmark
 
-A comprehensive benchmarking suite for PowerMem, including a REST API server for managing memories and a load testing tool based on the LOCOMO dataset.
+A comprehensive benchmarking suite for SeekMem, including a REST API server for managing memories and a load testing tool based on the LOCOMO dataset.
 
 
 ## Overview
 
-The PowerMem Benchmark suite consists of two main components:
+The SeekMem Benchmark suite consists of two main components:
 
 1. **Benchmark Server** (`benchmark/server/`): A FastAPI-based REST API server that provides:
    - Memory storage and management
@@ -70,7 +70,7 @@ bash run.sh results
 
    Or install specific dependencies:
    ```bash
-   pip install fastapi uvicorn python-dotenv powermem
+   pip install fastapi uvicorn python-dotenv seekmem
    ```
 
 2. **Configure environment variables**

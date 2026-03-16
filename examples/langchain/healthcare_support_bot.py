@@ -1,8 +1,8 @@
 """
-AI Healthcare Support Bot with PowerMem + LangChain
+AI Healthcare Support Bot with SeekMem + LangChain
 
 This example demonstrates how to build an AI Healthcare Support Bot using
-PowerMem for intelligent memory management and LangChain for conversation handling.
+SeekMem for intelligent memory management and LangChain for conversation handling.
 
 Features:
 - Persistent memory of patient information, symptoms, and medical history
@@ -26,7 +26,7 @@ from dotenv import load_dotenv
 # Add src to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
 
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 # LangChain imports - using new LangChain 1.1.0+ API
 try:
@@ -47,7 +47,7 @@ def load_oceanbase_config():
     
     Uses the auto_config() utility function to automatically load from .env.
     """
-    # Try to load from powermem.env from multiple possible locations
+    # Try to load from seekmem.env from multiple possible locations
     possible_paths = [
         os.path.join(os.path.dirname(__file__), '..', '..', '.env'),  # project root
     ]
@@ -70,20 +70,20 @@ def load_oceanbase_config():
     return config
 
 
-class HealthcarePowerMemMemory:
+class HealthcareSeekMemMemory:
     """
-    Custom memory class that integrates PowerMem with LangChain 1.1.0+ for healthcare support.
+    Custom memory class that integrates SeekMem with LangChain 1.1.0+ for healthcare support.
     
     This class manages:
     - Conversation history as a list of messages
-    - Storage of patient conversations in PowerMem
+    - Storage of patient conversations in SeekMem
     - Extraction of medical facts (symptoms, medications, history) automatically
     - Retrieval of relevant patient context for personalized responses
     - Privacy by isolating patient data by user_id
     """
     
-    def __init__(self, powermem_instance, user_id: str):
-        self.powermem = powermem_instance
+    def __init__(self, seekmem_instance, user_id: str):
+        self.seekmem = seekmem_instance
         self.user_id = user_id
         self.messages: List[BaseMessage] = []
     
@@ -95,15 +95,15 @@ class HealthcarePowerMemMemory:
         """Get all conversation messages."""
         return self.messages
     
-    def save_to_powermem(self, user_input: str, assistant_output: str):
-        """Save conversation to PowerMem with intelligent fact extraction."""
+    def save_to_seekmem(self, user_input: str, assistant_output: str):
+        """Save conversation to SeekMem with intelligent fact extraction."""
         messages = [
             {"role": "user", "content": user_input},
             {"role": "assistant", "content": assistant_output}
         ]
         
         try:
-            self.powermem.add(
+            self.seekmem.add(
                 messages=messages,
                 user_id=self.user_id,
                 infer=True,  # Enable intelligent fact extraction
@@ -113,12 +113,12 @@ class HealthcarePowerMemMemory:
                 }
             )
         except Exception as e:
-            print(f"Warning: Failed to save to PowerMem: {e}")
+            print(f"Warning: Failed to save to SeekMem: {e}")
     
     def get_patient_context(self, query: str) -> str:
-        """Load relevant patient context from PowerMem."""
+        """Load relevant patient context from SeekMem."""
         try:
-            results = self.powermem.search(
+            results = self.seekmem.search(
                 query=query,
                 user_id=self.user_id,
                 limit=5  # Get top 5 relevant memories
@@ -133,13 +133,13 @@ class HealthcarePowerMemMemory:
             else:
                 return "No previous patient history found."
         except Exception as e:
-            print(f"Warning: Failed to search PowerMem: {e}")
+            print(f"Warning: Failed to search SeekMem: {e}")
             return "Unable to retrieve patient history."
 
 
 class HealthcareSupportBot:
     """
-    AI Healthcare Support Bot using PowerMem and LangChain.
+    AI Healthcare Support Bot using SeekMem and LangChain.
     
     This bot provides:
     - Symptom assessment and guidance
@@ -168,14 +168,14 @@ class HealthcareSupportBot:
             print("⚠️  Warning: Database provider is not OceanBase.")
             print("   Please configure DATABASE_PROVIDER=oceanbase in .env")
         
-        # Initialize PowerMem with OceanBase
-        print("Initializing PowerMem with OceanBase...")
+        # Initialize SeekMem with OceanBase
+        print("Initializing SeekMem with OceanBase...")
         self.memory = create_memory(config=config)
-        print("✓ PowerMem initialized with OceanBase!")
+        print("✓ SeekMem initialized with OceanBase!")
         
-        # Initialize LangChain memory with PowerMem integration
-        self.langchain_memory = HealthcarePowerMemMemory(
-            powermem_instance=self.memory,
+        # Initialize LangChain memory with SeekMem integration
+        self.langchain_memory = HealthcareSeekMemMemory(
+            seekmem_instance=self.memory,
             user_id=patient_id
         )
         
@@ -236,7 +236,7 @@ class HealthcareSupportBot:
         
         if not self.llm:
             print("Warning: No LLM available. Using mock responses.")
-            print("  Note: Conversations will still be saved to PowerMem database.")
+            print("  Note: Conversations will still be saved to SeekMem database.")
         
         # Create healthcare-specific prompt template using new LangChain 1.1.0+ API
         self.prompt = ChatPromptTemplate.from_messages([
@@ -261,7 +261,7 @@ strongly recommend immediate medical attention."""),
             def format_messages(input_dict: Dict[str, Any]) -> Dict[str, Any]:
                 """Retrieve patient context and format messages for the prompt."""
                 user_input = input_dict.get("input", "")
-                # Get patient context from PowerMem
+                # Get patient context from SeekMem
                 patient_context = self.langchain_memory.get_patient_context(user_input)
                 # Get conversation history (excluding the current user input)
                 messages = self.langchain_memory.get_messages()
@@ -306,11 +306,11 @@ strongly recommend immediate medical attention."""),
         if not self.chain:
             # Mock response if no LLM available
             response = "I'm a healthcare support bot. Please configure an LLM API key to use this feature."
-            # Still save to PowerMem even without LLM
+            # Still save to SeekMem even without LLM
             try:
                 self.langchain_memory.add_message(HumanMessage(content=user_input))
                 self.langchain_memory.add_message(AIMessage(content=response))
-                self.langchain_memory.save_to_powermem(user_input, response)
+                self.langchain_memory.save_to_seekmem(user_input, response)
             except Exception as e:
                 print(f"Warning: Failed to save context: {e}")
             return response
@@ -331,8 +331,8 @@ strongly recommend immediate medical attention."""),
             # Add assistant response to history
             self.langchain_memory.add_message(AIMessage(content=response_text))
             
-            # Save to PowerMem
-            self.langchain_memory.save_to_powermem(user_input, response_text)
+            # Save to SeekMem
+            self.langchain_memory.save_to_seekmem(user_input, response_text)
             
             return response_text
         except Exception as e:
@@ -348,11 +348,11 @@ strongly recommend immediate medical attention."""),
             else:
                 error_response = f"I apologize, but I encountered an error: {error_msg}. Please try again."
             
-            # Always try to save the error context to PowerMem
+            # Always try to save the error context to SeekMem
             try:
                 self.langchain_memory.add_message(AIMessage(content=error_response))
-                self.langchain_memory.save_to_powermem(user_input, error_response)
-                print(f"  ✓ Conversation saved to PowerMem despite LLM error")
+                self.langchain_memory.save_to_seekmem(user_input, error_response)
+                print(f"  ✓ Conversation saved to SeekMem despite LLM error")
             except Exception as save_error:
                 print(f"Warning: Failed to save error context: {save_error}")
             return error_response
@@ -518,7 +518,7 @@ def main():
     """Main function to run the healthcare support bot."""
     import argparse
     
-    parser = argparse.ArgumentParser(description="AI Healthcare Support Bot with PowerMem + LangChain (OceanBase)")
+    parser = argparse.ArgumentParser(description="AI Healthcare Support Bot with SeekMem + LangChain (OceanBase)")
     parser.add_argument(
         '--mode',
         choices=['demo', 'interactive'],

@@ -1,21 +1,21 @@
 """
-Basic tests for powermem
+Basic tests for seekmem
 
 This module contains basic unit tests for the memory system.
 """
 
 import pytest
 from unittest.mock import MagicMock, patch, Mock
-from powermem import Memory
-from powermem.core.base import MemoryBase
+from seekmem import Memory
+from seekmem.core.base import MemoryBase
 
 
 class TestMemory:
     """Test cases for Memory class."""
     
-    @patch('powermem.core.memory.VectorStoreFactory')
-    @patch('powermem.core.memory.LLMFactory')
-    @patch('powermem.core.memory.EmbedderFactory')
+    @patch('seekmem.core.memory.VectorStoreFactory')
+    @patch('seekmem.core.memory.LLMFactory')
+    @patch('seekmem.core.memory.EmbedderFactory')
     def test_memory_initialization(self, mock_embedder_factory, mock_llm_factory, mock_vector_factory):
         """Test memory initialization."""
         # Mock the factories
@@ -31,9 +31,9 @@ class TestMemory:
         memory = Memory()
         assert isinstance(memory, MemoryBase)
     
-    @patch('powermem.core.memory.VectorStoreFactory')
-    @patch('powermem.core.memory.LLMFactory')
-    @patch('powermem.core.memory.EmbedderFactory')
+    @patch('seekmem.core.memory.VectorStoreFactory')
+    @patch('seekmem.core.memory.LLMFactory')
+    @patch('seekmem.core.memory.EmbedderFactory')
     def test_add_memory(self, mock_embedder_factory, mock_llm_factory, mock_vector_factory):
         """Test adding a memory."""
         # Mock the factories
@@ -58,10 +58,10 @@ class TestMemory:
         
         assert "results" in result or isinstance(result, dict)
     
-    @patch('powermem.core.memory.VectorStoreFactory')
-    @patch('powermem.core.memory.LLMFactory')
-    @patch('powermem.core.memory.EmbedderFactory')
-    @patch('powermem.core.memory.IntelligenceManager')
+    @patch('seekmem.core.memory.VectorStoreFactory')
+    @patch('seekmem.core.memory.LLMFactory')
+    @patch('seekmem.core.memory.EmbedderFactory')
+    @patch('seekmem.core.memory.IntelligenceManager')
     def test_search_memories(self, mock_intelligence_manager, mock_embedder_factory, mock_llm_factory, mock_vector_factory):
         """Test searching memories."""
         # Mock the factories
@@ -92,9 +92,9 @@ class TestMemory:
             assert isinstance(results, dict)
             assert "results" in results
     
-    @patch('powermem.core.memory.VectorStoreFactory')
-    @patch('powermem.core.memory.LLMFactory')
-    @patch('powermem.core.memory.EmbedderFactory')
+    @patch('seekmem.core.memory.VectorStoreFactory')
+    @patch('seekmem.core.memory.LLMFactory')
+    @patch('seekmem.core.memory.EmbedderFactory')
     def test_get_memory(self, mock_embedder_factory, mock_llm_factory, mock_vector_factory):
         """Test getting a specific memory."""
         # Mock the factories
@@ -118,10 +118,10 @@ class TestMemory:
             assert retrieved is not None
             assert retrieved["id"] == "test_id"
     
-    @patch('powermem.core.memory.VectorStoreFactory')
-    @patch('powermem.core.memory.LLMFactory')
-    @patch('powermem.core.memory.EmbedderFactory')
-    @patch('powermem.core.memory.IntelligenceManager')
+    @patch('seekmem.core.memory.VectorStoreFactory')
+    @patch('seekmem.core.memory.LLMFactory')
+    @patch('seekmem.core.memory.EmbedderFactory')
+    @patch('seekmem.core.memory.IntelligenceManager')
     def test_update_memory(self, mock_intelligence_manager, mock_embedder_factory, mock_llm_factory, mock_vector_factory):
         """Test updating a memory."""
         # Mock the factories
@@ -153,9 +153,9 @@ class TestMemory:
             assert isinstance(updated, dict)
             assert updated["id"] == "test_id"
     
-    @patch('powermem.core.memory.VectorStoreFactory')
-    @patch('powermem.core.memory.LLMFactory')
-    @patch('powermem.core.memory.EmbedderFactory')
+    @patch('seekmem.core.memory.VectorStoreFactory')
+    @patch('seekmem.core.memory.LLMFactory')
+    @patch('seekmem.core.memory.EmbedderFactory')
     def test_delete_memory(self, mock_embedder_factory, mock_llm_factory, mock_vector_factory):
         """Test deleting a memory."""
         # Mock the factories
@@ -177,10 +177,10 @@ class TestMemory:
             
             assert deleted is True
     
-    @patch('powermem.core.memory.VectorStoreFactory')
-    @patch('powermem.core.memory.LLMFactory')
-    @patch('powermem.core.memory.EmbedderFactory')
-    @patch('powermem.core.memory.IntelligenceManager')
+    @patch('seekmem.core.memory.VectorStoreFactory')
+    @patch('seekmem.core.memory.LLMFactory')
+    @patch('seekmem.core.memory.EmbedderFactory')
+    @patch('seekmem.core.memory.IntelligenceManager')
     def test_clear_memories(self, mock_intelligence_manager, mock_embedder_factory, mock_llm_factory, mock_vector_factory):
         """Test clearing memories."""
         # Mock the factories

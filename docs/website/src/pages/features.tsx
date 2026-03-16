@@ -40,7 +40,7 @@ const features = [
 const translations: Record<string, Record<string, string>> = {
   en: {
     'features.title': 'Upcoming Features',
-    'features.subtitle': 'Exciting features we\'re planning for PowerMem\'s future',
+    'features.subtitle': 'Exciting features we\'re planning for SeekMem\'s future',
     'features.more.title': 'And More...',
     'features.more.desc': 'We\'re continuously working on new features and improvements. Stay tuned for more exciting updates!',
     'feature.realtime.title': 'Real-time Sync & Collaboration',
@@ -62,7 +62,7 @@ const translations: Record<string, Record<string, string>> = {
     'feature.security.detail3': 'Compliance controls',
     'feature.security.detail4': 'Advanced access management',
     'feature.edge.title': 'Edge Computing Support',
-    'feature.edge.desc': 'Deploy PowerMem on edge devices with offline capabilities, reduced latency, and optimized resource usage for distributed AI applications.',
+    'feature.edge.desc': 'Deploy SeekMem on edge devices with offline capabilities, reduced latency, and optimized resource usage for distributed AI applications.',
     'feature.edge.detail1': 'Edge device deployment',
     'feature.edge.detail2': 'Offline capabilities',
     'feature.edge.detail3': 'Reduced latency',
@@ -76,7 +76,7 @@ const translations: Record<string, Record<string, string>> = {
   },
   zh: {
     'features.title': '即将推出的特性',
-    'features.subtitle': '我们为 PowerMem 未来规划的前沿功能',
+    'features.subtitle': '我们为 SeekMem 未来规划的前沿功能',
     'features.more.title': '还有更多...',
     'features.more.desc': '我们正在持续开发新功能和改进。敬请期待更多令人兴奋的更新！',
     'feature.realtime.title': '实时同步与协作',
@@ -98,7 +98,7 @@ const translations: Record<string, Record<string, string>> = {
     'feature.security.detail3': '合规控制',
     'feature.security.detail4': '高级访问管理',
     'feature.edge.title': '边缘计算支持',
-    'feature.edge.desc': '在边缘设备上部署 PowerMem，支持离线能力、降低延迟，为分布式 AI 应用优化资源使用。',
+    'feature.edge.desc': '在边缘设备上部署 SeekMem，支持离线能力、降低延迟，为分布式 AI 应用优化资源使用。',
     'feature.edge.detail1': '边缘设备部署',
     'feature.edge.detail2': '离线能力',
     'feature.edge.detail3': '降低延迟',
@@ -118,7 +118,7 @@ export default function FeaturesPage() {
   const t = (key: string) => translations[isZh ? 'zh' : 'en'][key] || key;
 
   return (
-    <Layout title="Features" description="PowerMem Upcoming Features">
+    <Layout title="Features" description="SeekMem Upcoming Features">
       <div className={styles.featuresPage}>
         <div className="container margin-vert--lg">
           <div className={styles.header}>

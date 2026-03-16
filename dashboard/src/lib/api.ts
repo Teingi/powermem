@@ -1,5 +1,5 @@
 /**
- * API client for the PowerMem Dashboard.
+ * API client for the SeekMem Dashboard.
  */
 
 import type { SystemStatus, MemoryQualityMetrics } from "../types/api";
@@ -89,14 +89,14 @@ export interface ApiResponse<T> {
  * Get the API key from local storage.
  */
 export const getApiKey = (): string => {
-  return localStorage.getItem("powermem_api_key") || "";
+  return localStorage.getItem("seekmem_api_key") || "";
 };
 
 /**
  * Set the API key in local storage.
  */
 export const setApiKey = (key: string): void => {
-  localStorage.setItem("powermem_api_key", key);
+  localStorage.setItem("seekmem_api_key", key);
 };
 
 /**

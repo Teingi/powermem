@@ -1,11 +1,11 @@
 # Sparse Vector Guide
 
-This guide explains how to use the Sparse Vector feature in PowerMem, including configuration, query usage, schema upgrades, and historical data migration.
+This guide explains how to use the Sparse Vector feature in SeekMem, including configuration, query usage, schema upgrades, and historical data migration.
 
 ## Prerequisites
 
 - Python 3.10+
-- powermem installed (`pip install powermem`)
+- seekmem installed (`pip install seekmem`)
 - Database requirements: **seekdb** or **OceanBase >= 4.5.0**
 
 > **Note**: Sparse vector feature only supports OceanBase storage backend, SQLite does not support this feature.
@@ -28,7 +28,7 @@ OCEANBASE_HOST=127.0.0.1
 OCEANBASE_PORT=2881
 OCEANBASE_USER=root
 OCEANBASE_PASSWORD=your_password
-OCEANBASE_DATABASE=powermem
+OCEANBASE_DATABASE=seekmem
 OCEANBASE_COLLECTION=memories
 OCEANBASE_EMBEDDING_MODEL_DIMS=1536
 
@@ -47,7 +47,7 @@ SPARSE_EMBEDDER_DIMS=1536
 Configure sparse vector using Python dictionary:
 
 ```python
-from powermem import Memory
+from seekmem import Memory
 
 config = {
     'llm': {
@@ -84,7 +84,7 @@ config = {
                 'port': 2881,
                 'user': 'root',
                 'password': 'your_password',
-                'db_name': 'powermem'
+                'db_name': 'seekmem'
             },
             # Optional: Configure search weights
             'vector_weight': 0.5,
@@ -116,7 +116,7 @@ After configuring sparse vector, searches will automatically use sparse vector f
 ### Basic Search
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 # Load configuration (automatically loads from .env)
 config = auto_config()
@@ -166,7 +166,7 @@ The migration guide covers:
 If creating a new table, simply enable sparse vector in the configuration:
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()  # Ensure include_sparse=True in configuration
 memory = Memory(config=config)

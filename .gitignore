@@ -123,7 +123,7 @@ celerybeat.pid
 .env
 .venv
 
-# PowerMem backup / local data
+# SeekMem backup / local data
 data/
 env/
 venv/
@@ -203,7 +203,7 @@ performance_logs/
 # Docker
 .dockerignore
 
-# PowerMem API Server
+# SeekMem API Server
 .server.pid
 server.log
 *.pid

@@ -45,18 +45,18 @@ export function AboutDialog() {
           <div className="space-y-2">
             <p className="text-sm font-medium">{t("dashboard.about.website")}</p>
             <a 
-              href="https://www.powermem.ai" 
+              href="https://www.seekmem.ai" 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-sm text-primary hover:underline"
             >
-              www.powermem.ai
+              www.seekmem.ai
             </a>
           </div>
           <div className="space-y-2">
             <p className="text-sm font-medium">{t("dashboard.about.copyright")}</p>
             <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} PowerMem. {t("dashboard.about.allRightsReserved")}
+              © {new Date().getFullYear()} SeekMem. {t("dashboard.about.allRightsReserved")}
             </p>
           </div>
         </div>

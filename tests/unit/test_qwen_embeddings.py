@@ -2,14 +2,14 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from powermem.integrations.embeddings.config.base import BaseEmbedderConfig
-from powermem.integrations.embeddings.qwen import QwenEmbedding
+from seekmem.integrations.embeddings.config.base import BaseEmbedderConfig
+from seekmem.integrations.embeddings.qwen import QwenEmbedding
 
 
 @pytest.fixture
 def mock_dashscope():
     """Mock the dashscope module and TextEmbedding.call method"""
-    with patch("powermem.integrations.embeddings.qwen.TextEmbedding") as mock_text_embedding:
+    with patch("seekmem.integrations.embeddings.qwen.TextEmbedding") as mock_text_embedding:
         mock_response = Mock()
         mock_response.status_code = 200
         mock_response.output = {

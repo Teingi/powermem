@@ -2,12 +2,12 @@
 ## Prerequisites
 
 - Python 3.10+
-- powermem installed (`pip install powermem`)
+- seekmem installed (`pip install seekmem`)
 - Basic understanding of Python async/await syntax
 
 ## When to Use Async Memory?
 
-The async version of powermem (`AsyncMemory`) is ideal when you need:
+The async version of seekmem (`AsyncMemory`) is ideal when you need:
 
 - **High-throughput applications**: Processing many memory operations simultaneously
 - **Concurrent operations**: Adding, searching, or updating multiple memories at once
@@ -21,11 +21,11 @@ The async version of powermem (`AsyncMemory`) is ideal when you need:
   - Batch processing large datasets
   - When you need maximum throughput
 
-> **Note:** If you're new to powermem, start with the [synchronous guide](./0001-getting_started.md) to learn the basics, then come back here for async operations.
+> **Note:** If you're new to seekmem, start with the [synchronous guide](./0001-getting_started.md) to learn the basics, then come back here for async operations.
 
 ## Configuration
 
-Before using async memory, you need to configure powermem. The configuration is the same for both sync and async versions. Powermem can automatically load configuration from a `.env` file in your project directory.
+Before using async memory, you need to configure seekmem. The configuration is the same for both sync and async versions. Powermem can automatically load configuration from a `.env` file in your project directory.
 
 ### Creating a `.env` File
 
@@ -48,7 +48,7 @@ For more configuration options, see the full example in `.env.example` or refer 
 
 ## Understanding Async Operations
 
-Async operations in powermem provide several key advantages:
+Async operations in seekmem provide several key advantages:
 
 ### Key Benefits
 
@@ -95,7 +95,7 @@ Let's create and initialize an AsyncMemory instance:
 
 ```python
 import asyncio
-from powermem import AsyncMemory, auto_config
+from seekmem import AsyncMemory, auto_config
 
 async def main():
     # Load configuration from .env file
@@ -128,7 +128,7 @@ Here's an example using a dictionary configuration:
 
 ```python
 import asyncio
-from powermem import AsyncMemory
+from seekmem import AsyncMemory
 
 async def main():
     # Define configuration as a dictionary (JSON-like format)
@@ -157,7 +157,7 @@ async def main():
                     'port': 2881,
                     'user': 'root@sys',
                     'password': 'password',
-                    'db_name': 'powermem'
+                    'db_name': 'seekmem'
                 },
                 'embedding_model_dims': 1536,
                 'index_type': 'IVF_FLAT',
@@ -186,7 +186,7 @@ You can also load configuration from a JSON file:
 ```python
 import asyncio
 import json
-from powermem import AsyncMemory
+from seekmem import AsyncMemory
 
 async def main():
     # Load configuration from JSON file
@@ -242,7 +242,7 @@ Let's add a memory asynchronously:
 
 ```python
 import asyncio
-from powermem import AsyncMemory, auto_config
+from seekmem import AsyncMemory, auto_config
 
 async def main():
     config = auto_config()
@@ -304,7 +304,7 @@ Let's add multiple memories concurrently:
 
 ```python
 import asyncio
-from powermem import AsyncMemory, auto_config
+from seekmem import AsyncMemory, auto_config
 
 async def main():
     config = auto_config()
@@ -373,7 +373,7 @@ Let's search memories asynchronously:
 
 ```python
 import asyncio
-from powermem import AsyncMemory, auto_config
+from seekmem import AsyncMemory, auto_config
 
 async def main():
     config = auto_config()
@@ -443,7 +443,7 @@ Let's process memories in batches:
 
 ```python
 import asyncio
-from powermem import AsyncMemory, auto_config
+from seekmem import AsyncMemory, auto_config
 
 async def main():
     config = auto_config()
@@ -489,7 +489,7 @@ asyncio.run(main())
 
 ## Async with Intelligent Memory
 
-Intelligent memory features work seamlessly with async operations. This allows you to leverage powermem's intelligent fact extraction and deduplication while maintaining high performance through async operations.
+Intelligent memory features work seamlessly with async operations. This allows you to leverage seekmem's intelligent fact extraction and deduplication while maintaining high performance through async operations.
 
 ### What is Intelligent Memory?
 
@@ -524,7 +524,7 @@ Let's use async operations with intelligent memory features:
 
 ```python
 import asyncio
-from powermem import AsyncMemory, auto_config
+from seekmem import AsyncMemory, auto_config
 
 async def main():
     config = auto_config()
@@ -589,7 +589,7 @@ Let's update and delete memories asynchronously:
 
 ```python
 import asyncio
-from powermem import AsyncMemory, auto_config
+from seekmem import AsyncMemory, auto_config
 
 async def main():
     config = auto_config()

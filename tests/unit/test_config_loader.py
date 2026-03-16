@@ -1,5 +1,5 @@
-import powermem.config_loader as config_loader
-import powermem.settings as settings
+import seekmem.config_loader as config_loader
+import seekmem.settings as settings
 
 
 def _reset_env(monkeypatch, keys):
@@ -43,7 +43,7 @@ def test_load_config_from_env_builds_core_config(monkeypatch):
     monkeypatch.setenv("OCEANBASE_PORT", "2881")
     monkeypatch.setenv("OCEANBASE_USER", "root@sys")
     monkeypatch.setenv("OCEANBASE_PASSWORD", "secret")
-    monkeypatch.setenv("OCEANBASE_DATABASE", "powermem")
+    monkeypatch.setenv("OCEANBASE_DATABASE", "seekmem")
     monkeypatch.setenv("OCEANBASE_COLLECTION", "memories")
     monkeypatch.setenv("LLM_PROVIDER", "qwen")
     monkeypatch.setenv("LLM_API_KEY", "llm-key")

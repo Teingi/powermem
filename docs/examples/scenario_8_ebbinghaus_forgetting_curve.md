@@ -1,11 +1,11 @@
 # Scenario 8: Ebbinghaus Forgetting Curve
 
-This scenario demonstrates how to implement and utilize the Ebbinghaus Forgetting Curve in PowerMem to optimize memory retrieval based on time-based decay patterns.
+This scenario demonstrates how to implement and utilize the Ebbinghaus Forgetting Curve in SeekMem to optimize memory retrieval based on time-based decay patterns.
 
 ## Prerequisites
 
 - Python 3.10+
-- powermem installed (`pip install powermem`)
+- seekmem installed (`pip install seekmem`)
 - matplotlib and numpy for visualization (optional)
 
 ## Configuration
@@ -19,7 +19,7 @@ This scenario demonstrates how to implement and utilize the Ebbinghaus Forgettin
 
 2. Edit the `.env` file and configure your settings
 
-> **Note:** When you call `auto_config()`, powermem will automatically load configuration from the `.env` file.
+> **Note:** When you call `auto_config()`, seekmem will automatically load configuration from the `.env` file.
 
 ## What is the Ebbinghaus Forgetting Curve?
 
@@ -114,7 +114,7 @@ Let's add memories and track their creation time:
 
 ```python
 # ebbinghaus_example.py
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 from datetime import datetime
 
 config = auto_config()
@@ -180,7 +180,7 @@ Now let's retrieve memories and calculate their retention scores:
 
 ```python
 # ebbinghaus_example.py
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 from datetime import datetime
 import math
 
@@ -250,7 +250,7 @@ Let's enhance search results by applying retention-based weighting:
 
 ```python
 # ebbinghaus_example.py
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 from datetime import datetime
 import math
 
@@ -434,7 +434,7 @@ Based on the forgetting curve, we can implement a spaced repetition system that 
 
 ```python
 # ebbinghaus_example.py
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 from datetime import datetime, timedelta
 import math
 
@@ -556,7 +556,7 @@ Here's a complete example that combines all concepts:
 
 ```python
 # ebbinghaus_example.py
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 from datetime import datetime, timedelta
 import math
 

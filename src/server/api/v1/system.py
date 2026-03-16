@@ -13,8 +13,8 @@ from ...middleware.rate_limit import limiter, get_rate_limit_string
 from ...config import config
 from ...utils.metrics import get_metrics_collector
 from ...utils.health_check import check_all_dependencies
-from powermem import auto_config
-from powermem.version import __version__ as powermem_version
+from seekmem import auto_config
+from seekmem.version import __version__ as seekmem_version
 
 # Import server start time from state module to avoid circular imports
 from ...state import SERVER_START_TIME
@@ -52,25 +52,25 @@ async def get_status(
 ):
     """Get system status"""
     try:
-        # Get PowerMem config
-        powermem_config = auto_config()
+        # Get SeekMem config
+        seekmem_config = auto_config()
         
         storage_type = None
         llm_provider = None
         
-        if isinstance(powermem_config, dict):
+        if isinstance(seekmem_config, dict):
             # Extract from dict config
-            vector_store = powermem_config.get("vector_store") or powermem_config.get("database", {})
+            vector_store = seekmem_config.get("vector_store") or seekmem_config.get("database", {})
             storage_type = vector_store.get("provider") if isinstance(vector_store, dict) else None
             
-            llm = powermem_config.get("llm", {})
+            llm = seekmem_config.get("llm", {})
             llm_provider = llm.get("provider") if isinstance(llm, dict) else None
         else:
             # Extract from config object
-            if hasattr(powermem_config, "vector_store") and powermem_config.vector_store:
-                storage_type = powermem_config.vector_store.provider
-            if hasattr(powermem_config, "llm") and powermem_config.llm:
-                llm_provider = powermem_config.llm.provider
+            if hasattr(seekmem_config, "vector_store") and seekmem_config.vector_store:
+                storage_type = seekmem_config.vector_store.provider
+            if hasattr(seekmem_config, "llm") and seekmem_config.llm:
+                llm_provider = seekmem_config.llm.provider
         
         # Calculate uptime
         now = datetime.now(timezone.utc)
@@ -97,7 +97,7 @@ async def get_status(
         
         status_data = StatusResponse(
             status=system_status,
-            version=powermem_version,
+            version=seekmem_version,
             storage_type=storage_type,
             llm_provider=llm_provider,
             uptime_seconds=uptime_seconds,
@@ -117,7 +117,7 @@ async def get_status(
         
         status_data = StatusResponse(
             status="degraded",
-            version=powermem_version,
+            version=seekmem_version,
             storage_type=None,
             llm_provider=None,
             uptime_seconds=uptime_seconds,
@@ -157,7 +157,7 @@ async def get_metrics(
     response_model=APIResponse,
     summary="Delete all memories",
     description="Delete all memories matching the provided filters (requires admin permissions). "
-                "This endpoint uses Memory.delete_all() to match the powermem SDK API. "
+                "This endpoint uses Memory.delete_all() to match the seekmem SDK API. "
                 "If no filters provided, deletes all memories.",
 )
 @limiter.limit(get_rate_limit_string())
@@ -171,10 +171,10 @@ async def delete_all_memories(
     """
     Delete all memories matching the provided filters.
     
-    This endpoint uses Memory.delete_all() to match the powermem SDK API.
+    This endpoint uses Memory.delete_all() to match the seekmem SDK API.
     If no filters are provided, all memories will be deleted.
     """
-    from powermem import Memory
+    from seekmem import Memory
     from ...models.errors import ErrorCode, APIError
     
     try:

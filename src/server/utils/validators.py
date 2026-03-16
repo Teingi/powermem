@@ -1,5 +1,5 @@
 """
-Validation utilities for PowerMem API
+Validation utilities for SeekMem API
 """
 
 from typing import Optional

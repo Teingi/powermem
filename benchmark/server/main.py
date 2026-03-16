@@ -1,7 +1,7 @@
 """
-PowerMem Benchmark Server
+SeekMem Benchmark Server
 
-⚠️ IMPORTANT: This server is NOT the official PowerMem server API.
+⚠️ IMPORTANT: This server is NOT the official SeekMem server API.
 It is only used for benchmark testing scenarios and should not be used in production.
 
 This server provides REST APIs for managing and searching memories.
@@ -27,7 +27,7 @@ from fastapi import FastAPI, HTTPException, status
 from fastapi.responses import JSONResponse, RedirectResponse
 from pydantic import BaseModel, Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from powermem import Memory
+from seekmem import Memory
 
 # ============================================================================
 # Logging Configuration
@@ -68,7 +68,7 @@ def _parse_boolish(value: object) -> object:
 
 
 class BenchmarkSettings(BaseSettings):
-    """Configuration settings for PowerMem Benchmark Server."""
+    """Configuration settings for SeekMem Benchmark Server."""
 
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -120,7 +120,7 @@ class BenchmarkSettings(BaseSettings):
     oceanbase_user: str = Field(default="root@sys")
     oceanbase_password: str = Field(default="")
     oceanbase_database: str = Field(default="ai_work")
-    oceanbase_collection: str = Field(default="powermem_collection")
+    oceanbase_collection: str = Field(default="seekmem_collection")
     oceanbase_embedding_model_dims: int = Field(default=1536)
     oceanbase_index_type: str = Field(default="HNSW")
     oceanbase_vector_metric_type: str = Field(default="l2")
@@ -589,7 +589,7 @@ setup_token_counting()
 # ============================================================================
 
 app = FastAPI(
-    title="PowerMem Benchmark REST APIs",
+    title="SeekMem Benchmark REST APIs",
     description="A REST API for managing and searching memories for benchmark testing scenarios.",
     version="1.0.0",
     docs_url="/docs",
@@ -683,7 +683,7 @@ async def root():
     return RedirectResponse(url="/docs")
 
 
-@app.post("/configure", summary="Configure PowerMem", status_code=status.HTTP_200_OK)
+@app.post("/configure", summary="Configure SeekMem", status_code=status.HTTP_200_OK)
 def set_config(config: Dict[str, Any]) -> Dict[str, str]:
     """Set memory configuration."""
     global MEMORY_INSTANCE

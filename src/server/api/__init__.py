@@ -1,3 +1,3 @@
 """
-API routes for PowerMem API Server
+API routes for SeekMem API Server
 """

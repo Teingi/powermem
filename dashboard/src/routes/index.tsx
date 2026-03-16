@@ -90,7 +90,7 @@ function OverviewPage() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [apiKeyInput, setApiKeyInput] = useState(
-    localStorage.getItem("powermem_api_key") || "",
+    localStorage.getItem("seekmem_api_key") || "",
   );
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [timeRange, setTimeRange] = useState<string>("30d");
@@ -127,7 +127,7 @@ function OverviewPage() {
   });
 
   const saveApiKey = () => {
-    localStorage.setItem("powermem_api_key", apiKeyInput);
+    localStorage.setItem("seekmem_api_key", apiKeyInput);
     refetch();
   };
 

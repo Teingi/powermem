@@ -1,12 +1,12 @@
 # Scenario 4: Async Operations
 
-This scenario demonstrates how to use powermem's async operations for high-performance, concurrent memory operations.
+This scenario demonstrates how to use seekmem's async operations for high-performance, concurrent memory operations.
 
 ## Prerequisites
 
 - Completed Scenario 1
 - Understanding of async/await in Python
-- powermem installed
+- seekmem installed
 
 ## Understanding Async Operations
 
@@ -23,7 +23,7 @@ First, let's create and initialize an AsyncMemory instance:
 ```python
 # async_operations_example.py
 import asyncio
-from powermem import AsyncMemory, auto_config
+from seekmem import AsyncMemory, auto_config
 
 async def main():
     config = auto_config()
@@ -57,7 +57,7 @@ Add memories using async methods:
 ```python
 # async_operations_example.py
 import asyncio
-from powermem import AsyncMemory, auto_config
+from seekmem import AsyncMemory, auto_config
 
 async def main():
     config = auto_config()
@@ -98,7 +98,7 @@ Add multiple memories concurrently:
 ```python
 # async_operations_example.py
 import asyncio
-from powermem import AsyncMemory, auto_config
+from seekmem import AsyncMemory, auto_config
 
 async def main():
     config = auto_config()
@@ -144,7 +144,7 @@ Search memories asynchronously:
 ```python
 # async_operations_example.py
 import asyncio
-from powermem import AsyncMemory, auto_config
+from seekmem import AsyncMemory, auto_config
 
 async def main():
     config = auto_config()
@@ -188,7 +188,7 @@ Process memories in batches:
 ```python
 # async_operations_example.py
 import asyncio
-from powermem import AsyncMemory, auto_config
+from seekmem import AsyncMemory, auto_config
 
 async def main():
     config = auto_config()
@@ -240,7 +240,7 @@ Use async operations with intelligent memory features:
 ```python
 # async_operations_example.py
 import asyncio
-from powermem import AsyncMemory, auto_config
+from seekmem import AsyncMemory, auto_config
 
 async def main():
     config = auto_config()
@@ -282,7 +282,7 @@ Update and delete memories asynchronously:
 ```python
 # async_operations_example.py
 import asyncio
-from powermem import AsyncMemory, auto_config
+from seekmem import AsyncMemory, auto_config
 
 async def main():
     config = auto_config()
@@ -343,7 +343,7 @@ Use async memory in FastAPI:
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from powermem import AsyncMemory, auto_config
+from seekmem import AsyncMemory, auto_config
 
 config = auto_config()
 async_memory = None
@@ -394,7 +394,7 @@ Here's a complete async example:
 ```python
 # complete_async_example.py
 import asyncio
-from powermem import AsyncMemory, auto_config
+from seekmem import AsyncMemory, auto_config
 
 async def main():
     config = auto_config()

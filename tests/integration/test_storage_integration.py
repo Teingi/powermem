@@ -7,8 +7,8 @@ This module tests the integration between Memory and different storage backends.
 import pytest
 import uuid
 from unittest.mock import MagicMock, patch
-from powermem import Memory
-from powermem.storage.sqlite.sqlite_vector_store import SQLiteVectorStore
+from seekmem import Memory
+from seekmem.storage.sqlite.sqlite_vector_store import SQLiteVectorStore
 
 
 class TestStorageIntegration:
@@ -39,7 +39,7 @@ class TestStorageIntegration:
         }
         
         # Mock LLM
-        patcher = patch('powermem.integrations.llm.factory.LLMFactory.create')
+        patcher = patch('seekmem.integrations.llm.factory.LLMFactory.create')
         mock_llm_factory = patcher.start()
         mock_llm = MagicMock()
         mock_llm.generate_response.return_value = {"content": "Test memory"}
@@ -171,7 +171,7 @@ class TestStorageIntegration:
             }
         }
 
-        patcher2 = patch('powermem.integrations.llm.factory.LLMFactory.create')
+        patcher2 = patch('seekmem.integrations.llm.factory.LLMFactory.create')
         mock_llm_factory2 = patcher2.start()
         mock_llm2 = MagicMock()
         mock_llm2.generate_response.return_value = {"content": "Test memory"}

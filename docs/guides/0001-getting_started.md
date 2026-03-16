@@ -1,11 +1,11 @@
 ## Prerequisites
 
 - Python 3.10+
-- powermem installed (`pip install powermem`)
+- seekmem installed (`pip install seekmem`)
 
 ## Configuration
 
-Before using powermem, you need to configure it. Powermem can automatically load configuration from a `.env` file in your project directory. This is the recommended way to configure powermem for your use case.
+Before using seekmem, you need to configure it. Powermem can automatically load configuration from a `.env` file in your project directory. This is the recommended way to configure seekmem for your use case.
 
 ### Why Use a `.env` File?
 
@@ -27,18 +27,18 @@ Using a `.env` file allows you to:
    - **Embedding Provider**: Select how text will be converted to vectors
    - **Vector Store**: Choose your database (SQLite for development, OceanBase for production)
 
-> **Note:** When you call `auto_config()`, powermem will automatically:
+> **Note:** When you call `auto_config()`, seekmem will automatically:
 > - Look for a `.env` file in the current directory
 > - Load configuration from environment variables
 > - Use sensible defaults if no configuration is found
 
 For more configuration options, see the full example in `.env.example` or refer to the [Configuration Guide](./0003-configuration.md).
 
-**Alternative:** You can use the PowerMem CLI to create or update your `.env` interactively: run `pmem config init`. See the [CLI Usage Guide](./0012-cli_usage.md) for details.
+**Alternative:** You can use the SeekMem CLI to create or update your `.env` interactively: run `smem config init`. See the [CLI Usage Guide](./0012-cli_usage.md) for details.
 
 ## Initializing Memory
 
-The first step in using powermem is to create a memory instance. This instance will handle all memory operations for your application.
+The first step in using seekmem is to create a memory instance. This instance will handle all memory operations for your application.
 
 ### Understanding `Memory` and `auto_config()`
 
@@ -47,10 +47,10 @@ The `Memory` class is the core memory management class. To initialize it:
 - Pass the config to `Memory` to create an instance with the appropriate settings
 - The `Memory` class handles initialization of vector stores and embeddings
 
-Let's create a simple Python script and initialize powermem:
+Let's create a simple Python script and initialize seekmem:
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 # Load configuration (auto-loads from .env or uses defaults)
 config = auto_config()
@@ -71,7 +71,7 @@ Instead of using `.env` files, you can also pass configuration directly as a Pyt
 Here's an example using a dictionary configuration:
 
 ```python
-from powermem import Memory
+from seekmem import Memory
 
 # Define configuration as a dictionary (JSON-like format)
 config = {
@@ -99,7 +99,7 @@ config = {
                 'port': 2881,
                 'user': 'root@sys',
                 'password': 'password',
-                'db_name': 'powermem'
+                'db_name': 'seekmem'
             },
             'embedding_model_dims': 1536,
             'index_type': 'IVF_FLAT',
@@ -116,7 +116,7 @@ print("✓ Memory initialized with JSON config!")
 
 ## Add Your First Memory
 
-Now that you have initialized powermem, let's add your first memory. Adding a memory stores information that can later be retrieved using semantic search.
+Now that you have initialized seekmem, let's add your first memory. Adding a memory stores information that can later be retrieved using semantic search.
 
 ### Understanding the `add()` Method
 
@@ -136,7 +136,7 @@ The `add()` method:
 Let's add a simple memory:
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 memory = Memory(config=config)
@@ -170,7 +170,7 @@ In real applications, you'll often need to add multiple memories for a user. Thi
 Let's add several memories for a user:
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 memory = Memory(config=config)
@@ -193,7 +193,7 @@ print(f"\n✓ All memories added for user {user_id}")
 
 ## Search Memories
 
-One of powermem's most powerful features is semantic search. Unlike traditional keyword search, semantic search finds memories based on meaning and context, not just exact word matches.
+One of seekmem's most powerful features is semantic search. Unlike traditional keyword search, semantic search finds memories based on meaning and context, not just exact word matches.
 
 ### How Semantic Search Works
 
@@ -219,7 +219,7 @@ Semantic search allows you to find relevant memories even when:
 Let's search for memories:
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 memory = Memory(config=config)
@@ -270,7 +270,7 @@ Metadata is additional information you can attach to memories to help organize, 
 Let's add memories with metadata for better organization:
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 memory = Memory(config=config)
@@ -329,7 +329,7 @@ Filters use a dictionary where:
 Let's search memories using metadata filters:
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 memory = Memory(config=config)
@@ -390,7 +390,7 @@ The `get_all()` method returns the same format as `search()`, with a `results` l
 Let's retrieve all memories for a user:
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 memory = Memory(config=config)
@@ -441,7 +441,7 @@ To update a memory, you need its ID. You can get the ID from:
 Let's update an existing memory:
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 memory = Memory(config=config)
@@ -503,7 +503,7 @@ Sometimes you need to remove a memory that is no longer relevant or accurate. Th
 Let's delete a memory:
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 memory = Memory(config=config)
@@ -566,7 +566,7 @@ The `delete_all()` method removes all memories for a specific user. This is usef
 Let's delete all memories for a user:
 
 ```python
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 config = auto_config()
 memory = Memory(config=config)

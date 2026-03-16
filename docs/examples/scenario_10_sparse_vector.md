@@ -5,7 +5,7 @@ This example demonstrates how to use the sparse vector feature, including config
 ## Prerequisites
 
 - Python 3.10+
-- powermem installed (`pip install powermem`)
+- seekmem installed (`pip install seekmem`)
 - Database: **seekdb** or **OceanBase >= 4.5.0**
 
 ## Step 1: Configure Sparse Vector
@@ -14,7 +14,7 @@ Create configuration to enable sparse vector support:
 
 ```python
 # sparse_vector_example.py
-from powermem import Memory
+from seekmem import Memory
 
 config = {
     'llm': {
@@ -52,7 +52,7 @@ config = {
                 'port': 2881,
                 'user': 'root',
                 'password': 'your_password',
-                'db_name': 'powermem'
+                'db_name': 'seekmem'
             }
         }
     }
@@ -77,7 +77,7 @@ Create a Memory instance using the configuration. For new tables, the system wil
 
 ```python
 # sparse_vector_example.py
-from powermem import Memory
+from seekmem import Memory
 
 # ... configuration code (same as Step 1)
 
@@ -100,7 +100,7 @@ When adding memories, the system will automatically generate sparse vectors:
 
 ```python
 # sparse_vector_example.py
-from powermem import Memory
+from seekmem import Memory
 
 # ... initialization code (same as Step 2)
 
@@ -136,7 +136,7 @@ Search will automatically use sparse vector for hybrid search:
 
 ```python
 # sparse_vector_example.py
-from powermem import Memory
+from seekmem import Memory
 
 # ... add memory code (same as Step 3)
 
@@ -176,7 +176,7 @@ The migration guide covers:
 Quick example:
 
 ```python
-from powermem import auto_config
+from seekmem import auto_config
 from script import ScriptManager
 
 # Load configuration
@@ -197,7 +197,7 @@ Here is a complete usage example:
 Complete Sparse Vector Example
 Demonstrates how to use sparse vector functionality
 """
-from powermem import Memory, auto_config
+from seekmem import Memory, auto_config
 
 def main():
     # Load configuration (with sparse vector enabled)
