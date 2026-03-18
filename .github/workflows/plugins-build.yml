@@ -1,0 +1,135 @@
+name: Plugins Build and Release
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'apps/**'
+      - '.github/workflows/plugins-build.yml'
+    tags:
+      - 'plugins-v*'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'apps/**'
+      - '.github/workflows/plugins-build.yml'
+  workflow_dispatch:
+    inputs:
+      create_release:
+        description: 'Create a GitHub Release with plugin assets (only if not tag)'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  build-vscode-extension:
+    name: Build VS Code Extension
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/vscode-extension
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: apps/vscode-extension/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Compile
+        run: npm run compile
+
+      - name: Install vsce
+        run: npm install -g @vscode/vsce
+
+      - name: Package .vsix
+        run: vsce package --no-dependencies
+        id: vsce
+
+      - name: Upload VS Code extension (.vsix)
+        uses: actions/upload-artifact@v4
+        with:
+          name: powermem-vscode-vsix
+          path: apps/vscode-extension/*.vsix
+          retention-days: 30
+
+  package-claude-plugin:
+    name: Package Claude Code Plugin
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create plugin zip
+        run: |
+          cd apps/claude-code-plugin
+          zip -r ../../powermem-claude-code-plugin.zip . -x "*.git*" -x ".DS_Store"
+
+      - name: Upload Claude Code plugin (zip)
+        uses: actions/upload-artifact@v4
+        with:
+          name: powermem-claude-code-plugin-zip
+          path: powermem-claude-code-plugin.zip
+          retention-days: 30
+  release-plugins:
+    name: Release Plugin Assets
+    runs-on: ubuntu-latest
+    needs: [build-vscode-extension, package-claude-plugin]
+    if: startsWith(github.ref, 'refs/tags/plugins-') || (github.event_name == 'workflow_dispatch' && github.event.inputs.create_release == 'true')
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download VS Code extension
+        uses: actions/download-artifact@v4
+        with:
+          name: powermem-vscode-vsix
+          path: vsix
+
+      - name: Download Claude Code plugin
+        uses: actions/download-artifact@v4
+        with:
+          name: powermem-claude-code-plugin-zip
+          path: zip
+
+      - name: Get version from tag or default
+        id: ver
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/plugins-* ]]; then
+            echo "version=${GITHUB_REF#refs/tags/plugins-}" >> $GITHUB_OUTPUT
+          else
+            echo "version=dev-$(date +%Y%m%d-%H%M)" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || format('plugins-{0}', steps.ver.outputs.version) }}
+          name: Plugins ${{ steps.ver.outputs.version }}
+          body: |
+            ## PowerMem IDE Plugins
+
+            - **PowerMem for VS Code** (`.vsix`): Install in VS Code/Cursor via Install from VSIX, or publish to marketplace.
+            - **PowerMem Claude Code Plugin** (`.zip`): Use with `claude --plugin-dir /path/to/unzipped-folder`.
+
+            See [apps/README.md](https://github.com/${{ github.repository }}/blob/main/apps/README.md) and [apps/TESTING.md](https://github.com/${{ github.repository }}/blob/main/apps/TESTING.md).
+          files: |
+            vsix/*.vsix
+            zip/powermem-claude-code-plugin.zip
+          draft: false
+          prerelease: ${{ contains(github.ref, 'refs/tags/') == false }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

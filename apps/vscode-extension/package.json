@@ -1,0 +1,74 @@
+{
+  "name": "powermem-vscode",
+  "displayName": "PowerMem for VS Code",
+  "description": "PowerMem intelligent memory for AI assistants: connect Cursor, Claude Code, Codex, Windsurf to PowerMem with one click.",
+  "version": "1.0.0",
+  "publisher": "OceanBase",
+  "engines": { "vscode": "^1.104.0" },
+  "categories": ["Machine Learning", "Other"],
+  "keywords": ["AI", "Memory", "PowerMem", "Cursor", "Claude", "Codex", "MCP"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      { "command": "powermem.statusBarClick", "title": "PowerMem: Status Bar Menu" },
+      { "command": "powermem.queryMemories", "title": "PowerMem: Query Memories" },
+      { "command": "powermem.addSelectionToMemory", "title": "PowerMem: Add Selection to Memory" },
+      { "command": "powermem.quickNote", "title": "PowerMem: Quick Note" },
+      { "command": "powermem.linkToAITools", "title": "PowerMem: Link to AI Tools" },
+      { "command": "powermem.setup", "title": "PowerMem: Setup" },
+      { "command": "powermem.dashboard", "title": "PowerMem: Dashboard" }
+    ],
+    "configuration": {
+      "title": "PowerMem",
+      "properties": {
+        "powermem.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable or disable PowerMem extension"
+        },
+        "powermem.backendUrl": {
+          "type": "string",
+          "default": "http://localhost:8000",
+          "description": "PowerMem backend URL (HTTP API / MCP root)"
+        },
+        "powermem.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "API key for PowerMem (X-API-Key header, leave empty if no auth)"
+        },
+        "powermem.useMCP": {
+          "type": "boolean",
+          "default": true,
+          "description": "Write MCP config for AI tools; when false, write HTTP context endpoints where supported"
+        },
+        "powermem.mcpServerPath": {
+          "type": "string",
+          "default": "",
+          "description": "Optional: path/command for local MCP (e.g. uvx). Leave empty to use backendUrl/mcp for HTTP MCP"
+        },
+        "powermem.userId": {
+          "type": "string",
+          "default": "",
+          "description": "Custom user ID for memory scope (leave empty to auto-generate)"
+        },
+        "powermem.projectName": {
+          "type": "string",
+          "default": "",
+          "description": "Custom project name (leave empty to use workspace name)"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts"
+  },
+  "devDependencies": {
+    "@types/node": "^18.x",
+    "@types/vscode": "^1.104.0",
+    "typescript": "^5.3.0"
+  }
+}
