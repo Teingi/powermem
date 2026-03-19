@@ -8,6 +8,7 @@ import { DashboardPanel } from './panels/DashboardPanel';
 import { checkHealth } from './utils/health';
 import { searchMemories, addMemory } from './api/client';
 import type { SearchResultItem } from './api/types';
+import { registerChatParticipant } from './chat/participant';
 
 let backendUrl = 'http://localhost:8000';
 let apiKey: string | undefined;
@@ -16,6 +17,34 @@ let useMCP = true;
 let mcpServerPath = '';
 let isEnabled = true;
 let userId = '';
+let autoCaptureOnSave = false;
+let autoCaptureInclude = '**/*.md,**/*.txt,**/docs/**';
+let autoCaptureMaxChars = 8000;
+let chatAutoSummarizeTurns = 10;
+let chatAutoRetrieve = true;
+
+function getUseMCPFromConfig(config: vscode.WorkspaceConfiguration): boolean {
+  const mode = config.get<'http' | 'mcp'>('connectionMode');
+  if (mode !== undefined) return mode === 'mcp';
+  return config.get<boolean>('useMCP') ?? true;
+}
+
+/** Simple glob match for auto-capture include (e.g. .md, docs/). Comma-separated patterns. */
+function matchesAutoCaptureInclude(filePath: string, includePattern: string): boolean {
+  const patterns = includePattern.split(',').map((p) => p.trim()).filter(Boolean);
+  if (patterns.length === 0 || patterns.includes('**') || patterns.includes('*')) return true;
+  const normalized = filePath.replace(/\\/g, '/');
+  for (const p of patterns) {
+    if (p.endsWith('/**')) {
+      const segment = p.replace(/^\*\*\//, '').replace(/\/\*\*$/, '');
+      if (segment && normalized.includes('/' + segment + '/')) return true;
+    } else if (p.startsWith('**/*.')) {
+      const ext = p.slice(5);
+      if (normalized.endsWith('.' + ext)) return true;
+    }
+  }
+  return false;
+}
 
 function getUserId(context: vscode.ExtensionContext, config: vscode.WorkspaceConfiguration): string {
   const configured = config.get<string>('userId');
@@ -114,7 +143,7 @@ async function showMenu(): Promise<void> {
       break;
     case 'toggleMcp':
       useMCP = !useMCP;
-      await vscode.workspace.getConfiguration('powermem').update('useMCP', useMCP, vscode.ConfigurationTarget.Global);
+      await vscode.workspace.getConfiguration('powermem').update('connectionMode', useMCP ? 'mcp' : 'http', vscode.ConfigurationTarget.Global);
       await autoLinkAll();
       break;
     case 'setup':
@@ -206,8 +235,13 @@ export function activate(context: vscode.ExtensionContext): void {
   isEnabled = config.get<boolean>('enabled') ?? true;
   backendUrl = config.get<string>('backendUrl') || 'http://localhost:8000';
   apiKey = config.get<string>('apiKey') || undefined;
-  useMCP = config.get<boolean>('useMCP') ?? true;
+  useMCP = getUseMCPFromConfig(config);
   mcpServerPath = config.get<string>('mcpServerPath') || '';
+  autoCaptureOnSave = config.get<boolean>('autoCapture.onSave') ?? false;
+  autoCaptureInclude = config.get<string>('autoCapture.include') ?? '**/*.md,**/*.txt,**/docs/**';
+  autoCaptureMaxChars = Math.max(500, config.get<number>('autoCapture.maxChars') ?? 8000);
+  chatAutoSummarizeTurns = Math.max(0, config.get<number>('chat.autoSummarizeEveryNTurns') ?? 10);
+  chatAutoRetrieve = config.get<boolean>('chat.autoRetrieve') ?? true;
   userId = getUserId(context, config);
 
   statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
@@ -216,6 +250,16 @@ export function activate(context: vscode.ExtensionContext): void {
 
   context.subscriptions.push(
     vscode.commands.registerCommand('powermem.statusBarClick', () => showMenu())
+  );
+
+  registerChatParticipant(
+    context,
+    () => backendUrl,
+    () => apiKey,
+    () => userId,
+    () => isEnabled,
+    () => chatAutoSummarizeTurns,
+    () => chatAutoRetrieve
   );
 
   if (!isEnabled) {
@@ -300,9 +344,45 @@ export function activate(context: vscode.ExtensionContext): void {
       const c = vscode.workspace.getConfiguration('powermem');
       backendUrl = c.get<string>('backendUrl') || 'http://localhost:8000';
       apiKey = c.get<string>('apiKey') || undefined;
-      useMCP = c.get<boolean>('useMCP') ?? true;
+      useMCP = getUseMCPFromConfig(c);
       mcpServerPath = c.get<string>('mcpServerPath') || '';
       isEnabled = c.get<boolean>('enabled') ?? true;
+      autoCaptureOnSave = c.get<boolean>('autoCapture.onSave') ?? false;
+      autoCaptureInclude = c.get<string>('autoCapture.include') ?? '**/*.md,**/*.txt,**/docs/**';
+      autoCaptureMaxChars = Math.max(500, c.get<number>('autoCapture.maxChars') ?? 8000);
+      chatAutoSummarizeTurns = Math.max(0, c.get<number>('chat.autoSummarizeEveryNTurns') ?? 10);
+      chatAutoRetrieve = c.get<boolean>('chat.autoRetrieve') ?? true;
+      // Re-link AI tools when connection/backend config changes so user does not need to click "Link to AI tools"
+      if (
+        isEnabled &&
+        (e.affectsConfiguration('powermem.backendUrl') ||
+          e.affectsConfiguration('powermem.connectionMode') ||
+          e.affectsConfiguration('powermem.useMCP') ||
+          e.affectsConfiguration('powermem.mcpServerPath'))
+      ) {
+        autoLinkAll().catch((err) => console.error('PowerMem auto re-link failed:', err));
+      }
+    })
+  );
+
+  // Optional: auto-add to memory on save (seamless write)
+  context.subscriptions.push(
+    vscode.workspace.onDidSaveTextDocument(async (doc) => {
+      if (!isEnabled || !autoCaptureOnSave || doc.uri.scheme !== 'file') return;
+      const path = doc.uri.fsPath;
+      if (!matchesAutoCaptureInclude(path, autoCaptureInclude)) return;
+      const text = doc.getText();
+      if (!text.trim()) return;
+      const content = text.length > autoCaptureMaxChars ? text.slice(0, autoCaptureMaxChars) + '\n…' : text;
+      try {
+        await addMemory(backendUrl, {
+          content,
+          user_id: userId || undefined,
+          metadata: { source: 'vscode', type: 'auto-save', file: path },
+        }, apiKey);
+      } catch {
+        // Silent fail to avoid interrupting the user
+      }
     })
   );
 }

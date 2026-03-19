@@ -38,11 +38,8 @@ export function generateClaudeConfig(
       },
     };
   }
-  return {
-    mcpServers: {
-      powermem: { url: `${base}/mcp` },
-    },
-  };
+  // HTTP mode: do not write MCP config so the client does not call /mcp
+  return { mcpServers: {} };
 }
 
 export async function writeClaudeConfig(

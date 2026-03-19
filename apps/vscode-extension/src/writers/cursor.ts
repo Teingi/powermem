@@ -39,11 +39,8 @@ export function generateCursorConfig(
       },
     };
   }
-  return {
-    mcpServers: {
-      powermem: { url: `${base}/mcp` },
-    },
-  };
+  // HTTP mode: do not add MCP config; caller will remove existing powermem entry
+  return { mcpServers: {} };
 }
 
 export async function writeCursorConfig(
@@ -69,6 +66,9 @@ export async function writeCursorConfig(
   const merged: CursorMcpConfig = {
     mcpServers: { ...existing.mcpServers, ...generated.mcpServers },
   };
+  if (!useMCP && merged.mcpServers) {
+    delete merged.mcpServers.powermem;
+  }
   fs.writeFileSync(configFile, JSON.stringify(merged, null, 2));
   return configFile;
 }

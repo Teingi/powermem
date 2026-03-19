@@ -2,7 +2,7 @@
   "name": "powermem-vscode",
   "displayName": "PowerMem for VS Code",
   "description": "PowerMem intelligent memory for AI assistants: connect Cursor, Claude Code, Codex, Windsurf to PowerMem with one click.",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "publisher": "OceanBase",
   "engines": { "vscode": "^1.104.0" },
   "categories": ["Machine Learning", "Other"],
@@ -10,6 +10,31 @@
   "activationEvents": ["onStartupFinished"],
   "main": "./out/extension.js",
   "contributes": {
+    "chatParticipants": [
+      {
+        "id": "powermem-vscode.powermem",
+        "name": "powermem",
+        "fullName": "PowerMem",
+        "description": "Save chat to memory, search memories. Say remember or /save to save; /search to query.",
+        "isSticky": false,
+        "commands": [
+          { "name": "remember", "description": "Save this conversation to PowerMem" },
+          { "name": "save", "description": "Save current conversation to PowerMem" },
+          { "name": "search", "description": "Search PowerMem" }
+        ],
+        "disambiguation": [
+          {
+            "category": "memory",
+            "description": "The user wants to save something to long-term memory (PowerMem) or search their saved memories.",
+            "examples": [
+              "Remember this",
+              "Save to memory: we use pnpm in this project",
+              "Search user login flow"
+            ]
+          }
+        ]
+      }
+    ],
     "commands": [
       { "command": "powermem.statusBarClick", "title": "PowerMem: Status Bar Menu" },
       { "command": "powermem.queryMemories", "title": "PowerMem: Query Memories" },
@@ -25,37 +50,72 @@
         "powermem.enabled": {
           "type": "boolean",
           "default": true,
-          "description": "Enable or disable PowerMem extension"
+          "description": "Enable or disable PowerMem extension."
+        },
+        "powermem.connectionMode": {
+          "type": "string",
+          "enum": ["http", "mcp"],
+          "default": "mcp",
+          "enumDescriptions": [
+            "HTTP mode: AI tools fetch memories via HTTP context endpoints. Use when MCP is not available or you prefer a simpler setup.",
+            "MCP mode: AI tools connect via MCP (Model Context Protocol). Recommended for Cursor, Claude Code, etc. You can use remote MCP (backend URL /mcp) or local MCP (set MCP Server Path)."
+          ],
+          "description": "Connection mode: HTTP or MCP. Determines how AI tools (Cursor, Claude Code, etc.) connect to PowerMem."
         },
         "powermem.backendUrl": {
           "type": "string",
           "default": "http://localhost:8000",
-          "description": "PowerMem backend URL (HTTP API / MCP root)"
+          "description": "PowerMem server address. HTTP mode: used as the API base URL. MCP mode: used as the MCP root (e.g. {backendUrl}/mcp if MCP Server Path is empty)."
         },
         "powermem.apiKey": {
           "type": "string",
           "default": "",
-          "description": "API key for PowerMem (X-API-Key header, leave empty if no auth)"
+          "description": "API key for PowerMem (X-API-Key header). Leave empty if your server does not require auth."
         },
         "powermem.useMCP": {
           "type": "boolean",
           "default": true,
-          "description": "Write MCP config for AI tools; when false, write HTTP context endpoints where supported"
+          "description": "Deprecated: use \"Connection Mode\" instead. When false, same as HTTP mode; when true, same as MCP mode."
         },
         "powermem.mcpServerPath": {
           "type": "string",
           "default": "",
-          "description": "Optional: path/command for local MCP (e.g. uvx). Leave empty to use backendUrl/mcp for HTTP MCP"
+          "description": "MCP mode only. Leave empty to use remote MCP at Backend URL + /mcp. Set a path/command (e.g. uvx) to use a local MCP server process instead."
         },
         "powermem.userId": {
           "type": "string",
           "default": "",
-          "description": "Custom user ID for memory scope (leave empty to auto-generate)"
+          "description": "Custom user ID for memory scope. Leave empty to auto-generate."
         },
         "powermem.projectName": {
           "type": "string",
           "default": "",
-          "description": "Custom project name (leave empty to use workspace name)"
+          "description": "Custom project name. Leave empty to use the workspace name."
+        },
+        "powermem.autoCapture.onSave": {
+          "type": "boolean",
+          "default": false,
+          "description": "When enabled, automatically add file content to memory on save (seamless write). Respects 'Include pattern' and 'Max chars'."
+        },
+        "powermem.autoCapture.include": {
+          "type": "string",
+          "default": "**/*.md,**/*.txt,**/docs/**",
+          "description": "Glob pattern for which files to auto-capture on save (comma-separated). Example: **/*.md,**/docs/**"
+        },
+        "powermem.autoCapture.maxChars": {
+          "type": "number",
+          "default": 8000,
+          "description": "Max characters per file to add to memory on auto-capture (avoids huge payloads)."
+        },
+        "powermem.chat.autoSummarizeEveryNTurns": {
+          "type": "number",
+          "default": 10,
+          "description": "In @powermem chat: auto-summarize and save to memory every N conversation turns (0 = off). Seamless write."
+        },
+        "powermem.chat.autoRetrieve": {
+          "type": "boolean",
+          "default": true,
+          "description": "In @powermem chat: always retrieve relevant memories before answering. Seamless retrieval."
         }
       }
     }
