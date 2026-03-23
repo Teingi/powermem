@@ -15,7 +15,7 @@
         "id": "powermem-vscode.powermem",
         "name": "powermem",
         "fullName": "PowerMem",
-        "description": "Save chat to memory, search memories. Say remember or /save to save; /search to query.",
+        "description": "Memory for AI (optional). In seamless mode use your linked AI instead; no need to @ mention.",
         "isSticky": false,
         "commands": [
           { "name": "remember", "description": "Save this conversation to PowerMem" },
@@ -92,10 +92,15 @@
           "default": "",
           "description": "Custom project name. Leave empty to use the workspace name."
         },
+        "powermem.seamlessMode": {
+          "type": "boolean",
+          "default": true,
+          "description": "Zero-friction mode: no need to use @powermem. Memory is automatic: linked AI (Cursor/Claude/Codex) get retrieval via MCP; optional file auto-capture adds content on save. Disable to use @powermem chat commands (remember/save/search)."
+        },
         "powermem.autoCapture.onSave": {
           "type": "boolean",
           "default": false,
-          "description": "When enabled, automatically add file content to memory on save (seamless write). Respects 'Include pattern' and 'Max chars'."
+          "description": "When enabled, automatically add file content to memory on save (seamless write). In seamless mode, defaults to true unless set explicitly. Respects 'Include pattern' and 'Max chars'."
         },
         "powermem.autoCapture.include": {
           "type": "string",

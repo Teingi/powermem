@@ -22,6 +22,7 @@ let autoCaptureInclude = '**/*.md,**/*.txt,**/docs/**';
 let autoCaptureMaxChars = 8000;
 let chatAutoSummarizeTurns = 10;
 let chatAutoRetrieve = true;
+let seamlessMode = true;
 
 function getUseMCPFromConfig(config: vscode.WorkspaceConfiguration): boolean {
   const mode = config.get<'http' | 'mcp'>('connectionMode');
@@ -237,7 +238,11 @@ export function activate(context: vscode.ExtensionContext): void {
   apiKey = config.get<string>('apiKey') || undefined;
   useMCP = getUseMCPFromConfig(config);
   mcpServerPath = config.get<string>('mcpServerPath') || '';
-  autoCaptureOnSave = config.get<boolean>('autoCapture.onSave') ?? false;
+  seamlessMode = config.get<boolean>('seamlessMode') ?? true;
+  // In seamless mode, default auto-capture on save to true so extraction is automatic
+  const explicitAutoCapture = config.inspect<boolean>('autoCapture.onSave');
+  const explicitOnSave = explicitAutoCapture?.workspaceValue ?? explicitAutoCapture?.globalValue;
+  autoCaptureOnSave = explicitOnSave !== undefined ? explicitOnSave : seamlessMode;
   autoCaptureInclude = config.get<string>('autoCapture.include') ?? '**/*.md,**/*.txt,**/docs/**';
   autoCaptureMaxChars = Math.max(500, config.get<number>('autoCapture.maxChars') ?? 8000);
   chatAutoSummarizeTurns = Math.max(0, config.get<number>('chat.autoSummarizeEveryNTurns') ?? 10);
@@ -258,6 +263,7 @@ export function activate(context: vscode.ExtensionContext): void {
     () => apiKey,
     () => userId,
     () => isEnabled,
+    () => seamlessMode,
     () => chatAutoSummarizeTurns,
     () => chatAutoRetrieve
   );
@@ -347,7 +353,10 @@ export function activate(context: vscode.ExtensionContext): void {
       useMCP = getUseMCPFromConfig(c);
       mcpServerPath = c.get<string>('mcpServerPath') || '';
       isEnabled = c.get<boolean>('enabled') ?? true;
-      autoCaptureOnSave = c.get<boolean>('autoCapture.onSave') ?? false;
+      seamlessMode = c.get<boolean>('seamlessMode') ?? true;
+      const explicitAutoCapture = c.inspect<boolean>('autoCapture.onSave');
+      const explicitOnSave = explicitAutoCapture?.workspaceValue ?? explicitAutoCapture?.globalValue;
+      autoCaptureOnSave = explicitOnSave !== undefined ? explicitOnSave : seamlessMode;
       autoCaptureInclude = c.get<string>('autoCapture.include') ?? '**/*.md,**/*.txt,**/docs/**';
       autoCaptureMaxChars = Math.max(500, c.get<number>('autoCapture.maxChars') ?? 8000);
       chatAutoSummarizeTurns = Math.max(0, c.get<number>('chat.autoSummarizeEveryNTurns') ?? 10);

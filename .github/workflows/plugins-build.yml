@@ -23,6 +23,7 @@ on:
 
 env:
   NODE_VERSION: '20'
+  GO_VERSION: '1.22.x'
 
 jobs:
   build-vscode-extension:
@@ -71,16 +72,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Create plugin zip
-        run: |
-          cd apps/claude-code-plugin
-          zip -r ../../powermem-claude-code-plugin.zip . -x "*.git*" -x ".DS_Store"
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Package Claude Code plugin (cross-compile hooks + zip)
+        run: bash apps/claude-code-plugin/scripts/package-plugin.sh
 
       - name: Upload Claude Code plugin (zip)
         uses: actions/upload-artifact@v4
         with:
           name: powermem-claude-code-plugin-zip
-          path: powermem-claude-code-plugin.zip
+          path: apps/claude-code-plugin/dist/powermem-claude-code-plugin-*.zip
+          if-no-files-found: error
           retention-days: 30
   release-plugins:
     name: Release Plugin Assets
@@ -121,12 +126,12 @@ jobs:
             ## PowerMem IDE Plugins
 
             - **PowerMem for VS Code** (`.vsix`): Install in VS Code/Cursor via Install from VSIX, or publish to marketplace.
-            - **PowerMem Claude Code Plugin** (`.zip`): Use with `claude --plugin-dir /path/to/unzipped-folder`.
+            - **PowerMem Claude Code Plugin** (`.zip`): **HTTP mode by default** (REST hooks; empty MCP). Cross-compiled hook binaries included. Unzip, then `claude --plugin-dir /path/to/powermem-claude-code-plugin`. Hooks default to `http://localhost:8000`; set `POWERMEM_BASE_URL` for a remote server. For in-chat tools, copy `config/mcp-mode.mcp.json` to `.mcp.json` (see plugin README).
 
             See [apps/README.md](https://github.com/${{ github.repository }}/blob/main/apps/README.md) and [apps/TESTING.md](https://github.com/${{ github.repository }}/blob/main/apps/TESTING.md).
           files: |
             vsix/*.vsix
-            zip/powermem-claude-code-plugin.zip
+            zip/powermem-claude-code-plugin-*.zip
           draft: false
           prerelease: ${{ contains(github.ref, 'refs/tags/') == false }}
           generate_release_notes: true

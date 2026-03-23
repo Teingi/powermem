@@ -1,6 +1,7 @@
 /**
- * Chat participant @powermem: seamless memory write (auto-summarize every N turns)
- * and retrieval (auto-retrieve on every question, answer with LLM + memories).
+ * Chat participant @powermem: when seamless mode is off, supports remember/save/search
+ * and auto-summarize + auto-retrieve. When seamless mode is on, memory is automatic
+ * via linked AI (MCP) and file auto-capture; this handler only shows a short redirect.
  */
 
 import * as vscode from 'vscode';
@@ -78,12 +79,16 @@ async function summarizeWithModel(
   return out.trim();
 }
 
+const SEAMLESS_REDIRECT =
+  'PowerMem is in **seamless mode**: memory is automatic. Use your linked AI (Cursor, Claude Code, Codex) for chat—they already have retrieval via MCP. File content is added to memory on save when auto-capture is on (default in seamless mode). Disable *Seamless mode* in PowerMem settings to use @powermem commands (remember / save / search).';
+
 export function registerChatParticipant(
   context: vscode.ExtensionContext,
   getBackendUrl: () => string,
   getApiKey: () => string | undefined,
   getUserId: () => string,
   getEnabled: () => boolean,
+  getSeamlessMode: () => boolean,
   getChatAutoSummarizeTurns: () => number,
   getChatAutoRetrieve: () => boolean
 ): void {
@@ -95,6 +100,10 @@ export function registerChatParticipant(
     stream: vscode.ChatResponseStream,
     token: vscode.CancellationToken
   ): Promise<vscode.ChatResult | void> => {
+    if (getSeamlessMode()) {
+      stream.markdown(SEAMLESS_REDIRECT);
+      return;
+    }
     const enabled = getEnabled();
     const backendUrl = getBackendUrl();
     if (!enabled || !backendUrl) {

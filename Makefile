@@ -1,4 +1,4 @@
-.PHONY: help install install-dev test test-unit test-integration test-e2e test-coverage test-fast test-slow lint format clean build build-package build-check build-dashboard publish-pypi publish-testpypi install-build-tools upload docs bump-version server-start server-stop server-restart server-status server-logs server-dashboard-start docker-build docker-run docker-up docker-down docker-logs docker-stop docker-restart docker-clean docker-ps
+.PHONY: help install install-dev test test-unit test-integration test-e2e test-coverage test-fast test-slow lint format clean build build-package build-check build-dashboard build-claude-hook package-claude-plugin publish-pypi publish-testpypi install-build-tools upload docs bump-version server-start server-stop server-restart server-status server-logs server-dashboard-start docker-build docker-run docker-up docker-down docker-logs docker-stop docker-restart docker-clean docker-ps
 
 help: ## Show help information
 	@echo "powermem Project Build Tools"
@@ -121,6 +121,12 @@ build-dashboard: ## Build dashboard frontend and inject into src/server/dashboar
 	@mkdir -p src/server/dashboard
 	@cp -r dashboard/dist/* src/server/dashboard/
 	@echo "✓ Dashboard built. Start server with: make server-start-reload (then open http://localhost:$(SERVER_PORT)/dashboard/)"
+
+build-claude-hook: ## Build Claude Code hook binaries (Go; output: apps/claude-code-plugin/hooks/bin/)
+	@bash apps/claude-code-plugin/scripts/build-hook-binaries.sh
+
+package-claude-plugin: ## Zip Claude Code plugin for sharing (apps/claude-code-plugin/dist/*.zip)
+	@bash apps/claude-code-plugin/scripts/package-plugin.sh
 
 install-build-tools: ## Install build and upload tools
 	@echo "Installing build tools..."
