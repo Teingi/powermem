@@ -176,6 +176,10 @@ setup-env: ## Setup development environment
 	python scripts/setup.py
 
 # Version management
+# macOS BSD sed: -i requires a backup extension; use '' for in-place without backup.
+# GNU sed accepts plain -i; '' is also valid. \+ in patterns is GNU-specific; use -E and + for portability.
+SED_INPLACE := $(if $(filter Darwin,$(shell uname -s)),sed -i '',sed -i)
+
 bump-version: ## Bump version number (usage: make bump-version VERSION=0.2.0)
 	@if [ -z "$(VERSION)" ]; then \
 		echo "Error: VERSION is required. Usage: make bump-version VERSION=0.2.0"; \
@@ -183,13 +187,13 @@ bump-version: ## Bump version number (usage: make bump-version VERSION=0.2.0)
 	fi
 	@echo "Bumping version to $(VERSION)..."
 	@# Update pyproject.toml
-	@sed -i 's/^version = ".*"/version = "$(VERSION)"/' pyproject.toml
+	@$(SED_INPLACE) 's/^version = ".*"/version = "$(VERSION)"/' pyproject.toml
 	@# Update src/powermem/version.py
-	@sed -i 's/^__version__ = ".*"/__version__ = "$(VERSION)"/' src/powermem/version.py
+	@$(SED_INPLACE) 's/^__version__ = ".*"/__version__ = "$(VERSION)"/' src/powermem/version.py
 	@# Update src/powermem/core/telemetry.py (all occurrences; match any x.y.z)
-	@sed -i 's/"version": "[0-9]\+\.[0-9]\+\.[0-9]\+"/"version": "$(VERSION)"/g' src/powermem/core/telemetry.py
+	@$(SED_INPLACE) -E 's/"version": "[0-9]+\.[0-9]+\.[0-9]+"/"version": "$(VERSION)"/g' src/powermem/core/telemetry.py
 	@# Update src/powermem/core/audit.py (match any x.y.z)
-	@sed -i 's/"version": "[0-9]\+\.[0-9]\+\.[0-9]\+"/"version": "$(VERSION)"/g' src/powermem/core/audit.py
+	@$(SED_INPLACE) -E 's/"version": "[0-9]+\.[0-9]+\.[0-9]+"/"version": "$(VERSION)"/g' src/powermem/core/audit.py
 	@echo "✓ Version updated to $(VERSION) in all files (excluding examples/)"
 	@echo ""
 	@echo "Updated files:"
