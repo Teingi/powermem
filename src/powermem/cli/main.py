@@ -87,7 +87,7 @@ _COMPLETION_SUBCOMMANDS = {
 
 @click.group(invoke_without_command=True)
 @click.option(
-    "--env-file", "-e",
+    "--env-file", "-f",
     type=click.Path(exists=True),
     help="Path to .env configuration file"
 )

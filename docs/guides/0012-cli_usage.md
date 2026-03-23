@@ -42,7 +42,7 @@ These options can be used before any subcommand (and some are also available per
 
 | Option | Short | Description |
 |--------|-------|-------------|
-| `--env-file PATH` | `-e` | Path to a `.env` configuration file. Overrides the default (e.g. `./.env`). |
+| `--env-file PATH` | `-f` | Path to a `.env` configuration file. Overrides the default (e.g. `./.env`). |
 | `--json` | `-j` | Output results in JSON format. |
 | `--verbose` | `-v` | Enable verbose output (e.g. stack traces on errors). |
 | `--install-completion SHELL` | — | Install shell completion for `bash`, `zsh`, `fish`, or `powershell`. |
@@ -52,7 +52,7 @@ These options can be used before any subcommand (and some are also available per
 **Examples:**
 
 ```bash
-pmem -e .env.production memory list
+pmem -f .env.production memory list
 pmem --json stats
 pmem -v memory add "User prefers dark mode" --user-id user123
 pmem --install-completion bash
@@ -556,7 +556,7 @@ Bash/Zsh scripts are written under `~/.config/powermem/` and, if you confirm, a 
 
 ## Summary
 
-- Use **`pmem`** (or **`powermem-cli`**) with **global options** (`-e`, `-j`, `-v`) and **subcommands** for memory, config, stats, manage, and shell.
+- Use **`pmem`** (or **`powermem-cli`**) with **global options** (`-f` / `--env-file`, `-j`, `-v`) and **subcommands** for memory, config, stats, manage, and shell.
 - **Memory operations**: `memory add/search/get/update/delete/list/delete-all` with filters and JSON output.
 - **Configuration**: `config show/validate/test/init` for inspecting, validating, testing, and interactively creating `.env`.
 - **Statistics**: `stats` with optional user/agent filters and `--detailed`.
