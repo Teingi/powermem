@@ -1,3 +1,5 @@
+import textwrap
+
 import powermem.config_loader as config_loader
 import powermem.settings as settings
 
@@ -186,3 +188,44 @@ def test_load_config_from_env_embedding_common_override(monkeypatch):
 
     assert config["embedder"]["provider"] == "azure_openai"
     assert config["embedder"]["config"]["api_key"] == "common-key"
+
+
+def test_load_config_from_env_respects_powermem_env_file(tmp_path, monkeypatch):
+    """CLI --env-file sets POWERMEM_ENV_FILE; dotenv must load that file."""
+    env_file = tmp_path / "custom.env"
+    env_file.write_text(
+        textwrap.dedent(
+            """
+            DATABASE_PROVIDER=sqlite
+            SQLITE_PATH=/tmp/powermem_test.db
+            LLM_PROVIDER=qwen
+            LLM_API_KEY=from-custom-env-file
+            LLM_MODEL=qwen-plus
+            EMBEDDING_PROVIDER=qwen
+            EMBEDDING_API_KEY=from-custom-env-file-emb
+            EMBEDDING_MODEL=text-embedding-v4
+            """
+        ).strip(),
+        encoding="utf-8",
+    )
+    _reset_env(
+        monkeypatch,
+        [
+            "DATABASE_PROVIDER",
+            "SQLITE_PATH",
+            "LLM_PROVIDER",
+            "LLM_API_KEY",
+            "LLM_MODEL",
+            "EMBEDDING_PROVIDER",
+            "EMBEDDING_API_KEY",
+            "EMBEDDING_MODEL",
+            "POWERMEM_ENV_FILE",
+        ],
+    )
+    _disable_env_file(monkeypatch)
+    monkeypatch.setenv("POWERMEM_ENV_FILE", str(env_file))
+
+    config = config_loader.load_config_from_env()
+
+    assert config["llm"]["config"]["api_key"] == "from-custom-env-file"
+    assert config["embedder"]["config"]["api_key"] == "from-custom-env-file-emb"

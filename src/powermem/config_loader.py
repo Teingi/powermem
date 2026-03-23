@@ -5,6 +5,8 @@ This module provides utilities for loading configuration from environment variab
 or other sources. It simplifies the configuration setup process.
 """
 
+import os
+from pathlib import Path
 from typing import Any, Dict, Optional
 import warnings
 
@@ -18,14 +20,25 @@ from powermem.integrations.llm.config.base import BaseLLMConfig
 from powermem.settings import _DEFAULT_ENV_FILE, settings_config
 
 
+def _resolve_dotenv_path() -> Optional[str]:
+    """Prefer POWERMEM_ENV_FILE (CLI --env-file) over auto-detected default .env."""
+    explicit = os.environ.get("POWERMEM_ENV_FILE")
+    if explicit:
+        path = Path(os.path.expanduser(explicit))
+        if path.is_file():
+            return str(path)
+    return _DEFAULT_ENV_FILE
+
+
 def _load_dotenv_if_available() -> None:
-    if not _DEFAULT_ENV_FILE:
+    env_path = _resolve_dotenv_path()
+    if not env_path:
         return
     try:
         from dotenv import load_dotenv
     except Exception:
         return
-    load_dotenv(_DEFAULT_ENV_FILE, override=False)
+    load_dotenv(env_path, override=False)
 
 
 class _BasePowermemSettings(BaseSettings):
