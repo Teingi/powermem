@@ -125,10 +125,10 @@ jobs:
           body: |
             ## PowerMem IDE Plugins
 
-            - **PowerMem for VS Code** (`.vsix`): Install in VS Code/Cursor via Install from VSIX, or publish to marketplace.
-            - **PowerMem Claude Code Plugin** (`.zip`): **HTTP mode by default** (REST hooks; empty MCP). Cross-compiled hook binaries included. Unzip, then `claude --plugin-dir /path/to/powermem-claude-code-plugin`. Hooks default to `http://localhost:8000`; set `POWERMEM_BASE_URL` for a remote server. For in-chat tools, copy `config/mcp-mode.mcp.json` to `.mcp.json` (see plugin README).
+            - **PowerMem for VS Code** (`.vsix`): Download and install from VSIX in VS Code or Cursor.
+            - **PowerMem for Claude Code** (`.zip`): Download, unzip, and start Claude with `claude --plugin-dir /path/to/powermem-claude-code-plugin`.
 
-            See [apps/README.md](https://github.com/${{ github.repository }}/blob/main/apps/README.md) and [apps/TESTING.md](https://github.com/${{ github.repository }}/blob/main/apps/TESTING.md).
+            See [apps/README.md](https://github.com/${{ github.repository }}/blob/main/apps/README.md).
           files: |
             vsix/*.vsix
             zip/powermem-claude-code-plugin-*.zip
