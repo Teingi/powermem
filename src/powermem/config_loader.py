@@ -19,16 +19,6 @@ from powermem.integrations.llm.config.base import BaseLLMConfig
 from powermem.settings import _DEFAULT_ENV_FILE, settings_config
 
 
-def _resolve_dotenv_path() -> Optional[str]:
-    """Prefer POWERMEM_ENV_FILE (CLI --env-file) over auto-detected default .env."""
-    explicit = os.environ.get("POWERMEM_ENV_FILE")
-    if explicit:
-        path = Path(os.path.expanduser(explicit))
-        if path.is_file():
-            return str(path)
-    return _DEFAULT_ENV_FILE
-
-
 def _load_dotenv_if_available() -> None:
     """
     Load env files into os.environ before BaseSettings / Memory read configuration.
