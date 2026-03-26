@@ -1,4 +1,4 @@
-import textwrap
+import os
 
 import powermem.config_loader as config_loader
 import powermem.settings as settings
@@ -190,42 +190,23 @@ def test_load_config_from_env_embedding_common_override(monkeypatch):
     assert config["embedder"]["config"]["api_key"] == "common-key"
 
 
-def test_load_config_from_env_respects_powermem_env_file(tmp_path, monkeypatch):
-    """CLI --env-file sets POWERMEM_ENV_FILE; dotenv must load that file."""
-    env_file = tmp_path / "custom.env"
-    env_file.write_text(
-        textwrap.dedent(
-            """
-            DATABASE_PROVIDER=sqlite
-            SQLITE_PATH=/tmp/powermem_test.db
-            LLM_PROVIDER=qwen
-            LLM_API_KEY=from-custom-env-file
-            LLM_MODEL=qwen-plus
-            EMBEDDING_PROVIDER=qwen
-            EMBEDDING_API_KEY=from-custom-env-file-emb
-            EMBEDDING_MODEL=text-embedding-v4
-            """
-        ).strip(),
-        encoding="utf-8",
-    )
-    _reset_env(
-        monkeypatch,
-        [
-            "DATABASE_PROVIDER",
-            "SQLITE_PATH",
-            "LLM_PROVIDER",
-            "LLM_API_KEY",
-            "LLM_MODEL",
-            "EMBEDDING_PROVIDER",
-            "EMBEDDING_API_KEY",
-            "EMBEDDING_MODEL",
-            "POWERMEM_ENV_FILE",
-        ],
-    )
-    _disable_env_file(monkeypatch)
-    monkeypatch.setenv("POWERMEM_ENV_FILE", str(env_file))
+def test_load_dotenv_uses_powermem_env_file(monkeypatch, tmp_path):
+    monkeypatch.delenv("DASHSCOPE_API_KEY", raising=False)
+    monkeypatch.setattr(config_loader, "_DEFAULT_ENV_FILE", None, raising=False)
+    env_path = tmp_path / "powermem.env"
+    env_path.write_text("DASHSCOPE_API_KEY=key-from-cli-env-file\n", encoding="utf-8")
+    monkeypatch.setenv("POWERMEM_ENV_FILE", str(env_path))
+    config_loader._load_dotenv_if_available()
+    assert os.environ.get("DASHSCOPE_API_KEY") == "key-from-cli-env-file"
 
-    config = config_loader.load_config_from_env()
 
-    assert config["llm"]["config"]["api_key"] == "from-custom-env-file"
-    assert config["embedder"]["config"]["api_key"] == "from-custom-env-file-emb"
+def test_load_dotenv_powermem_env_file_wins_over_default(monkeypatch, tmp_path):
+    monkeypatch.delenv("DASHSCOPE_API_KEY", raising=False)
+    default = tmp_path / ".env"
+    default.write_text("DASHSCOPE_API_KEY=from-default\n", encoding="utf-8")
+    custom = tmp_path / "custom.env"
+    custom.write_text("DASHSCOPE_API_KEY=from-custom\n", encoding="utf-8")
+    monkeypatch.setattr(config_loader, "_DEFAULT_ENV_FILE", str(default), raising=False)
+    monkeypatch.setenv("POWERMEM_ENV_FILE", str(custom))
+    config_loader._load_dotenv_if_available()
+    assert os.environ.get("DASHSCOPE_API_KEY") == "from-custom"

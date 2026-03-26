@@ -6,9 +6,8 @@ or other sources. It simplifies the configuration setup process.
 """
 
 import os
-from pathlib import Path
-from typing import Any, Dict, Optional
 import warnings
+from typing import Any, Dict, Optional
 
 from pydantic import AliasChoices, BaseModel, ConfigDict, Field
 from pydantic_settings import BaseSettings
@@ -31,14 +30,26 @@ def _resolve_dotenv_path() -> Optional[str]:
 
 
 def _load_dotenv_if_available() -> None:
-    env_path = _resolve_dotenv_path()
-    if not env_path:
-        return
+    """
+    Load env files into os.environ before BaseSettings / Memory read configuration.
+
+    When the CLI passes ``--env-file``, it sets ``POWERMEM_ENV_FILE``; that path
+    must be loaded here. Otherwise only the auto-detected project ``.env`` is used
+    and custom paths are silently ignored.
+    """
     try:
         from dotenv import load_dotenv
     except Exception:
         return
-    load_dotenv(env_path, override=False)
+
+    cli_env = os.environ.get("POWERMEM_ENV_FILE")
+    if cli_env:
+        path = os.path.expanduser(os.path.expandvars(cli_env.strip()))
+        if path and os.path.isfile(path):
+            load_dotenv(path, override=False)
+
+    if _DEFAULT_ENV_FILE:
+        load_dotenv(_DEFAULT_ENV_FILE, override=False)
 
 
 class _BasePowermemSettings(BaseSettings):
