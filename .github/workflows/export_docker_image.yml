@@ -1,6 +1,9 @@
 name: Export Docker Image Package
 
 on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches: [main, develop]
   workflow_dispatch:
     inputs:
       target_type:
@@ -43,31 +46,61 @@ jobs:
         run: |
           set -euo pipefail
 
-          TARGET_TYPE="${{ github.event.inputs.target_type }}"
-          TARGET_VALUE="${{ github.event.inputs.target_value }}"
+          EVENT_NAME="${{ github.event_name }}"
 
-          case "${TARGET_TYPE}" in
-            branch)
-              CHECKOUT_REF="${TARGET_VALUE}"
-              SOURCE_LABEL="branch:${TARGET_VALUE}"
-              ;;
-            tag)
-              CHECKOUT_REF="refs/tags/${TARGET_VALUE}"
-              SOURCE_LABEL="tag:${TARGET_VALUE}"
-              ;;
-            pr)
-              CHECKOUT_REF="refs/pull/${TARGET_VALUE}/head"
-              SOURCE_LABEL="pr:${TARGET_VALUE}"
-              ;;
-            *)
-              echo "Unsupported target_type: ${TARGET_TYPE}"
-              exit 1
-              ;;
-          esac
+          if [[ "${EVENT_NAME}" == "pull_request" ]]; then
+            CHECKOUT_REF="${{ github.event.pull_request.head.sha }}"
+            SOURCE_LABEL="pr:${{ github.event.pull_request.number }}"
+          else
+            TARGET_TYPE="${{ github.event.inputs.target_type }}"
+            TARGET_VALUE="${{ github.event.inputs.target_value }}"
+
+            case "${TARGET_TYPE}" in
+              branch)
+                CHECKOUT_REF="${TARGET_VALUE}"
+                SOURCE_LABEL="branch:${TARGET_VALUE}"
+                ;;
+              tag)
+                CHECKOUT_REF="refs/tags/${TARGET_VALUE}"
+                SOURCE_LABEL="tag:${TARGET_VALUE}"
+                ;;
+              pr)
+                CHECKOUT_REF="refs/pull/${TARGET_VALUE}/head"
+                SOURCE_LABEL="pr:${TARGET_VALUE}"
+                ;;
+              *)
+                echo "Unsupported target_type: ${TARGET_TYPE}"
+                exit 1
+                ;;
+            esac
+          fi
 
           echo "checkout_ref=${CHECKOUT_REF}" >> "${GITHUB_OUTPUT}"
           echo "source_label=${SOURCE_LABEL}" >> "${GITHUB_OUTPUT}"
           echo "Resolved checkout ref: ${CHECKOUT_REF}"
+
+      - name: Resolve build parameters
+        id: resolve-build
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          EVENT_NAME="${{ github.event_name }}"
+
+          if [[ "${EVENT_NAME}" == "pull_request" ]]; then
+            PR_NUMBER="${{ github.event.pull_request.number }}"
+            SHORT_SHA="$(echo "${{ github.event.pull_request.head.sha }}" | cut -c1-7)"
+            IMAGE_TAG="pr-${PR_NUMBER}-${SHORT_SHA}"
+            PLATFORM="linux/amd64"
+          else
+            IMAGE_TAG="${{ github.event.inputs.image_tag }}"
+            PLATFORM="${{ github.event.inputs.platform }}"
+          fi
+
+          echo "image_tag=${IMAGE_TAG}" >> "${GITHUB_OUTPUT}"
+          echo "platform=${PLATFORM}" >> "${GITHUB_OUTPUT}"
+          echo "Resolved image_tag: ${IMAGE_TAG}"
+          echo "Resolved platform: ${PLATFORM}"
 
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -86,8 +119,8 @@ jobs:
           set -euo pipefail
 
           IMAGE_NAME="oceanbase/powermem-server"
-          IMAGE_TAG="${{ github.event.inputs.image_tag }}"
-          PLATFORM="${{ github.event.inputs.platform }}"
+          IMAGE_TAG="${{ steps.resolve-build.outputs.image_tag }}"
+          PLATFORM="${{ steps.resolve-build.outputs.platform }}"
           PLATFORM_SUFFIX="${PLATFORM//\//-}"
 
           mkdir -p docker-images
@@ -113,8 +146,8 @@ jobs:
           set -euo pipefail
 
           SOURCE_LABEL="${{ steps.resolve-ref.outputs.source_label }}"
-          IMAGE_TAG="${{ github.event.inputs.image_tag }}"
-          PLATFORM="${{ github.event.inputs.platform }}"
+          IMAGE_TAG="${{ steps.resolve-build.outputs.image_tag }}"
+          PLATFORM="${{ steps.resolve-build.outputs.platform }}"
           PLATFORM_SUFFIX="${PLATFORM//\//-}"
           TAR_FILE="powermem-server-${IMAGE_TAG}-${PLATFORM_SUFFIX}.tar"
 
@@ -138,7 +171,7 @@ jobs:
       - name: Upload docker image package
         uses: actions/upload-artifact@v4
         with:
-          name: powermem-server-image-${{ github.event.inputs.image_tag }}
+          name: powermem-server-image-${{ steps.resolve-build.outputs.image_tag }}
           path: docker-images/*
           retention-days: 30
           if-no-files-found: error
