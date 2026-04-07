@@ -157,10 +157,10 @@ func inferFile() bool {
 
 func promptSearchEnabled() bool {
 	switch strings.ToLower(strings.TrimSpace(os.Getenv("POWERMEM_PROMPT_SEARCH"))) {
-	case "1", "true", "yes", "on":
-		return true
-	default:
+	case "0", "false", "no", "off":
 		return false
+	default:
+		return true
 	}
 }
 

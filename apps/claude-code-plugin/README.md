@@ -9,7 +9,7 @@ Claude Code plugin that connects to [PowerMem](https://github.com/oceanbase/powe
 - **MCP mode (optional)**: Copy [`config/mcp-mode.mcp.json`](config/mcp-mode.mcp.json) to `.mcp.json` (or run `apply-connection-mode.sh mcp`). Claude gets PowerMem tools over **HTTP** `…/mcp` or **stdio**.
 - **Skills**: `/memory-powermem:remember` and `/memory-powermem:recall` — effective in **MCP mode**; in default HTTP mode they cannot drive tools.
 - **Seamless REST capture**: Hooks run in **both** modes. Optional **file poller** — see [watcher/README.md](watcher/README.md).
-- **Optional auto-retrieval (no MCP required)**: A `UserPromptSubmit` hook can call **`POST /api/v1/memories/search`** with the user’s prompt and inject hits into Claude’s context via [`additionalContext`](https://code.claude.com/docs/en/hooks#userpromptsubmit). Enable with **`POWERMEM_PROMPT_SEARCH=1`** (off by default — each turn adds a search round-trip). Works in **HTTP and MCP** modes.
+- **Auto-retrieval (no MCP required, on by default)**: The `UserPromptSubmit` hook calls **`POST /api/v1/memories/search`** with the user’s prompt and injects hits via [`additionalContext`](https://code.claude.com/docs/en/hooks#userpromptsubmit). Set **`POWERMEM_PROMPT_SEARCH=0`** (or `false` / `no` / `off`) to disable — saves a search round-trip per turn. Works in **HTTP and MCP** modes.
 
 ## Runtime requirements (end users)
 
@@ -164,7 +164,7 @@ The plugin ships [`hooks/hooks.json`](hooks/hooks.json), [`hooks/run-hook.sh`](h
 
 | Hook | What happens |
 |------|----------------|
-| `UserPromptSubmit` | If **`POWERMEM_PROMPT_SEARCH=1`**: **`POST …/api/v1/memories/search`** with the submitted `prompt`; top results are injected as **additional context** for that turn ([Claude Code hooks](https://code.claude.com/docs/en/hooks#userpromptsubmit)). If unset, the hook no-ops (still registered; overhead is small). |
+| `UserPromptSubmit` | By default, **`POST …/api/v1/memories/search`** with the submitted `prompt`; top results are injected as **additional context** for that turn ([Claude Code hooks](https://code.claude.com/docs/en/hooks#userpromptsubmit)). Set **`POWERMEM_PROMPT_SEARCH=0`** (or `false` / `no` / `off`) to skip search (hook still registered; overhead is small when disabled). |
 | `SessionEnd` | Full **transcript** from `transcript_path` (parsed JSONL: user/assistant/summary lines) → **`POST …/api/v1/memories`**. |
 | `PostCompact` | The **`compact_summary`** field after `/compact` or auto-compact → **`POST …/api/v1/memories`**. |
 
@@ -181,7 +181,7 @@ Optional environment variables (where you launch Claude Code):
 | `POWERMEM_HOOK_MAX_CHARS` | No | Transcript cap (default `120000`) |
 | `POWERMEM_INFER_TRANSCRIPT` | No | Set `1` to enable server-side infer on large transcripts (default off) |
 | `POWERMEM_INFER_COMPACT` | No | Set `0` to disable infer on compact summaries (default on) |
-| `POWERMEM_PROMPT_SEARCH` | No | Set **`1`** (or `true` / `yes` / `on`) to **inject semantic search results** on every user prompt via `UserPromptSubmit`. Default: off. |
+| `POWERMEM_PROMPT_SEARCH` | No | **Default: on** — injects semantic search results on every user prompt via `UserPromptSubmit`. Set **`0`** / **`false`** / **`no`** / **`off`** to disable. |
 | `POWERMEM_PROMPT_SEARCH_LIMIT` | No | Max memories returned per prompt (default **8**, cap **30**). |
 | `POWERMEM_PROMPT_SEARCH_MAX_CHARS` | No | Cap on injected context string (default **24000**). |
 
@@ -191,8 +191,8 @@ Optional environment variables (where you launch Claude Code):
 
 What you see is often **expected**:
 
-1. **Default HTTP mode** — There are **no** PowerMem MCP tools during chat, so Claude does **not** call `/mcp` or `POST /api/v1/memories` on each message.
-2. **Hooks are not per-turn** — `SessionEnd` runs when the **session ends** (quit, `/clear`, `/resume` switch, etc.). `PostCompact` runs after **manual or auto compact**, not after every reply. **Normal back-and-forth coding does not trigger a hook.**
+1. **Default HTTP mode** — There are **no** PowerMem MCP tools during chat, so Claude does **not** call `/mcp` on each message. **`POST /api/v1/memories`** (writes) still come from **`SessionEnd`** / **`PostCompact`**, not every reply. By default, **`POST /api/v1/memories/search`** runs **on each user message** via `UserPromptSubmit`; set **`POWERMEM_PROMPT_SEARCH=0`** to turn that off.
+2. **Not every hook is per-turn** — `SessionEnd` runs when the **session ends** (quit, `/clear`, `/resume` switch, etc.). `PostCompact` runs after **manual or auto compact**, not after every reply.
 3. **Those GETs** (`/system/status`, `/memories/stats`, …) usually come from another client (e.g. **PowerMem VS Code extension** dashboard), not from Claude Code hooks.
 
 **How to verify hooks:**
@@ -203,7 +203,7 @@ What you see is often **expected**:
 
 **If you want traffic during the conversation:**
 
-- Set **`POWERMEM_PROMPT_SEARCH=1`** so each user message triggers **`POST /api/v1/memories/search`** and retrieved memories are **injected automatically** (no MCP tools needed).
+- **`POWERMEM_PROMPT_SEARCH` is on by default**, so each user message triggers **`POST /api/v1/memories/search`** and retrieved memories are **injected automatically** (no MCP tools needed). Set **`POWERMEM_PROMPT_SEARCH=0`** to turn that off.
 - Or switch to **MCP mode** (`bash scripts/apply-connection-mode.sh mcp`) so Claude can call memory tools when it chooses — traffic goes to **`/mcp`**, not necessarily the same paths as the dashboard GETs.
 - Or rely on **VS Code extension** save capture / `sh hooks/run-hook.sh poll` for file-based writes.
 
@@ -222,8 +222,8 @@ See [watcher/README.md](watcher/README.md) for environment variables.
 
 ## Usage
 
-- **Default (HTTP mode):** Hooks capture to REST automatically; no PowerMem tools in chat. For **automatic retrieval each turn**, set **`POWERMEM_PROMPT_SEARCH=1`** (see [Seamless recording](#seamless-recording-hooks--http-api)).
-- **MCP mode:** Run `apply-connection-mode.sh mcp`, then PowerMem tools appear; use **/memory-powermem:remember** / **recall** with real tool backing. You can combine MCP tools with **`POWERMEM_PROMPT_SEARCH=1`** if you want both explicit tool use and per-prompt injection.
+- **Default (HTTP mode):** Hooks capture to REST automatically; no PowerMem tools in chat. **Per-prompt semantic retrieval is on by default** (see [Seamless recording](#seamless-recording-hooks--http-api)); set **`POWERMEM_PROMPT_SEARCH=0`** to disable.
+- **MCP mode:** Run `apply-connection-mode.sh mcp`, then PowerMem tools appear; use **/memory-powermem:remember** / **recall** with real tool backing. Per-prompt injection stays **on by default**; set **`POWERMEM_PROMPT_SEARCH=0`** if you only want explicit MCP tool use.
 - In **both** modes, transcript/compact hooks write to REST (`POWERMEM_BASE_URL`, default `http://localhost:8000`) without the model calling tools.
 
 ## Links

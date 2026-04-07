@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- **UserPromptSubmit:** `POWERMEM_PROMPT_SEARCH` defaults to **on** (`POST /api/v1/memories/search` + `additionalContext` per prompt). Set `0`, `false`, `no`, or `off` to disable.
+
 ## 0.1.0
 
 Initial release of the PowerMem plugin for Claude Code.
@@ -17,7 +21,7 @@ Initial release of the PowerMem plugin for Claude Code.
 
 - **SessionEnd:** Upload full session transcript to `POST /api/v1/memories` (detached worker so large uploads do not block exit).
 - **PostCompact:** Upload compact summary to `POST /api/v1/memories`.
-- **UserPromptSubmit (optional):** When `POWERMEM_PROMPT_SEARCH=1`, `POST /api/v1/memories/search` and inject hits via `additionalContext` (works in HTTP and MCP modes; off by default).
+- **UserPromptSubmit (optional):** When `POWERMEM_PROMPT_SEARCH=1`, `POST /api/v1/memories/search` and inject hits via `additionalContext` (works in HTTP and MCP modes; off by default in this release).
 
 **Other**
 
