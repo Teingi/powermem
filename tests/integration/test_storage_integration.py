@@ -6,8 +6,9 @@ This module tests the integration between Memory and different storage backends.
 
 import pytest
 import uuid
+import asyncio
 from unittest.mock import MagicMock, patch
-from powermem import Memory
+from powermem import AsyncMemory, Memory
 from powermem.storage.sqlite.sqlite_vector_store import SQLiteVectorStore
 
 
@@ -50,6 +51,43 @@ class TestStorageIntegration:
             yield memory
         finally:
             patcher.stop()
+
+    @pytest.fixture
+    def sqlite_intelligent_memory(self):
+        """Create a Memory instance with intelligent memory enabled."""
+        config = {
+            "vector_store": {
+                "provider": "sqlite",
+                "config": {
+                    "database_path": ":memory:",
+                    "collection_name": f"test_collection_intelligent_{uuid.uuid4().hex[:8]}"
+                }
+            },
+            "llm": {
+                "provider": "openai",
+                "config": {
+                    "model": "gpt-4o-mini",
+                    "api_key": "mock-key"
+                }
+            },
+            "embedder": {
+                "provider": "mock",
+                "config": {}
+            },
+            "intelligent_memory": {
+                "enabled": True
+            }
+        }
+
+        patcher = patch('powermem.integrations.llm.factory.LLMFactory.create')
+        mock_llm_factory = patcher.start()
+        mock_llm_factory.return_value = MagicMock()
+
+        try:
+            memory = Memory(config=config)
+            yield memory
+        finally:
+            patcher.stop()
     
     def test_sqlite_storage_initialization(self, sqlite_memory):
         """Test SQLite storage initialization."""
@@ -87,6 +125,94 @@ class TestStorageIntegration:
         assert results is not None
         assert "results" in results
         assert len(results["results"]) > 0
+
+    def test_intelligent_add_persists_and_exposes_lifecycle_fields(self, sqlite_intelligent_memory):
+        """infer=True adds should store and expose lifecycle fields."""
+        memory = sqlite_intelligent_memory
+        user_id = "test_user_intelligent"
+
+        with patch.object(memory, "_extract_facts", return_value=["Remember that Alice likes coffee"]), \
+             patch.object(
+                 memory,
+                 "_decide_memory_actions",
+                 return_value=[{"event": "ADD", "text": "Remember that Alice likes coffee"}],
+             ):
+            add_result = memory.add("Remember that Alice likes coffee", user_id=user_id)
+
+        memory_id = add_result["results"][0]["id"]
+        retrieved = memory.get(memory_id, user_id=user_id)
+        assert retrieved is not None
+        assert "memory_type" in retrieved
+        assert "importance_score" in retrieved
+        assert "intelligence" in retrieved
+        assert "access_count" in retrieved
+
+        listed = memory.get_all(user_id=user_id)
+        assert listed["results"]
+        assert "memory_type" in listed["results"][0]
+        assert "importance_score" in listed["results"][0]
+
+        searched = memory.search("coffee", user_id=user_id)
+        assert searched["results"]
+        assert "memory_type" in searched["results"][0]
+        assert "importance_score" in searched["results"][0]
+
+    def test_async_intelligent_add_persists_lifecycle_fields(self):
+        """Async infer=True adds should also persist lifecycle fields."""
+        config = {
+            "vector_store": {
+                "provider": "sqlite",
+                "config": {
+                    "database_path": ":memory:",
+                    "collection_name": f"test_collection_async_intelligent_{uuid.uuid4().hex[:8]}"
+                }
+            },
+            "llm": {
+                "provider": "openai",
+                "config": {
+                    "model": "gpt-4o-mini",
+                    "api_key": "mock-key"
+                }
+            },
+            "embedder": {
+                "provider": "mock",
+                "config": {}
+            },
+            "intelligent_memory": {
+                "enabled": True
+            }
+        }
+
+        patcher = patch('powermem.integrations.llm.factory.LLMFactory.create')
+        mock_llm_factory = patcher.start()
+        mock_llm_factory.return_value = MagicMock()
+
+        try:
+            async def run_test():
+                memory = AsyncMemory(config=config)
+
+                async def fake_extract(_messages):
+                    return ["Remember that Bob likes tea"]
+
+                async def fake_decide(_facts, _existing_memories, _user_id, _agent_id):
+                    return [{"event": "ADD", "text": "Remember that Bob likes tea"}]
+
+                memory._extract_facts = fake_extract
+                memory._decide_memory_actions = fake_decide
+
+                add_result = await memory.add("Remember that Bob likes tea", user_id="async_user")
+                memory_id = add_result["results"][0]["id"]
+                retrieved = await memory.get(memory_id, user_id="async_user")
+
+                assert retrieved is not None
+                assert "memory_type" in retrieved
+                assert "importance_score" in retrieved
+                assert "intelligence" in retrieved
+                assert "access_count" in retrieved
+
+            asyncio.run(run_test())
+        finally:
+            patcher.stop()
 
     def test_sqlite_delete_functionality(self, sqlite_memory):
         """Test SQLite delete functionality."""

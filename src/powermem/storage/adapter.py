@@ -18,6 +18,24 @@ logger = logging.getLogger(__name__)
 
 class StorageAdapter:
     """Adapter that bridges VectorStoreBase interface with Memory class expectations."""
+
+    _PAYLOAD_RESERVED_KEYS = {
+        "id",
+        "data",
+        "content",
+        "fulltext_content",
+        "sparse_embedding",
+        "hash",
+        "created_at",
+        "updated_at",
+        "metadata",
+        "user_id",
+        "agent_id",
+        "run_id",
+        "actor_id",
+        "role",
+        "category",
+    }
     
     def __init__(self, vector_store: VectorStoreBase, embedding_service=None, sparse_embedder_service=None):
         """Initialize the adapter with a vector store and embedding service."""
@@ -33,6 +51,14 @@ class StorageAdapter:
 
         # Ensure collection exists (will be created with actual vector size when first vector is added)
         # self.vector_store.create_col(self.collection_name, vector_size=1536, distance="cosine")
+
+    def _extract_additional_payload_fields(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+        """Expose intelligent lifecycle fields that are stored at payload top level."""
+        return {
+            key: value
+            for key, value in payload.items()
+            if key not in self._PAYLOAD_RESERVED_KEYS and value is not None
+        }
     
     def _generate_sparse_embedding(self, content: str, memory_action: str) -> Optional[Any]:
         """
@@ -268,6 +294,8 @@ class StorageAdapter:
                 **promoted_fields,  # Add promoted fields at top level
                 "metadata": user_metadata if user_metadata else {},  # Add user metadata
             }
+
+            memory.update(self._extract_additional_payload_fields(payload))
             
             # No need to apply filters here - filters are already applied at the database level
             # in vector_store.search(), so all returned results should already match the filters
@@ -296,7 +324,9 @@ class StorageAdapter:
                 "metadata": result.payload.get("metadata", {}),
                 "created_at": result.payload.get("created_at"),
                 "updated_at": result.payload.get("updated_at"),
+                "category": result.payload.get("category"),
             }
+            memory.update(self._extract_additional_payload_fields(result.payload))
             
             # Check access control
             if user_id and memory.get("user_id") != user_id:
@@ -315,14 +345,16 @@ class StorageAdapter:
                         content = result.payload.get("data") or result.payload.get("content") or ""
                         memory = {
                             "id": result.id,
-                             "content": content,
+                            "content": content,
                             "user_id": result.payload.get("user_id"),
                             "agent_id": result.payload.get("agent_id"),
                             "run_id": result.payload.get("run_id"),
                             "metadata": result.payload.get("metadata", {}),
                             "created_at": result.payload.get("created_at"),
                             "updated_at": result.payload.get("updated_at"),
+                            "category": result.payload.get("category"),
                         }
+                        memory.update(self._extract_additional_payload_fields(result.payload))
 
                         # Check access control
                         if user_id and memory.get("user_id") != user_id:
@@ -540,6 +572,7 @@ class StorageAdapter:
                 "created_at": created_at,
                 "updated_at": updated_at,
             }
+            memory.update(self._extract_additional_payload_fields(payload))
             
             # Apply filters (as double-check if database didn't filter)
             # Note: If filters were applied at database level, these will all pass

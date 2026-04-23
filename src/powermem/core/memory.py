@@ -741,6 +741,12 @@ class Memory(MemoryBase):
             else:
                 enhanced_metadata = {"scope": scope}
 
+        # Preserve the same intelligent annotations as the simple add path so
+        # infer=True writes memories that can later be promoted/forgotten.
+        extra_fields = {}
+        if self._intelligence_plugin and self._intelligence_plugin.enabled:
+            extra_fields = self._intelligence_plugin.on_add(content=content, metadata=enhanced_metadata)
+
         # Final validation before storage
         if not content or not content.strip():
             raise ValueError(f"Refusing to store empty content. Original messages: {messages}")
@@ -1109,6 +1115,12 @@ class Memory(MemoryBase):
                 enhanced_metadata = {**enhanced_metadata, "scope": scope}
             else:
                 enhanced_metadata = {"scope": scope}
+
+        # Keep infer=True aligned with the simple add path so lifecycle fields
+        # are persisted for later promotion/forgetting decisions.
+        extra_fields = {}
+        if self._intelligence_plugin and self._intelligence_plugin.enabled:
+            extra_fields = self._intelligence_plugin.on_add(content=content, metadata=enhanced_metadata)
         
         # Generate content hash
         content_hash = hashlib.md5(content.encode('utf-8')).hexdigest()
@@ -1130,6 +1142,9 @@ class Memory(MemoryBase):
             "created_at": get_current_datetime(),
             "updated_at": get_current_datetime(),
         }
+
+        if extra_fields:
+            memory_data.update(extra_fields)
         
         memory_id = self.storage.add_memory(memory_data)
         
@@ -1296,6 +1311,11 @@ class Memory(MemoryBase):
                 for key in ["id", "created_at", "updated_at", "user_id", "agent_id", "run_id"]:
                     if key in result:
                         transformed_result[key] = result[key]
+
+                # Preserve intelligent lifecycle fields surfaced by the storage layer.
+                for key, value in result.items():
+                    if key not in transformed_result and key not in {"memory", "metadata", "score"}:
+                        transformed_result[key] = value
                 
                 # Ensure memory_id field exists (for API compatibility)
                 if "id" in transformed_result and "memory_id" not in transformed_result:

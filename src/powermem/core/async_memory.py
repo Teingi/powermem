@@ -564,6 +564,12 @@ class AsyncMemory(MemoryBase):
             else:
                 enhanced_metadata = {"scope": scope}
 
+        # Keep infer=True aligned with the sync/simple add paths so lifecycle
+        # fields are persisted for later promotion/forgetting decisions.
+        extra_fields = {}
+        if self._intelligence_plugin and self._intelligence_plugin.enabled:
+            extra_fields = self._intelligence_plugin.on_add(content=content, metadata=enhanced_metadata)
+
         # Final validation before storage
         if not content or not content.strip():
             raise ValueError(f"Refusing to store empty content. Original messages: {messages}")
@@ -937,6 +943,10 @@ class AsyncMemory(MemoryBase):
                 enhanced_metadata = {**enhanced_metadata, "scope": scope}
             else:
                 enhanced_metadata = {"scope": scope}
+
+        extra_fields = {}
+        if self._intelligence_plugin and self._intelligence_plugin.enabled:
+            extra_fields = self._intelligence_plugin.on_add(content=content, metadata=enhanced_metadata)
         
         # Generate content hash
         content_hash = hashlib.md5(content.encode('utf-8')).hexdigest()
@@ -958,6 +968,9 @@ class AsyncMemory(MemoryBase):
             "created_at": get_current_datetime(),
             "updated_at": get_current_datetime(),
         }
+
+        if extra_fields:
+            memory_data.update(extra_fields)
         
         memory_id = await self.storage.add_memory_async(memory_data)
         
@@ -1111,6 +1124,9 @@ class AsyncMemory(MemoryBase):
                 for key in ["id", "created_at", "updated_at", "user_id", "agent_id", "run_id"]:
                     if key in result:
                         transformed_result[key] = result[key]
+                for key, value in result.items():
+                    if key not in transformed_result and key not in {"memory", "metadata", "score"}:
+                        transformed_result[key] = value
                 transformed_results.append(transformed_result)
             
             # Log audit event
@@ -1172,8 +1188,11 @@ class AsyncMemory(MemoryBase):
                     updates, delete_flag = self._intelligence_plugin.on_get(result)
                     try:
                         if delete_flag:
-                            await self.storage.delete_memory_async(memory_id, user_id, agent_id)
-                            return None
+                            logger.info(f"Memory {memory_id} marked as 'should_forget' by intelligence plugin")
+                            if updates is None:
+                                updates = {}
+                            updates["should_forget"] = True
+                            updates["marked_for_forgetting_at"] = get_current_datetime().isoformat()
                         if updates:
                             await self.storage.update_memory_async(memory_id, {**updates}, user_id, agent_id)
                     except Exception:

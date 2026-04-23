@@ -230,10 +230,11 @@ class EbbinghausAlgorithm:
             True if memory should be forgotten
         """
         try:
+            review_reference = self._get_review_reference_time(memory)
+
             # Check decay factor
-            created_at = memory.get("created_at")
-            if created_at:
-                decay_factor = self.calculate_decay(created_at)
+            if review_reference:
+                decay_factor = self.calculate_decay(review_reference)
                 if decay_factor < self.working_threshold:
                     return True
             
@@ -241,11 +242,8 @@ class EbbinghausAlgorithm:
             access_count = memory.get("access_count", 0)
             if access_count == 0:
                 # Check if memory is old enough to be forgotten
-                if created_at:
-                    # Parse string to datetime if needed
-                    if isinstance(created_at, str):
-                        created_at = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
-                    time_elapsed = get_current_datetime() - created_at
+                if review_reference:
+                    time_elapsed = get_current_datetime() - review_reference
                     if time_elapsed > timedelta(days=7):
                         return True
             
@@ -331,6 +329,36 @@ class EbbinghausAlgorithm:
             "long_term": self.decay_rate,  # Standard decay for long-term
         }
         return decay_rates.get(memory_type, self.decay_rate)
+
+    def _parse_datetime(self, value: Any) -> datetime:
+        """Normalize stored timestamps into datetime objects."""
+        if isinstance(value, datetime):
+            return value
+        if isinstance(value, str):
+            return datetime.fromisoformat(value.replace('Z', '+00:00'))
+        raise TypeError(f"Unsupported datetime value: {type(value)!r}")
+
+    def _get_review_reference_time(self, memory: Dict[str, Any]) -> Optional[datetime]:
+        """
+        Use the most recent review/access timestamp for decay checks.
+
+        Falling back to created_at preserves compatibility with older records
+        that do not yet store review metadata.
+        """
+        intelligence = memory.get("intelligence")
+        candidates = []
+        if isinstance(intelligence, dict):
+            candidates.append(intelligence.get("last_reviewed"))
+        candidates.extend([memory.get("updated_at"), memory.get("created_at")])
+
+        for candidate in candidates:
+            if not candidate:
+                continue
+            try:
+                return self._parse_datetime(candidate)
+            except Exception:
+                continue
+        return None
     
     def _generate_review_schedule(self, importance_score: float, created_at: datetime) -> List[datetime]:
         """Generate review schedule based on importance and Ebbinghaus curve."""

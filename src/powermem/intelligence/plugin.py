@@ -122,42 +122,77 @@ class EbbinghausIntelligencePlugin(IntelligentMemoryPlugin):
         if not self.enabled or not self._algo:
             return None, False
         try:
+            review_time = get_current_datetime()
+            reviewed_access_count = (memory.get("access_count") or 0) + 1
+            reviewed_memory = memory.copy()
+
+            reviewed_intelligence = memory.get("intelligence")
+            if isinstance(reviewed_intelligence, dict):
+                reviewed_intelligence = reviewed_intelligence.copy()
+            else:
+                reviewed_intelligence = {}
+            reviewed_intelligence["last_reviewed"] = review_time.isoformat()
+            reviewed_intelligence["review_count"] = reviewed_intelligence.get("review_count", 0) + 1
+            reviewed_intelligence["access_count"] = reviewed_access_count
+
             updates: Dict[str, Any] = {
-                "access_count": (memory.get("access_count") or 0) + 1,
-                "updated_at": get_current_datetime(),
+                "access_count": reviewed_access_count,
+                "updated_at": review_time,
+                "intelligence": reviewed_intelligence,
             }
-            
-            # Check if memory should be forgotten
-            if self._algo.should_forget(memory):
-                return None, True
-            
-            # Check if memory should be promoted
-            if self._algo.should_promote(memory):
+
+            reviewed_memory["access_count"] = reviewed_access_count
+            reviewed_memory["updated_at"] = review_time
+            reviewed_memory["intelligence"] = reviewed_intelligence
+
+            # Access should first strengthen/potentially promote the memory
+            # before we consider forgetting it.
+            promoted = False
+            if self._algo.should_promote(reviewed_memory):
                 current = memory.get("memory_type")
                 if current == "working":
                     updates["memory_type"] = "short_term"
+                    reviewed_memory["memory_type"] = "short_term"
+                    promoted = True
                 elif current == "short_term":
                     updates["memory_type"] = "long_term"
-            
+                    reviewed_memory["memory_type"] = "long_term"
+                    promoted = True
+
+            if not promoted and self._algo.should_forget(reviewed_memory):
+                return None, True
+
             # Check if memory should be archived
-            if self._algo.should_archive(memory):
+            if self._algo.should_archive(reviewed_memory):
                 meta = memory.get("metadata") or {}
                 meta["archived"] = True
                 updates["metadata"] = meta
             
             # Re-process content if memory type changed or if it's been accessed multiple times
-            access_count = memory.get("access_count", 0) + 1
+            access_count = reviewed_access_count
             if (updates.get("memory_type") != memory.get("memory_type") or 
                 access_count % 5 == 0):  # Re-process every 5 accesses
                 
-                original_content = memory.get("original_content") or memory.get("content", "")
+                original_content = (
+                    memory.get("original_content")
+                    or memory.get("content", "")
+                    or memory.get("memory", "")
+                )
                 importance_score = memory.get("importance_score", 0.5)
                 memory_type = updates.get("memory_type") or memory.get("memory_type", "working")
                 
                 # Re-process with updated parameters
                 intelligence_metadata = self._algo.process_memory_metadata(original_content, importance_score, memory_type)
-                updates.update(intelligence_metadata)
-                updates["last_reprocessed_at"] = get_current_datetime()
+                refreshed_intelligence = intelligence_metadata.get("intelligence", {})
+                if refreshed_intelligence:
+                    refreshed_intelligence["last_reviewed"] = reviewed_intelligence["last_reviewed"]
+                    refreshed_intelligence["review_count"] = reviewed_intelligence["review_count"]
+                    refreshed_intelligence["access_count"] = reviewed_access_count
+                    updates["intelligence"] = refreshed_intelligence
+                if intelligence_metadata.get("memory_management"):
+                    updates["memory_management"] = intelligence_metadata["memory_management"]
+                updates["processing_applied"] = True
+                updates["last_reprocessed_at"] = review_time
             
             return updates, False
         except Exception as e:

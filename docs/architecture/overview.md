@@ -262,8 +262,8 @@ The `ImportanceEvaluator` uses LLM capabilities to evaluate memory importance:
 The `EbbinghausAlgorithm` implements the forgetting curve theory:
 
 - **Decay Calculation**: `R = e^(-t/S)` where R is retention, t is time, S is strength
-- **Reinforcement**: Increases retention strength when memories are accessed
-- **Memory Promotion**: Automatically promotes memories between layers based on retention scores
+- **Reinforcement**: Accesses and reviews refresh the active review timestamp before decay is evaluated
+- **Memory Promotion**: Access-triggered promotion is evaluated before forgetting so reinforced memories can move between layers
 - **Forgetting Detection**: Identifies memories that should be forgotten or archived
 
 ### Memory Processor
